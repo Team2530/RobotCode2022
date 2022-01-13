@@ -160,32 +160,7 @@ public class RobotContainer {
    * @return the command to run in autonomous
    */
   public Command getAutonomousCommand(Trajectory trajectory) {
-    // Create a voltage constraint to ensure we don't accelerate too fast
-    var autoVoltageConstraint = new DifferentialDriveVoltageConstraint(m_driveTrain.m_feedforward,
-        m_driveTrain.m_kinematics, 10);
-
-    // Create config for trajectory
-    TrajectoryConfig config = new TrajectoryConfig(Constants.maxVelocityMetersPerSecond,
-        Constants.maxAccelerationMetersPerSecondSq)
-            // Add kinematics to ensure max speed is actually obeyed
-            .setKinematics(m_driveTrain.m_kinematics)
-            // Apply the voltage constraint
-            .addConstraint(autoVoltageConstraint);
-    // Slalom.path
-    // An example trajectory to follow. All units in meters.
-
-    RamseteCommand ramseteCommand = new RamseteCommand(trajectory, m_driveTrain::getPose,
-        new RamseteController(Constants.kRamseteB, Constants.kRamseteZeta), m_driveTrain.m_feedforward,
-        m_driveTrain.m_kinematics, m_driveTrain::getWheelSpeeds, m_driveTrain.m_leftPIDController,
-        m_driveTrain.m_rightPIDController,
-        // RamseteCommand passes volts to the callback
-        m_driveTrain::tankDriveVolts, m_driveTrain);
-
-    // Reset odometry to the starting pose of the trajectory.
-    m_driveTrain.resetOdometry(trajectory.getInitialPose());
-
-    // Run path following command, then stop at the end.
-    return ramseteCommand.andThen(() -> m_driveTrain.tankDriveVolts(0, 0));
+    return null;
   }
 
   public Command getTelopCommand() {

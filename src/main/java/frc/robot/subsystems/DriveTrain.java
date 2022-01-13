@@ -11,10 +11,7 @@ import edu.wpi.first.math.filter.SlewRateLimiter;
 import edu.wpi.first.math.controller.PIDController;
 import edu.wpi.first.math.controller.SimpleMotorFeedforward;
 import edu.wpi.first.wpilibj.drive.DifferentialDrive;
-import edu.wpi.first.math.geometry.Pose2d;
-import edu.wpi.first.math.kinematics.ChassisSpeeds;
-import edu.wpi.first.math.kinematics.DifferentialDriveKinematics;
-import edu.wpi.first.math.kinematics.DifferentialDriveOdometry;
+import edu.wpi.first.wpilibj.drive.MecanumDrive;
 import edu.wpi.first.math.kinematics.DifferentialDriveWheelSpeeds;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
@@ -39,8 +36,7 @@ public class DriveTrain extends SubsystemBase {
   AHRS ahrs = new AHRS();
 
   public DifferentialDrive differentialDrive;
-  public DifferentialDriveKinematics m_kinematics = new DifferentialDriveKinematics(Constants.WHEEL_DISTANCE);
-  DifferentialDriveOdometry m_odometry;
+  public MecanumDrive mecanumDrive;
   public final SimpleMotorFeedforward m_feedforward = new SimpleMotorFeedforward(Constants.kS, Constants.kV,
       Constants.kA);
 
@@ -66,8 +62,8 @@ public class DriveTrain extends SubsystemBase {
     motor_left.feed();
     motor_right.feed();
 
-    m_odometry = new DifferentialDriveOdometry(ahrs.getRotation2d());
     differentialDrive = new DifferentialDrive(motor_left, motor_right);
+    mecanumDrive = new MecanumDrive(frontLeftMotor, rearLeftMotor, frontRightMotor, rearRightMotor)
     differentialDrive.setSafetyEnabled(false);
   }
 
@@ -77,7 +73,6 @@ public class DriveTrain extends SubsystemBase {
     SmartDashboard.putNumber("Distance right", getRightEncoderDistance());
     SmartDashboard.putNumber("Velocity left", getLeftEncoderRate());
     SmartDashboard.putNumber("Velocity right ", getLeftEncoderRate());
-    updateOdometry();
     putAcceleration();
   }
 
@@ -130,28 +125,8 @@ public class DriveTrain extends SubsystemBase {
     }
   }
 
-  public void singleJoystickDrivePID(double x, double z) {
-    var wheelSpeeds = m_kinematics.toWheelSpeeds(new ChassisSpeeds(m_speedLimiter.calculate(x) * Constants.kMaxSpeed,
-        0.0, m_rotLimiter.calculate(z * Constants.kMaxAngularSpeed)));
-    SmartDashboard.putString("wheelSpeed", wheelSpeeds.toString());
-    setSpeeds(wheelSpeeds);
-  }
-
   public void stop() {
     differentialDrive.stopMotor();
-  }
-
-  public void updateOdometry() {
-    m_odometry.update(ahrs.getRotation2d(), getLeftEncoderDistance(), getRightEncoderDistance());
-  }
-
-  public void resetOdometry(Pose2d pose) {
-    // resetEncoders();
-    m_odometry.resetPosition(pose, ahrs.getRotation2d());
-  }
-
-  public Pose2d getPose() {
-    return m_odometry.getPoseMeters();
   }
 
   public void setSpeeds(DifferentialDriveWheelSpeeds speeds) {
