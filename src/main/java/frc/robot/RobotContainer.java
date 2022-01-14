@@ -13,7 +13,6 @@ import edu.wpi.first.wpilibj.XboxController;
 import edu.wpi.first.math.controller.RamseteController;
 import edu.wpi.first.math.trajectory.Trajectory;
 import edu.wpi.first.math.trajectory.TrajectoryConfig;
-import edu.wpi.first.math.trajectory.constraint.DifferentialDriveVoltageConstraint;
 import frc.robot.commands.*;
 import frc.robot.subsystems.*;
 import edu.wpi.first.wpilibj2.command.Command;
@@ -143,9 +142,6 @@ public class RobotContainer {
     // new JoystickButton(xbox, 1).whenPressed(() -> new AutoShoot(m_revolver,
     // m_hood));
 
-    // For autonomous testing -- rotates the robot by a certain amount
-    // new JoystickButton(stick1, 12).whenPressed(() -> m_driveTrain.autoTurn(90));
-
     // Intake control
     new JoystickButton(stick1, 13).whenPressed(() -> m_intake.setIntakeSpeed(0.5))
         .whenReleased(() -> m_intake.setIntakeSpeed(0));
@@ -165,13 +161,9 @@ public class RobotContainer {
 
   public Command getTelopCommand() {
     // Toggles dual joystick, should be replaced with an actual check in the future
-    if (false) {
-      return new ParallelCommandGroup(new ManualAimHood(stick1, m_hood, m_revolver),
-          new DualJoystickDrive(m_driveTrain, stick1, stick2));
-    } else {
-      return new ParallelCommandGroup(new ManualAimHood(stick1, m_hood, m_revolver),
-          new SingleJoystickDrive(m_driveTrain, stick1));
-    }
+    return new ParallelCommandGroup(new ManualAimHood(stick1, m_hood, m_revolver),
+        new SingleJoystickDrive(m_driveTrain, stick1));
+
   }
 
 }
