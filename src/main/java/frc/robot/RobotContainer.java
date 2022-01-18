@@ -39,8 +39,8 @@ public class RobotContainer {
 
   // -------------------- Joysticks and Buttons -------------------- \\
   // Joysticks
-  final Joystick stick1 = new Joystick(1); // Creates a joystick on port 1
-  final Joystick stick2 = new Joystick(2); // Creates a joystick on port 2
+  final Joystick stick1 = new Joystick(0); // Creates a joystick on port 1
+  final Joystick stick2 = new Joystick(1); // Creates a joystick on port 2
 
   // Joystick buttons
   // private final JoystickButton Button1 = new JoystickButton(stick1, 1); //

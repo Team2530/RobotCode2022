@@ -33,7 +33,8 @@ public class SingleJoystickDrive extends CommandBase {
   // Called every time the scheduler runs while the command is scheduled.
   @Override
   public void execute() {
-    m_drivetrain.singleJoystickDrive(stick.getX(), stick.getY(), stick.getZ());
+    // if' (stick.getMagnitude() < 0.2) return;
+    m_drivetrain.singleJoystickDrive(stick.getX() / 3.0, stick.getY() / 3.0, stick.getZ() / 3.0);
   }
 
   // Called once the command ends or is interrupted.

@@ -11,11 +11,15 @@ import edu.wpi.first.math.filter.SlewRateLimiter;
 import edu.wpi.first.math.controller.PIDController;
 import edu.wpi.first.math.controller.SimpleMotorFeedforward;
 import edu.wpi.first.wpilibj.drive.MecanumDrive;
+import edu.wpi.first.wpilibj.interfaces.Gyro;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import frc.robot.Constants;
 
+import com.ctre.phoenix.motorcontrol.ControlMode;
 import com.ctre.phoenix.motorcontrol.NeutralMode;
+import com.ctre.phoenix.motorcontrol.can.TalonFX;
+import com.ctre.phoenix.motorcontrol.can.TalonFXConfiguration;
 import com.ctre.phoenix.motorcontrol.can.WPI_TalonFX;
 import com.ctre.phoenix.motorcontrol.can.WPI_TalonSRX;
 import com.kauailabs.navx.frc.AHRS;
@@ -45,26 +49,33 @@ public class DriveTrain extends SubsystemBase {
 
   private final SlewRateLimiter m_speedLimiter = new SlewRateLimiter(0.125);
   private final SlewRateLimiter m_rotLimiter = new SlewRateLimiter(2);
-
+  
   /**
    * Creates a new {@link DriveTrain}.
    */
   public DriveTrain() {
-    motorFL.setNeutralMode(NeutralMode.Brake);
-    motorFR.setNeutralMode(NeutralMode.Brake);
-    motorBL.setNeutralMode(NeutralMode.Brake);
-    motorBR.setNeutralMode(NeutralMode.Brake);
+    // motorFL.configFactoryDefault();
+    // motorFR.configFactoryDefault();
+    // motorBL.configFactoryDefault();
+    // motorBR.configFactoryDefault();
+
+    // HACK: FIx this PLSSS
+    motorFL.setNeutralMode(NeutralMode.Coast);
+    motorFR.setNeutralMode(NeutralMode.Coast);
+    motorBL.setNeutralMode(NeutralMode.Coast);
+    motorBR.setNeutralMode(NeutralMode.Coast);
     motorFL.setSelectedSensorPosition(0);
     motorFR.setSelectedSensorPosition(0);
     motorBL.setSelectedSensorPosition(0);
     motorBR.setSelectedSensorPosition(0);
-    motorFL.feed();
-    motorFR.feed();
-    motorBL.feed();
-    motorBR.feed();
+    // motorFL.feed();
+    // motorFR.feed();
+    // motorBL.feed();
+    // motorBR.feed();
 
     mecanumDrive = new MecanumDrive(motorFL, motorFR, motorBL, motorBR);
-    mecanumDrive.setSafetyEnabled(false);
+    //mecanumDrive.setDeadband(-0.2);
+    mecanumDrive.setSafetyEnabled(true);
   }
 
   @Override
