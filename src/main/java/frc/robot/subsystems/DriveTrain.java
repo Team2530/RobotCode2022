@@ -72,6 +72,8 @@ public class DriveTrain extends SubsystemBase {
     // motorFR.feed();
     // motorBL.feed();
     // motorBR.feed();
+    motorFR.setInverted(true);
+    motorBR.setInverted(true);
 
     mecanumDrive = new MecanumDrive(motorFL, motorFR, motorBL, motorBR);
     //mecanumDrive.setDeadband(-0.2);
