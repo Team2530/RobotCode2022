@@ -50,6 +50,7 @@ public final class Constants {
     public static final int kSlotIdx = 0;
     public static final int kPIDLoopIdx = 0;
     public static final int kTimeoutMs = 30;
+    public static final int COLOR_SENSOR_PORT = 777778;
 
     // ----------Driving Constants----------\\
     // The ratio between the encoder and the driven wheels
