@@ -42,14 +42,16 @@ public class DriveTrain extends SubsystemBase {
   public final SimpleMotorFeedforward m_feedforward = new SimpleMotorFeedforward(Constants.kS, Constants.kV,
       Constants.kA);
 
-  public final PIDController m_leftPIDController = new PIDController(Constants.PIDleftDrive.kP,
-      Constants.PIDleftDrive.kI, Constants.PIDleftDrive.kD);
-  public final PIDController m_rightPIDController = new PIDController(Constants.PIDrigthDrive.kP,
-      Constants.PIDrigthDrive.kI, Constants.PIDrigthDrive.kD);
+  // public final PIDController m_leftPIDController = new
+  // PIDController(Constants.PIDleftDrive.kP,
+  // Constants.PIDleftDrive.kI, Constants.PIDleftDrive.kD);
+  // public final PIDController m_rightPIDController = new
+  // PIDController(Constants.PIDrigthDrive.kP,
+  // Constants.PIDrigthDrive.kI, Constants.PIDrigthDrive.kD);
 
-  private final SlewRateLimiter m_speedLimiter = new SlewRateLimiter(0.125);
-  private final SlewRateLimiter m_rotLimiter = new SlewRateLimiter(2);
-  
+  // private final SlewRateLimiter m_speedLimiter = new SlewRateLimiter(0.125);
+  // private final SlewRateLimiter m_rotLimiter = new SlewRateLimiter(2);
+
   /**
    * Creates a new {@link DriveTrain}.
    */
@@ -64,6 +66,8 @@ public class DriveTrain extends SubsystemBase {
     motorFR.setNeutralMode(NeutralMode.Coast);
     motorBL.setNeutralMode(NeutralMode.Coast);
     motorBR.setNeutralMode(NeutralMode.Coast);
+    motorFR.setInverted(true);
+    motorBR.setInverted(true);
     motorFL.setSelectedSensorPosition(0);
     motorFR.setSelectedSensorPosition(0);
     motorBL.setSelectedSensorPosition(0);
@@ -73,8 +77,8 @@ public class DriveTrain extends SubsystemBase {
     // motorBL.feed();
     // motorBR.feed();
 
-    mecanumDrive = new MecanumDrive(motorFL, motorFR, motorBL, motorBR);
-    //mecanumDrive.setDeadband(-0.2);
+    mecanumDrive = new MecanumDrive(motorFL, motorBL, motorFR, motorBR);
+    // mecanumDrive.setDeadband(-0.2);
     mecanumDrive.setSafetyEnabled(true);
   }
 
@@ -90,12 +94,13 @@ public class DriveTrain extends SubsystemBase {
 
   /**
    * Initializes a drive mode where only one joystick controls the drive motors.
+   * 
    * @param x The joystick's forward/backward tilt. Any value from -1.0 to 1.0.
    * @param y The joystick's sideways tilt. Any value from -1.0 to 1.0.
    * @param z The joystick's vertical "twist". Any value from -1.0 to 1.0.
    */
   public void singleJoystickDrive(double x, double y, double z) {
-    mecanumDrive.driveCartesian(y, x, z);
+    mecanumDrive.driveCartesian(y, -x, -z);
   }
 
   public void stop() {
@@ -104,22 +109,32 @@ public class DriveTrain extends SubsystemBase {
 
   // NEED TO SET ALL OF THESE CORRECTLY
   public double getLeftEncoderDistance() {
-    return 1.5;/*motor_left.getSelectedSensorPosition() / Constants.ENCODER_TICKS_PER_REVOLUTION / Constants.DRIVE_GEAR_RATIO;*/
+    return 1.5;/*
+                * motor_left.getSelectedSensorPosition() /
+                * Constants.ENCODER_TICKS_PER_REVOLUTION / Constants.DRIVE_GEAR_RATIO;
+                */
   }
 
   public double getRightEncoderDistance() {
-    return 1.5;/*motor_right.getSelectedSensorPosition() / Constants.ENCODER_TICKS_PER_REVOLUTION
-        / Constants.DRIVE_GEAR_RATIO;*/
+    return 1.5;/*
+                * motor_right.getSelectedSensorPosition() /
+                * Constants.ENCODER_TICKS_PER_REVOLUTION
+                * / Constants.DRIVE_GEAR_RATIO;
+                */
   }
 
   public double getLeftEncoderRate() {
-    return 1.5;/*motor_left.getSelectedSensorVelocity()
-        / (Constants.ENCODER_TICKS_PER_REVOLUTION * Constants.DRIVE_GEAR_RATIO);*/
+    return 1.5;/*
+                * motor_left.getSelectedSensorVelocity()
+                * / (Constants.ENCODER_TICKS_PER_REVOLUTION * Constants.DRIVE_GEAR_RATIO);
+                */
   }
 
   public double getRightEncoderRate() {
-    return 1.5;/*motor_right.getSelectedSensorVelocity()
-        / (Constants.ENCODER_TICKS_PER_REVOLUTION * Constants.DRIVE_GEAR_RATIO);*/
+    return 1.5;/*
+                * motor_right.getSelectedSensorVelocity()
+                * / (Constants.ENCODER_TICKS_PER_REVOLUTION * Constants.DRIVE_GEAR_RATIO);
+                */
   }
 
   public void putAcceleration() {

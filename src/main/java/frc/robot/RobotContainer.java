@@ -163,7 +163,6 @@ public class RobotContainer {
     // Toggles dual joystick, should be replaced with an actual check in the future
     return new ParallelCommandGroup(new ManualAimHood(stick1, m_hood, m_revolver),
         new SingleJoystickDrive(m_driveTrain, stick1));
-
   }
 
 }

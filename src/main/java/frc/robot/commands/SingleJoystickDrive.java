@@ -8,6 +8,7 @@
 package frc.robot.commands;
 
 import edu.wpi.first.wpilibj.Joystick;
+import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.CommandBase;
 import frc.robot.subsystems.DriveTrain;
 
@@ -30,11 +31,16 @@ public class SingleJoystickDrive extends CommandBase {
 
   }
 
+  // TODO: Drive strait button that detects stick heading and locks motors using
+  // following built into motor controller and inversion
+
   // Called every time the scheduler runs while the command is scheduled.
   @Override
   public void execute() {
     // if' (stick.getMagnitude() < 0.2) return;
-    m_drivetrain.singleJoystickDrive(stick.getX() / 3.0, stick.getY() / 3.0, stick.getZ() / 3.0);
+    double m = stick.getRawButton(1) ? 1.0 : 0.5;
+    m *= (1.0 - stick.getRawAxis(3));
+    m_drivetrain.singleJoystickDrive(stick.getX() * m, stick.getY() * m, stick.getZ() * m);
   }
 
   // Called once the command ends or is interrupted.
