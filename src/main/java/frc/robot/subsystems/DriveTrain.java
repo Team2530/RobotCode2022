@@ -30,6 +30,13 @@ import com.kauailabs.navx.frc.AHRS;
  * handling the control mode, and auto-turning.
  */
 public class DriveTrain extends SubsystemBase {
+  public static enum DriveDirection {
+    Forwards,
+    Backwards,
+    Left,
+    Right
+  };
+
   // -------------------- Motors -------------------- \\
   // Left Motors
   WPI_TalonFX motorFL = new WPI_TalonFX(Constants.MOTOR_FL_DRIVE_PORT);
@@ -39,8 +46,9 @@ public class DriveTrain extends SubsystemBase {
   AHRS ahrs = new AHRS();
 
   public MecanumDrive mecanumDrive;
-  public final SimpleMotorFeedforward m_feedforward = new SimpleMotorFeedforward(Constants.kS, Constants.kV,
-      Constants.kA);
+  // public final SimpleMotorFeedforward m_feedforward = new
+  // SimpleMotorFeedforward(Constants.kS, Constants.kV,
+  // Constants.kA);
 
   // public final PIDController m_leftPIDController = new
   // PIDController(Constants.PIDleftDrive.kP,
@@ -60,12 +68,7 @@ public class DriveTrain extends SubsystemBase {
     // motorFR.configFactoryDefault();
     // motorBL.configFactoryDefault();
     // motorBR.configFactoryDefault();
-
-    // HACK: FIx this PLSSS
-    motorFL.setNeutralMode(NeutralMode.Coast);
-    motorFR.setNeutralMode(NeutralMode.Coast);
-    motorBL.setNeutralMode(NeutralMode.Coast);
-    motorBR.setNeutralMode(NeutralMode.Coast);
+    setCoast(NeutralMode.Brake);
     motorFR.setInverted(true);
     motorBR.setInverted(true);
     motorFL.setSelectedSensorPosition(0);
@@ -82,6 +85,15 @@ public class DriveTrain extends SubsystemBase {
     mecanumDrive.setSafetyEnabled(true);
   }
 
+  public void driveStraitDirection(DriveDirection d, double throttle) {
+    throttle *= (d == DriveDirection.Left || d == DriveDirection.Backwards) ? -1.0 : 1.0;
+    if (d == DriveDirection.Forwards || d == DriveDirection.Backwards) {
+
+    } else {
+
+    }
+  }
+
   @Override
   public void periodic() {
     // TODO: Convert to mecanum
@@ -90,6 +102,13 @@ public class DriveTrain extends SubsystemBase {
     SmartDashboard.putNumber("Velocity left", getLeftEncoderRate());
     SmartDashboard.putNumber("Velocity right ", getLeftEncoderRate());
     putAcceleration();
+  }
+
+  public void setCoast(NeutralMode neutralSetting) {
+    motorFL.setNeutralMode(neutralSetting);
+    motorFR.setNeutralMode(neutralSetting);
+    motorBL.setNeutralMode(neutralSetting);
+    motorBR.setNeutralMode(neutralSetting);
   }
 
   /**
