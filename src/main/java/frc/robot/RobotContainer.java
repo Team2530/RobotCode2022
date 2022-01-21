@@ -13,7 +13,6 @@ import edu.wpi.first.wpilibj.XboxController;
 import edu.wpi.first.math.controller.RamseteController;
 import edu.wpi.first.math.trajectory.Trajectory;
 import edu.wpi.first.math.trajectory.TrajectoryConfig;
-import edu.wpi.first.math.trajectory.constraint.DifferentialDriveVoltageConstraint;
 import frc.robot.commands.*;
 import frc.robot.subsystems.*;
 import edu.wpi.first.wpilibj2.command.Command;
@@ -40,8 +39,8 @@ public class RobotContainer {
 
   // -------------------- Joysticks and Buttons -------------------- \\
   // Joysticks
-  final Joystick stick1 = new Joystick(1); // Creates a joystick on port 1
-  final Joystick stick2 = new Joystick(2); // Creates a joystick on port 2
+  final Joystick stick1 = new Joystick(0); // Creates a joystick on port 1
+  final Joystick stick2 = new Joystick(1); // Creates a joystick on port 2
 
   // Joystick buttons
   // private final JoystickButton Button1 = new JoystickButton(stick1, 1); //
@@ -143,9 +142,6 @@ public class RobotContainer {
     // new JoystickButton(xbox, 1).whenPressed(() -> new AutoShoot(m_revolver,
     // m_hood));
 
-    // For autonomous testing -- rotates the robot by a certain amount
-    // new JoystickButton(stick1, 12).whenPressed(() -> m_driveTrain.autoTurn(90));
-
     // Intake control
     new JoystickButton(stick1, 13).whenPressed(() -> m_intake.setIntakeSpeed(0.5))
         .whenReleased(() -> m_intake.setIntakeSpeed(0));
@@ -160,43 +156,13 @@ public class RobotContainer {
    * @return the command to run in autonomous
    */
   public Command getAutonomousCommand(Trajectory trajectory) {
-    // Create a voltage constraint to ensure we don't accelerate too fast
-    var autoVoltageConstraint = new DifferentialDriveVoltageConstraint(m_driveTrain.m_feedforward,
-        m_driveTrain.m_kinematics, 10);
-
-    // Create config for trajectory
-    TrajectoryConfig config = new TrajectoryConfig(Constants.maxVelocityMetersPerSecond,
-        Constants.maxAccelerationMetersPerSecondSq)
-            // Add kinematics to ensure max speed is actually obeyed
-            .setKinematics(m_driveTrain.m_kinematics)
-            // Apply the voltage constraint
-            .addConstraint(autoVoltageConstraint);
-    // Slalom.path
-    // An example trajectory to follow. All units in meters.
-
-    RamseteCommand ramseteCommand = new RamseteCommand(trajectory, m_driveTrain::getPose,
-        new RamseteController(Constants.kRamseteB, Constants.kRamseteZeta), m_driveTrain.m_feedforward,
-        m_driveTrain.m_kinematics, m_driveTrain::getWheelSpeeds, m_driveTrain.m_leftPIDController,
-        m_driveTrain.m_rightPIDController,
-        // RamseteCommand passes volts to the callback
-        m_driveTrain::tankDriveVolts, m_driveTrain);
-
-    // Reset odometry to the starting pose of the trajectory.
-    m_driveTrain.resetOdometry(trajectory.getInitialPose());
-
-    // Run path following command, then stop at the end.
-    return ramseteCommand.andThen(() -> m_driveTrain.tankDriveVolts(0, 0));
+    return null;
   }
 
   public Command getTelopCommand() {
     // Toggles dual joystick, should be replaced with an actual check in the future
-    if (false) {
-      return new ParallelCommandGroup(new ManualAimHood(stick1, m_hood, m_revolver),
-          new DualJoystickDrive(m_driveTrain, stick1, stick2));
-    } else {
-      return new ParallelCommandGroup(new ManualAimHood(stick1, m_hood, m_revolver),
-          new SingleJoystickDrive(m_driveTrain, stick1));
-    }
+    return new ParallelCommandGroup(new ManualAimHood(stick1, m_hood, m_revolver),
+        new SingleJoystickDrive(m_driveTrain, stick1));
   }
 
 }

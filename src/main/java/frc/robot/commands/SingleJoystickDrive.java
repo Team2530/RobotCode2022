@@ -7,7 +7,11 @@
 
 package frc.robot.commands;
 
+import com.ctre.phoenix.led.ColorFlowAnimation.Direction;
+import com.ctre.phoenix.motorcontrol.NeutralMode;
+
 import edu.wpi.first.wpilibj.Joystick;
+import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.CommandBase;
 import frc.robot.subsystems.DriveTrain;
 
@@ -30,10 +34,20 @@ public class SingleJoystickDrive extends CommandBase {
 
   }
 
+  // TODO: Drive strait button that detects stick heading and locks motors using
   // Called every time the scheduler runs while the command is scheduled.
   @Override
   public void execute() {
-    m_drivetrain.singleJoystickDrive(stick.getZ(), stick.getY());
+    // m_drivetrain.setBrakeMode(stick.getRawButton(2));
+
+    // m_drivetrain.setCoast(stick.getRawButton(2) ? NeutralMode.Coast :
+    // NeutralMode.Brake);
+
+    // if' (stick.getMagnitude() < 0.2) return;
+    double m = stick.getRawButton(1) ? 1.0 : 0.5;
+    m *= (stick.getRawAxis(3) + 1.0) / 2.0;
+    // double turn = stick.getRawAxis(3) - stick.getRawAxis(2);
+    m_drivetrain.singleJoystickDrive(stick.getX() * m, stick.getY() * m, stick.getZ() * m);
   }
 
   // Called once the command ends or is interrupted.
