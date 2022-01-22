@@ -156,7 +156,7 @@ public class RobotContainer {
    * @return the command to run in autonomous
    */
   public Command getAutonomousCommand(Trajectory trajectory) {
-    return null;
+    return new AutonomousDrive(m_driveTrain);
   }
 
   public Command getTelopCommand() {
