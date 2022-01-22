@@ -47,7 +47,8 @@ public class DriveTrain extends SubsystemBase {
   AHRS ahrs = new AHRS();
 
   // NOTE: Yaw is in degrees, need small pid constants
-  private final double kP = 0.05, kI = 0.0015, kD = 0.00175;
+  // private final double kP = 0.05, kI = 0.0015, kD = 0.00175;
+  private final double kP = 18.7, kI = 1.7, kD = 1.4;
   PIDController rot_pid = new PIDController(kP, kI, kD);
 
   public MecanumDrive mecanumDrive;
@@ -118,12 +119,12 @@ public class DriveTrain extends SubsystemBase {
    * @param y The joystick's sideways tilt. Any value from -1.0 to 1.0.
    * @param z The joystick's vertical "twist". Any value from -1.0 to 1.0.
    */
-  public void singleJoystickDrive(double x, double y, double z) {
+  public void singleJoystickDrive(double x, double y, double yawTarget) {
     // mecanumDrive.driveCartesian(y, -x, -z);
     mecanumDrive.driveCartesian(
         y,
         -x,
-        Deadzone.deadZone(-rot_pid.calculate(ahrs.getAngle(), z * 45) * 0.25, 0.05) // TODO: Test
+        -rot_pid.calculate(ahrs.getAngle() / 360.0, yawTarget / 360) * 0.25 // TODO: Test
     );
   }
 
