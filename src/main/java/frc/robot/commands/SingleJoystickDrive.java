@@ -41,7 +41,6 @@ public class SingleJoystickDrive extends CommandBase {
     lastExecuted = Timer.getFPGATimestamp();
   }
 
-  // TODO: Drive strait button that detects stick heading and locks motors using
   // Called every time the scheduler runs while the command is scheduled.
   @Override
   public void execute() {

@@ -124,8 +124,7 @@ public class DriveTrain extends SubsystemBase {
     mecanumDrive.driveCartesian(
         y,
         -x,
-        -rot_pid.calculate(ahrs.getAngle() / 360.0, yawTarget / 360) * 0.25 // TODO: Test
-    );
+        -rot_pid.calculate(ahrs.getAngle() / 360.0, yawTarget / 360) * 0.25);
   }
 
   public void stop() {

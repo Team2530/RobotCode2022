@@ -11,9 +11,10 @@ public class Deadzone {
         return (v - a) / (b - a);
     }
 
+    // Fixed, previous version didnt work with negative values, stupid me
     public static double deadZone(double value, double deadzone) {
         if (Math.abs(value) > deadzone)
-            return invlerp(deadzone, 1., value);
+            return Math.signum(value) * invlerp(deadzone, 1.0, Math.abs(value));
         else
             return 0.;
     }
