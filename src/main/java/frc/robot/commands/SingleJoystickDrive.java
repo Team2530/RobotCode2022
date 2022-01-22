@@ -31,7 +31,7 @@ public class SingleJoystickDrive extends CommandBase {
   // Called when the command is initially scheduled.
   @Override
   public void initialize() {
-
+    m_drivetrain.reset();
   }
 
   // TODO: Drive strait button that detects stick heading and locks motors using
@@ -47,7 +47,8 @@ public class SingleJoystickDrive extends CommandBase {
     double m = stick.getRawButton(1) ? 1.0 : 0.5;
     m *= (stick.getRawAxis(3) + 1.0) / 2.0;
     // double turn = stick.getRawAxis(3) - stick.getRawAxis(2);
-    m_drivetrain.singleJoystickDrive(stick.getX() * m, stick.getY() * m, stick.getZ() * m);
+    m_drivetrain.singleJoystickDrive(stick.getX() * m, stick.getY() * m, stick.getZ());
+    // m_drivetrain.singleJoystickDrive(stick.getX() * m, 0, 0);
   }
 
   // Called once the command ends or is interrupted.

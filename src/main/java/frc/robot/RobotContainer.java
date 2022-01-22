@@ -146,8 +146,9 @@ public class RobotContainer {
     new JoystickButton(stick1, 13).whenPressed(() -> m_intake.setIntakeSpeed(0.5))
         .whenReleased(() -> m_intake.setIntakeSpeed(0));
 
-    new JoystickButton(stick1, 1).whenPressed(() -> m_driveTrain.driveStraight(0.5))
-        .whenReleased(() -> m_driveTrain.driveStraight(0));
+    // new JoystickButton(stick1, 1).whenPressed(() ->
+    // m_driveTrain.driveStraight(0.5))
+    // .whenReleased(() -> m_driveTrain.driveStraight(0));
   }
 
   /**
