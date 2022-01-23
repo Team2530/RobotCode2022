@@ -113,6 +113,7 @@ public class Hood extends SubsystemBase {
 
   /**
    * Automatically aims the hood using the Limelight.
+   * 
    * @param distance The distance reading from the Limelight.
    */
   public void autoAimHood(double distance) { // ! everything must stay in meters
@@ -126,6 +127,7 @@ public class Hood extends SubsystemBase {
 
   /**
    * Moves the hood vertically to the specified angle.
+   * 
    * @param angle The angle, in degrees.
    */
   public void moveHoodToAngle(double angle) {
@@ -137,6 +139,7 @@ public class Hood extends SubsystemBase {
 
   /**
    * Sets the speed and direction of the vertical hood aiming motor.
+   * 
    * @param speed Any value from -1.0 to 1.0.
    */
   public void setHood(double speed) {
@@ -145,6 +148,7 @@ public class Hood extends SubsystemBase {
 
   /**
    * Sets the speed and direction of the flywheel motor.
+   * 
    * @param f_speed Any value from -1.0 to 1.0.
    */
   public void flywheelRotateSpeed(double f_speed) {
@@ -153,6 +157,7 @@ public class Hood extends SubsystemBase {
 
   /**
    * Sets the speed and direction of the horizontal hood aiming motor.
+   * 
    * @param speed Any value from -1.0 to 1.0.
    */
   public void setTurretPower(double speed) {
@@ -164,29 +169,30 @@ public class Hood extends SubsystemBase {
    */
   public void toggleLight() {
     switch (light) {
-    case 1:
-      light = 3;
-      break;
-    case 3:
-      light = 1;
-      break;
-    default:
-      light = 3;
-      break;
+      case 1:
+        light = 3;
+        break;
+      case 3:
+        light = 1;
+        break;
+      default:
+        light = 3;
+        break;
     }
 
   }
+
   public void toggleCamMode() {
     switch (camMode) {
-    case 0:
-      camMode = 1;
-      break;
-    case 1:
-      camMode = 0;
-      break;
-    default:
-      camMode = 0;
-      break;
+      case 0:
+        camMode = 1;
+        break;
+      case 1:
+        camMode = 0;
+        break;
+      default:
+        camMode = 0;
+        break;
     }
 
   }

@@ -7,22 +7,16 @@
 
 package frc.robot.subsystems;
 
-import edu.wpi.first.math.filter.SlewRateLimiter;
 import edu.wpi.first.math.controller.PIDController;
-import edu.wpi.first.math.controller.SimpleMotorFeedforward;
 import edu.wpi.first.wpilibj.drive.MecanumDrive;
-import edu.wpi.first.wpilibj.interfaces.Gyro;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import frc.robot.Constants;
 import frc.robot.libraries.Deadzone;
+import frc.robot.libraries.Gains;
 
-import com.ctre.phoenix.motorcontrol.ControlMode;
 import com.ctre.phoenix.motorcontrol.NeutralMode;
-import com.ctre.phoenix.motorcontrol.can.TalonFX;
-import com.ctre.phoenix.motorcontrol.can.TalonFXConfiguration;
 import com.ctre.phoenix.motorcontrol.can.WPI_TalonFX;
-import com.ctre.phoenix.motorcontrol.can.WPI_TalonSRX;
 import com.kauailabs.navx.frc.AHRS;
 
 /**
@@ -46,10 +40,32 @@ public class DriveTrain extends SubsystemBase {
   WPI_TalonFX motorBR = new WPI_TalonFX(Constants.MOTOR_BR_DRIVE_PORT);
   AHRS ahrs = new AHRS();
 
-  // NOTE: Yaw is in degrees, need small pid constants
-  // private final double kP = 0.05, kI = 0.0015, kD = 0.00175;
-  private final double kP = 18.7, kI = 1.7, kD = 1.4;
-  PIDController rot_pid = new PIDController(kP, kI, kD);
+  // ------------------------ PID gains ------------------------- \\
+
+  // "Teenage resistance"
+  // private final double hkP = 0.05, hkI = 0.0015, hkD = 0.00175;
+  private final Gains rotPIDGains = new Gains(18.7, 1.7, 1.4);
+
+  // Turn rate control (Z angular velocity control)
+  private final Gains ratePIDGains = new Gains(1.0, 0.0, 0.0); // TODO: Tune
+
+  // Left and right rate control
+  private final Gains strafePIDGains = new Gains(1.0, 0.0, 0.0); // TODO: Tune
+
+  // Forward and back rate control
+  private final Gains drivePIDGains = new Gains(1.0, 0.0, 0.0); // TODO: Tune
+
+  PIDController rotPID = rotPIDGains.getPID();
+  PIDController turnrate_pid = ratePIDGains.getPID();
+
+  PIDController strafePID = drivePIDGains.getPID();
+  PIDController drivePID = strafePIDGains.getPID();
+
+  private final double maxMetersPerSecondForwards = 1.0;
+  private final double maxMetersPerSecondStrafe = maxMetersPerSecondForwards / Math.sqrt(2); // TODO: Actually test
+
+  public double yawTarget = 0.0;
+  public final double yawRate = 310.0;
 
   public MecanumDrive mecanumDrive;
   // public final SimpleMotorFeedforward m_feedforward = new
@@ -115,16 +131,49 @@ public class DriveTrain extends SubsystemBase {
   /**
    * Initializes a drive mode where only one joystick controls the drive motors.
    * 
-   * @param x The joystick's forward/backward tilt. Any value from -1.0 to 1.0.
-   * @param y The joystick's sideways tilt. Any value from -1.0 to 1.0.
-   * @param z The joystick's vertical "twist". Any value from -1.0 to 1.0.
+   * @param x             The joystick's forward/backward tilt. Any value from
+   *                      -1.0 to 1.0.
+   * @param y             The joystick's sideways tilt. Any value from -1.0 to
+   *                      1.0.
+   * @param z             The joystick's vertical "twist". Any value from -1.0 to
+   *                      1.0.
+   * @param headingAdjust when true, yaw control is set to heading hold and the z
+   *                      (steering) axis instead adjusts the yaw target
    */
-  public void singleJoystickDrive(double x, double y, double yawTarget) {
+  public void singleJoystickDrive(double x, double y, double z, double deltaTime, boolean headingAdjust) {
     // mecanumDrive.driveCartesian(y, -x, -z);
+    // TODO: Deadzones for pid output
+
+    /*
+     * 
+     * TODO: While driving, PID for turn rate (gyro angular velocity Z axis,
+     * `getRate()`)
+     * TODO: While not turning, lock heading and use the "teenage resistance" PID to
+     * drive
+     * straight.
+     * 
+     * TEST: X and Y axis velocity PIDs and independent deadzones
+     * TODO: Position-locking PID when not moving? It could even have a really high
+     * I setting to resist being shoved.
+     * 
+     */
+
+    // NOTE: Disabled because rate/heading switchover not implemented
+    // if (Math.abs(z) >= 0.1)
+    // yawTarget = ahrs.getAngle();
+
+    if (headingAdjust)
+      yawTarget += z * yawRate * deltaTime;
+
+    // Rate control driving for x/y, heading select steering currently, needs work
+    // and testing
     mecanumDrive.driveCartesian(
-        y,
-        -x,
-        -rot_pid.calculate(ahrs.getAngle() / 360.0, yawTarget / 360) * 0.25);
+        // TODO: Double check the accelerometer orientation on the robot
+        // TODO: Double check strafe speed calculation
+        strafePID.calculate(ahrs.getVelocityX(), Deadzone.deadZone(y, 0.1) * maxMetersPerSecondStrafe),
+        drivePID.calculate(ahrs.getVelocityY(), Deadzone.deadZone(-x, 0.1) * maxMetersPerSecondForwards),
+        // TODO: Rate control when turning, otherwise lock heading for stability
+        Deadzone.cutOff(-rotPID.calculate(ahrs.getAngle() / 360.0, yawTarget / 360) * 0.25, 0.01));
   }
 
   public void stop() {

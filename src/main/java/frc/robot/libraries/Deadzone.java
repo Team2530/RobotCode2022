@@ -19,6 +19,13 @@ public class Deadzone {
             return 0.;
     }
 
+    public static double cutOff(double value, double cutoff) {
+        if (Math.abs(value) < cutoff)
+            return 0;
+        else
+            return value;
+    }
+
     // TODO: test this
     public static Vector2d deadBand(Vector2d v, double deadzone) {
         double l = v.magnitude();

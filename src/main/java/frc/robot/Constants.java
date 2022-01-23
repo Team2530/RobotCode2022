@@ -80,9 +80,9 @@ public final class Constants {
     // The acceptable distance from the target angle for autonomous turning, in
     // degrees
     public static final double autoDriveTurnTolerance = 5;
-    public static final Gains PIDleftDrive = new Gains(0.439, 0, 0, 0, 0, 0);
-    public static final Gains PIDrigthDrive = new Gains(0.439, 0, 0, 0, 0, 0);
-    public static final Gains motor_Shooter = new Gains(1, 0, 0, 0, 0, 0);
+    // public static final Gains PIDleftDrive = new Gains(0.439, 0, 0, 0, 0, 0);
+    // public static final Gains PIDrigthDrive = new Gains(0.439, 0, 0, 0, 0, 0);
+    public static final Gains motor_Shooter = new Gains(1, 0, 0);
 
     // public static final double ALIGN = 0.025;
     public static final double WHEEL_DISTANCE = Units.inchesToMeters(21);
