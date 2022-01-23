@@ -15,6 +15,7 @@ import edu.wpi.first.wpilibj.interfaces.Gyro;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import frc.robot.Constants;
+import frc.robot.libraries.Deadzone;
 
 import com.ctre.phoenix.motorcontrol.ControlMode;
 import com.ctre.phoenix.motorcontrol.NeutralMode;
@@ -44,6 +45,11 @@ public class DriveTrain extends SubsystemBase {
   WPI_TalonFX motorBL = new WPI_TalonFX(Constants.MOTOR_BL_DRIVE_PORT);
   WPI_TalonFX motorBR = new WPI_TalonFX(Constants.MOTOR_BR_DRIVE_PORT);
   AHRS ahrs = new AHRS();
+
+  // NOTE: Yaw is in degrees, need small pid constants
+  // private final double kP = 0.05, kI = 0.0015, kD = 0.00175;
+  private final double kP = 18.7, kI = 1.7, kD = 1.4;
+  PIDController rot_pid = new PIDController(kP, kI, kD);
 
   public MecanumDrive mecanumDrive;
   // public final SimpleMotorFeedforward m_feedforward = new
@@ -83,27 +89,12 @@ public class DriveTrain extends SubsystemBase {
     motorBR.setInverted(true);
 
     mecanumDrive = new MecanumDrive(motorFL, motorBL, motorFR, motorBR);
-    // mecanumDrive.setDeadband(-0.2);
     mecanumDrive.setSafetyEnabled(true);
-  }
-
-  public void driveStraitDirection(DriveDirection d, double throttle) {
-    throttle *= (d == DriveDirection.Left || d == DriveDirection.Backwards) ? -1.0 : 1.0;
-    if (d == DriveDirection.Forwards || d == DriveDirection.Backwards) {
-
-    } else {
-
-    }
   }
 
   @Override
   public void periodic() {
-    // TODO: Convert to mecanum
-    SmartDashboard.putNumber("Distance left", getLeftEncoderDistance());
-    SmartDashboard.putNumber("Distance right", getRightEncoderDistance());
-    SmartDashboard.putNumber("Velocity left", getLeftEncoderRate());
-    SmartDashboard.putNumber("Velocity right ", getLeftEncoderRate());
-    putAcceleration();
+    putNavXInfo();
   }
 
   public void setCoast(NeutralMode neutralSetting) {
@@ -114,63 +105,40 @@ public class DriveTrain extends SubsystemBase {
   }
 
   /**
+   * Call this from the owner when the robot gets enabled, or you want to manually
+   * re-center the stabilization
+   */
+  public void reset() {
+    ahrs.zeroYaw();
+  }
+
+  /**
    * Initializes a drive mode where only one joystick controls the drive motors.
    * 
    * @param x The joystick's forward/backward tilt. Any value from -1.0 to 1.0.
    * @param y The joystick's sideways tilt. Any value from -1.0 to 1.0.
    * @param z The joystick's vertical "twist". Any value from -1.0 to 1.0.
    */
-  public void singleJoystickDrive(double x, double y, double z) {
-    mecanumDrive.driveCartesian(y, -x, -z);
+  public void singleJoystickDrive(double x, double y, double yawTarget) {
+    // mecanumDrive.driveCartesian(y, -x, -z);
+    mecanumDrive.driveCartesian(
+        y,
+        -x,
+        -rot_pid.calculate(ahrs.getAngle() / 360.0, yawTarget / 360) * 0.25);
   }
 
   public void stop() {
     mecanumDrive.stopMotor();
   }
 
-  // NEED TO SET ALL OF THESE CORRECTLY
-  public double getLeftEncoderDistance() {
-    return 1.5;/*
-                * motor_left.getSelectedSensorPosition() /
-                * Constants.ENCODER_TICKS_PER_REVOLUTION / Constants.DRIVE_GEAR_RATIO;
-                */
-  }
-
-  public double getRightEncoderDistance() {
-    return 1.5;/*
-                * motor_right.getSelectedSensorPosition() /
-                * Constants.ENCODER_TICKS_PER_REVOLUTION
-                * / Constants.DRIVE_GEAR_RATIO;
-                */
-  }
-
-  public double getLeftEncoderRate() {
-    return 1.5;/*
-                * motor_left.getSelectedSensorVelocity()
-                * / (Constants.ENCODER_TICKS_PER_REVOLUTION * Constants.DRIVE_GEAR_RATIO);
-                */
-  }
-
-  public double getRightEncoderRate() {
-    return 1.5;/*
-                * motor_right.getSelectedSensorVelocity()
-                * / (Constants.ENCODER_TICKS_PER_REVOLUTION * Constants.DRIVE_GEAR_RATIO);
-                */
-  }
-
-  public void putAcceleration() {
+  public void putNavXInfo() {
     SmartDashboard.putNumber("RawAccel_X", ahrs.getRawAccelX());
     SmartDashboard.putNumber("RawAccel_Y", ahrs.getRawAccelY());
     SmartDashboard.putNumber("RawAccel_Z", ahrs.getRawAccelZ());
     SmartDashboard.putNumber("Velocity_X", ahrs.getVelocityX());
     SmartDashboard.putNumber("Velocity_Y", ahrs.getVelocityY());
     SmartDashboard.putNumber("Velocity_Z", ahrs.getVelocityZ());
-  }
-
-  public void driveStraight(double power) {
-    motorFL.set(power);
-    motorFR.set(power);
-    motorBL.set(power);
-    motorBR.set(power);
+    SmartDashboard.putNumber("Accumulated yaw ", ahrs.getAngle());
+    SmartDashboard.putNumber("Rotational velocity (raw)", ahrs.getRawGyroZ());
   }
 }

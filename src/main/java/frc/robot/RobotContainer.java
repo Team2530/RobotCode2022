@@ -98,9 +98,6 @@ public class RobotContainer {
    * passing it to a {@link edu.wpi.first.wpilibj2.command.button.JoystickButton}.
    */
   private void configureButtonBindings() {
-    // Button2.whenPressed(new AimHood(m_hood, 1)); //TODO: Figure out what buttons
-    // we want to use for hood movement
-    // Button3.whenPressed(new AimHood(m_hood, -1));
     new JoystickButton(stick1, 12).whenPressed(() -> m_hood.flywheelRotateSpeed(1))
         .whenReleased(() -> m_hood.flywheelRotateSpeed(0));
     // new JoystickButton(stick1, 3)
@@ -146,8 +143,9 @@ public class RobotContainer {
     new JoystickButton(stick1, 13).whenPressed(() -> m_intake.setIntakeSpeed(0.5))
         .whenReleased(() -> m_intake.setIntakeSpeed(0));
 
-    new JoystickButton(stick1, 1).whenPressed(() -> m_driveTrain.driveStraight(0.5))
-        .whenReleased(() -> m_driveTrain.driveStraight(0));
+    // new JoystickButton(stick1, 1).whenPressed(() ->
+    // m_driveTrain.driveStraight(0.5))
+    // .whenReleased(() -> m_driveTrain.driveStraight(0));
   }
 
   /**
