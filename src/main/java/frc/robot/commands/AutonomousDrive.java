@@ -47,13 +47,13 @@ public class AutonomousDrive extends CommandBase {
     double velocity = ahrs.getVelocityY();
     timer.reset();
     timer.start();
-    double time = 0
+    double time = 0;
     while(distance > distanceTraveled){
        driveTrain.singleJoystickDrive(0, 0.5, 0);
        velocity = ahrs.getVelocityY();
        timeElapsed = timer.get();
        // Distance = Rate * Time
-       distanceTraveled = distanceTraveled + (velocity * timeElapsed);
+       distanceTraveled = distanceTraveled + abs(velocity * timeElapsed);
        // reset and start time for next loop (There may be a better way to do this)
        timer.reset();
        timer.start();
