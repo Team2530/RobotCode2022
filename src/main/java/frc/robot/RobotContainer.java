@@ -39,8 +39,8 @@ public class RobotContainer {
 
   // -------------------- Joysticks and Buttons -------------------- \\
   // Joysticks
-  final Joystick stick1 = new Joystick(0); // Creates a joystick on port 1
-  final Joystick stick2 = new Joystick(1); // Creates a joystick on port 2
+  final Joystick stick1 = new Joystick(Constants.stickport1); // Creates a joystick on port 1
+  final Joystick stick2 = new Joystick(Constants.stickport2); // Creates a joystick on port 2
 
   // Joystick buttons
   // private final JoystickButton Button1 = new JoystickButton(stick1, 1); //
@@ -56,7 +56,7 @@ public class RobotContainer {
   // private final JoystickButton Button11 = new JoystickButton(stick1, 11);
   // private final JoystickButton Button12 = new JoystickButton(stick1, 12);
   // Xbox Controller
-  final XboxController xbox = new XboxController(0);
+  final XboxController xbox = new XboxController(Constants.xboxport);
 
   // Xbox buttons
   // private final JoystickButton XboxButton1 = new JoystickButton(xbox, 1);
