@@ -5,6 +5,8 @@
 package frc.robot.subsystems;
 
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
+
+import com.ctre.phoenix.motorcontrol.can.WPI_TalonFX;
 import com.ctre.phoenix.motorcontrol.can.WPI_VictorSPX;
 import frc.robot.Constants;
 
@@ -13,7 +15,8 @@ import frc.robot.Constants;
  * to control the speed of the intake motor.
  */
 public class Intake extends SubsystemBase {
-  private static WPI_VictorSPX motor_Intake = new WPI_VictorSPX(Constants.motor_intake_port);
+  private static WPI_TalonFX motor_Intake_L = new WPI_TalonFX(Constants.motor_intake_port_L);
+  private static WPI_TalonFX motor_Intake_U = new WPI_TalonFX(Constants.motor_intake_port_U);
 
   /** Creates a new {@link Intake}. */
   public Intake() {
@@ -29,7 +32,11 @@ public class Intake extends SubsystemBase {
    * Sets the speed and direction of the intake motor.
    * @param speed Any value from -1.0 to 1.0.
    */
-  public void setIntakeSpeed(double speed) {
-    motor_Intake.set(speed);
+  public void setLowerIntakeSpeed(double speed) {
+    motor_Intake_L.set(speed);
+  }
+
+  public void setUpperIntakeSpeed(double speed) {
+    motor_Intake_U.set(speed);
   }
 }
