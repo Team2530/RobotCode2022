@@ -106,6 +106,7 @@ public final class Constants {
 
     // ----------Control (Joystick) Constants----------\\
     public static final double deadzone = 0.1;
+    public static final int JoystickPort = 0;
 
     // ----------Control (Shooting) Constants----------\\
     // From floor to center of opening, in meters.

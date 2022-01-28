@@ -22,6 +22,7 @@ public class AutonomousDrive extends CommandBase {
   double forwardBack = 0;
   double leftRight = 0;
   double lastKnownTime = 0;
+
   public AutonomousDrive(DriveTrain driveTrain, double distanceTraveling, String direction) {
     // Use addRequirements() here to declare subsystem dependencies.
     this.driveTrain = driveTrain;
@@ -52,7 +53,12 @@ public class AutonomousDrive extends CommandBase {
   public void execute() {
     timer.start();
     driveTrain.singleJoystickDrive(leftRight, forwardBack, 0);
-    velocity = ahrs.getVelocityY();
+    if (direction == "forward" || direction == "back") {
+      velocity = ahrs.getVelocityY();
+    } else {
+      velocity = ahrs.getVelocityX();
+    }
+
     timeElapsed = timer.get();
     // Distance = Rate * Time
     distanceTraveled = distanceTraveled + Math.abs(velocity * (timeElapsed - lastKnownTime));
@@ -62,11 +68,19 @@ public class AutonomousDrive extends CommandBase {
   // Called once the command ends or is interrupted.
   @Override
   public void end(boolean interrupted) {
+    driveTrain.singleJoystickDrive(0, 0, 0);
+    timer.stop();
+    timer.reset();
   }
 
   // Returns true when the command should end.
   @Override
   public boolean isFinished() {
-    return false;
+    if (distanceTraveling < distanceTraveled) {
+      return true;
+    } else {
+      return false;
+    }
+
   }
 }
