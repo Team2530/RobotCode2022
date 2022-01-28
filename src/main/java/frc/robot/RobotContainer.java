@@ -36,7 +36,6 @@ public class RobotContainer {
   private final Hood m_hood = new Hood();
   private final Revolver m_revolver = new Revolver();
   private final Intake m_intake = new Intake();
-  private final Rev3ColorSensor colorSensor = new Rev3ColorSensor();
 
   // -------------------- Joysticks and Buttons -------------------- \\
   // Joysticks

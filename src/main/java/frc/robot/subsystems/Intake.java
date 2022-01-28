@@ -9,14 +9,17 @@ import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import com.ctre.phoenix.motorcontrol.can.WPI_TalonFX;
 import com.ctre.phoenix.motorcontrol.can.WPI_VictorSPX;
 import frc.robot.Constants;
+import frc.robot.subsystems.Rev3ColorSensor;
 
 /**
  * This is Team 2530's Intake class. Its only method, `setIntakeSpeed`, is able
  * to control the speed of the intake motor.
  */
 public class Intake extends SubsystemBase {
-  private static WPI_TalonFX motor_Intake_L = new WPI_TalonFX(Constants.motor_intake_port_L);
-  private static WPI_TalonFX motor_Intake_U = new WPI_TalonFX(Constants.motor_intake_port_U);
+  private static WPI_TalonFX motorIntakeLower = new WPI_TalonFX(Constants.LOWER_INTAKE_PORT);
+  private static WPI_TalonFX motorIntakeUpper = new WPI_TalonFX(Constants.UPPER_INTAKE_PORT);
+  private final Rev3ColorSensor colorSensorUpper = new Rev3ColorSensor();
+  private final Rev3ColorSensor colorSensorLower = new Rev3ColorSensor();
 
   /** Creates a new {@link Intake}. */
   public Intake() {
@@ -33,10 +36,38 @@ public class Intake extends SubsystemBase {
    * @param speed Any value from -1.0 to 1.0.
    */
   public void setLowerIntakeSpeed(double speed) {
-    motor_Intake_L.set(speed);
+    motorIntakeLower.set(speed);
   }
 
   public void setUpperIntakeSpeed(double speed) {
-    motor_Intake_U.set(speed);
+    motorIntakeUpper.set(speed);
   }
+
+  /*
+    Ints for chamber colors
+    0 = no color
+    1 = red
+    2 = blue
+  */
+  public int lowerChamberColor() { 
+    if (colorSensorLower.isBallRed() == true) {
+      return 1;
+    } else if (colorSensorLower.isBallBlue() == true) {
+      return 2;
+    } else {
+      return 0;
+    }
+  }
+
+  public int upperChamberColor() { 
+    if (colorSensorUpper.isBallRed() == true) {
+      return 1;
+    } else if (colorSensorUpper.isBallBlue() == true) {
+      return 2;
+    } else {
+      return 0;
+    }
+  }
+
+
 }

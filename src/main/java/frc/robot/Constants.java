@@ -32,8 +32,8 @@ public final class Constants {
     public static final int MOTOR_BR_DRIVE_PORT = 20;
     public static final int motor_revolver_port = 5;
     // TODO: Add real intake port
-    public static final int motor_intake_port_L = 72;
-    public static final int motor_intake_port_U = 73;
+    public static final int LOWER_INTAKE_PORT = 72;
+    public static final int UPPER_INTAKE_PORT = 73;
     public static final int motor_flywheel_port = 3;
     public static final int motor_turret_port = 4;
     public static final int motor_hood_port = 6;
