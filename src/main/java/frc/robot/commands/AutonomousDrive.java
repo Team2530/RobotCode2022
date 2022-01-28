@@ -22,12 +22,16 @@ public class AutonomousDrive extends CommandBase {
   double forwardBack = 0;
   double leftRight = 0;
   double lastKnownTime = 0;
+  double rotation = 0;
+  double currentRotation = 0;
+  double orginalRotation = 0;
 
-  public AutonomousDrive(DriveTrain driveTrain, double distanceTraveling, String direction) {
+  public AutonomousDrive(DriveTrain driveTrain, double distanceTraveling, String direction, double rotation) {
     // Use addRequirements() here to declare subsystem dependencies.
     this.driveTrain = driveTrain;
     this.distanceTraveling = distanceTraveling;
     this.direction = direction;
+    this.rotation = rotation;
   }
 
   // Called when the command is initially scheduled.
@@ -46,12 +50,17 @@ public class AutonomousDrive extends CommandBase {
     if (direction == "right") {
       leftRight = 0.5;
     }
+    timer.reset();
+    timer.start();
+    // Getting orginal rotation of the robot
+    orginalRotation = ahrs.getAngle();
   }
 
   // Called every time the scheduler runs while the command is scheduled.
   @Override
   public void execute() {
-    timer.start();
+    // check to see if you are rotating or going a cardinal direction
+    if(direction != ""){
     driveTrain.singleJoystickDrive(leftRight, forwardBack, 0);
     if (direction == "forward" || direction == "back") {
       velocity = ahrs.getVelocityY();
@@ -63,6 +72,12 @@ public class AutonomousDrive extends CommandBase {
     // Distance = Rate * Time
     distanceTraveled = distanceTraveled + Math.abs(velocity * (timeElapsed - lastKnownTime));
     lastKnownTime = timer.get();
+    } else {
+      // if not going a cardinal direction, do spin
+     driveTrain.singleJoystickDrive(0 , 0, Math.sign(rotation) * 0.2 );
+      currentRotation = ahrs.getAngle();
+    }
+    
   }
 
   // Called once the command ends or is interrupted.
@@ -76,11 +91,19 @@ public class AutonomousDrive extends CommandBase {
   // Returns true when the command should end.
   @Override
   public boolean isFinished() {
-    if (distanceTraveling < distanceTraveled) {
+    // check to see if you are turning or going a cardinal direction
+    if(direction != ""){
+     if (distanceTraveling < distanceTraveled) {
       return true;
     } else {
       return false;
     }
-
+    } else {
+      if(rotation <= currentRotation - originalRotation){
+        return true;
+      } else {
+        return false;
+      }
+    }
+    }
   }
-}
