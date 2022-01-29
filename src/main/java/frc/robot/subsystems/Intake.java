@@ -7,7 +7,6 @@ package frc.robot.subsystems;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 
 import com.ctre.phoenix.motorcontrol.can.WPI_TalonFX;
-import com.ctre.phoenix.motorcontrol.can.WPI_VictorSPX;
 import frc.robot.Constants;
 import frc.robot.subsystems.Rev3ColorSensor;
 
@@ -49,23 +48,23 @@ public class Intake extends SubsystemBase {
     1 = red
     2 = blue
   */
-  public int lowerChamberColor() { 
+  public String lowerChamberColor() { 
     if (colorSensorLower.isBallRed() == true) {
-      return 1;
+      return "Red";
     } else if (colorSensorLower.isBallBlue() == true) {
-      return 2;
+      return "Blue";
     } else {
-      return 0;
+      return "Empty";
     }
   }
 
-  public int upperChamberColor() { 
+  public String upperChamberColor() { 
     if (colorSensorUpper.isBallRed() == true) {
-      return 1;
+      return "Red";
     } else if (colorSensorUpper.isBallBlue() == true) {
-      return 2;
+      return "Blue";
     } else {
-      return 0;
+      return "Empty";
     }
   }
 
