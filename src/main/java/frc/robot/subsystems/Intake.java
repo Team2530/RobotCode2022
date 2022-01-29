@@ -41,7 +41,33 @@ public class Intake extends SubsystemBase {
   public void setUpperIntakeSpeed(double speed) {
     motorIntakeUpper.set(speed);
   }
+  
+  /*stalling detection */
+  public void WPI_TalonFX(double angle) {
+    double prevPos = motorIntakeLower.getSelectedSensorPosition();
+    try {
+      motorIntakeLower.setSelectedSensorPosition(prevPos + (angle / 360 * Constants.ENCODER_TICKS_PER_REVOLUTION), 0,
+          1000);
+    } catch (Exception e) {
+      setLowerIntakeSpeed(0);
+      System.out.println("The lower intake stopped because it detected a stalling issue.");
+    }
+    prevPos = motorIntakeUpper.getSelectedSensorPosition();
+    try {
+      motorIntakeUpper.setSelectedSensorPosition(prevPos + (angle / 360 * Constants.ENCODER_TICKS_PER_REVOLUTION), 0,
+          1000);
+    } catch (Exception e) {
+      setUpperIntakeSpeed(0);
+      System.out.println("The upper intake stopped because it detected a stalling issue.");
+    }
+  }
 
+
+
+  
+ 
+ 
+ 
   /*
     Ints for chamber colors
     0 = no color
@@ -67,6 +93,8 @@ public class Intake extends SubsystemBase {
       return "Empty";
     }
   }
-
+  
+  
+  
 
 }
