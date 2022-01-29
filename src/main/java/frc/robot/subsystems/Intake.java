@@ -8,7 +8,8 @@ import edu.wpi.first.wpilibj2.command.SubsystemBase;
 
 import com.ctre.phoenix.motorcontrol.can.WPI_TalonFX;
 import frc.robot.Constants;
-import frc.robot.subsystems.Rev3ColorSensor;
+import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
+// import frc.robot.subsystems.Rev3ColorSensor;
 
 /**
  * This is Team 2530's Intake class. Its only method, `setIntakeSpeed`, is able
@@ -62,18 +63,6 @@ public class Intake extends SubsystemBase {
     }
   }
 
-
-
-  
- 
- 
- 
-  /*
-    Ints for chamber colors
-    0 = no color
-    1 = red
-    2 = blue
-  */
   public String lowerChamberColor() { 
     if (colorSensorLower.isBallRed() == true) {
       return "Red";
@@ -93,8 +82,9 @@ public class Intake extends SubsystemBase {
       return "Empty";
     }
   }
-  
-  
-  
 
+  public void checkChamberColors(String lowerChamberColor, String upperChamberColor) {
+    SmartDashboard.putString("Lower Chamber", lowerChamberColor);
+    SmartDashboard.putString("Upper Chamber", upperChamberColor);
+  }
 }
