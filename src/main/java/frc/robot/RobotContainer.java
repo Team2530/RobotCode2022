@@ -100,7 +100,7 @@ public class RobotContainer {
     // Toggles the LimeLight camera mode (aiming to drive cam)
     new JoystickButton(stick1, 5).whenPressed(() -> m_limeLight.toggleCamMode());
     // Toggles the LimeLight LEDs (useful for blinding people)
-    new JoystickButton(stick1, 6).whenPressed(() -> m_limeLight.toggleLight());
+    new JoystickButton(stick1, 3).whenPressed(() -> m_limeLight.toggleLight());
 
     // Automatically shoots balls
     // new JoystickButton(xbox, 1).whenPressed(() -> new AutoShoot(m_revolver,
