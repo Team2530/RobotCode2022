@@ -128,9 +128,9 @@ public class RobotContainer {
     new JoystickButton(stick1, 7).whenReleased(() -> m_hood.setTurretPower(0));
     new JoystickButton(stick1, 8).whileHeld(() -> m_hood.setTurretPower(-1));
     new JoystickButton(stick1, 8).whenReleased(() -> m_hood.setTurretPower(0));
-    */
+    
     new JoystickButton(stick1, 4).whenPressed(() -> m_hood.toggleAim());
-
+    */
     // Toggles the LimeLight camera mode (aiming to drive cam)
     new JoystickButton(stick1, 5).whenPressed(() -> m_hood.toggleCamMode());
     // Toggles the LimeLight LEDs (useful for not blinding people)
@@ -141,7 +141,7 @@ public class RobotContainer {
     // m_hood));
 
     // Climber control
-    new JoystickButton(stick1, 3).whenPressed(() -> m_climber.setClimberSpeed(0.5))
+    new JoystickButton(stick1, 4).whenPressed(() -> m_climber.setClimberSpeed(0.5))
         .whenReleased(() -> m_climber.setClimberSpeed(0));
 
     // Intake control

@@ -11,7 +11,8 @@ import com.ctre.phoenix.motorcontrol.can.WPI_VictorSPX;
 import frc.robot.Constants;
 
 public class Climber extends SubsystemBase {
-  private static WPI_TalonFX motor_Climber = new WPI_TalonFX(Constants.motor_climber_port);
+  private static WPI_TalonFX climberMotorL = new WPI_TalonFX(Constants.CLIMBER_MOTOR_PORT_L);
+  private static WPI_TalonFX climberMotorR = new WPI_TalonFX(Constants.CLIMBER_MOTOR_PORT_R);
   /** Creates a new Climber. */
   public Climber() {}
 
@@ -21,11 +22,13 @@ public class Climber extends SubsystemBase {
   }
 
   /**
-   * Sets the speed and direction of the intake motor.
+   * Sets the speed and direction of the climber motors.
    * @param speed Any value from -1.0 to 1.0.
    */
   public void setClimberSpeed(double speed) {
-    motor_Climber.set(speed);
+    climberMotorL.set(speed);
+    climberMotorR.set(speed);
+
     // This method will be called once per scheduler run
 
   }
