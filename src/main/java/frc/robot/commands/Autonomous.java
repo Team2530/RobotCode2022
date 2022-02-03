@@ -19,7 +19,8 @@ public class Autonomous extends CommandBase {
   // Called when the command is initially scheduled.
   @Override
   public void initialize() {
-    new AutonomousDrive(driveTrain, 1.5, "forward", 0.0);
+    AutonomousDrive thing = new AutonomousDrive(driveTrain, 1.5, "forward", 0.0);
+    thing.schedule();
   }
   // Called every time the scheduler runs while the command is scheduled.
   @Override
