@@ -44,7 +44,7 @@ public final class Constants {
     }
 
     // ----------Sensor Constants-----------\\
-    public static final int ENCODER_TICKS_PER_REVOLUTION = 2048;
+    public static final int ENCODER_TICKS_PER_REVOLUTION = 4096;
     public static final int gyroDrift = 5;
     // Mounting height, in inches
     public static final double sensor_Limelight_Height = 25;

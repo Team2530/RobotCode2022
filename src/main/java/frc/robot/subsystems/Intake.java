@@ -12,14 +12,15 @@ import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 // import frc.robot.subsystems.Rev3ColorSensor;
 
 /**
- * This is Team 2530's Intake class. Its only method, `setIntakeSpeed`, is able
- * to control the speed of the intake motor.
+ * This is Team 2530's Intake class.
  */
 public class Intake extends SubsystemBase {
   private static WPI_TalonFX motorIntakeLower = new WPI_TalonFX(Constants.LOWER_INTAKE_PORT);
   private static WPI_TalonFX motorIntakeUpper = new WPI_TalonFX(Constants.UPPER_INTAKE_PORT);
   private final Rev3ColorSensor colorSensorUpper = new Rev3ColorSensor();
   private final Rev3ColorSensor colorSensorLower = new Rev3ColorSensor();
+  double lowerIntakeSpeed = 0;
+  double upperIntakeSpeed = 0;
 
   /** Creates a new {@link Intake}. */
   public Intake() {
@@ -30,6 +31,8 @@ public class Intake extends SubsystemBase {
   public void periodic() {
     // This method will be called once per scheduler run
     checkChamberColors();
+    lowerStallDetection();
+    upperStallDetection();
   }
 
   /**
@@ -38,10 +41,12 @@ public class Intake extends SubsystemBase {
    */
   public void setLowerIntakeSpeed(double speed) {
     motorIntakeLower.set(speed);
+    lowerIntakeSpeed = speed;
   }
 
   public void setUpperIntakeSpeed(double speed) {
     motorIntakeUpper.set(speed);
+    upperIntakeSpeed = speed;
   }
 
   public String lowerChamberColor() { 
@@ -69,24 +74,19 @@ public class Intake extends SubsystemBase {
     SmartDashboard.putString("Upper Chamber", upperChamberColor());
   }
 
-  // stalling detection
-  public void WPI_TalonFX(double angle) {
-    double prevPos = motorIntakeLower.getSelectedSensorPosition();
-    try {
-      motorIntakeLower.setSelectedSensorPosition(prevPos + (angle / 360 * Constants.ENCODER_TICKS_PER_REVOLUTION), 0,
-          1000);
-    } catch (Exception e) {
+  // These might need either a sign change or absolute value to account for motors moving opposite directions
+  public void lowerStallDetection() {
+    if ((motorIntakeLower.getMotorOutputPercent() < lowerIntakeSpeed)) {
       setLowerIntakeSpeed(0);
-      System.out.println("The lower intake stopped because it detected a stalling issue.");
-    }
-    
-    prevPos = motorIntakeUpper.getSelectedSensorPosition();
-    try {
-      motorIntakeUpper.setSelectedSensorPosition(prevPos + (angle / 360 * Constants.ENCODER_TICKS_PER_REVOLUTION), 0,
-          1000);
-    } catch (Exception e) {
-      setUpperIntakeSpeed(0);
-      System.out.println("The upper intake stopped because it detected a stalling issue.");
+      System.out.println("The lower intake has stopped due to a stalling issue.");
     }
   }
+
+  public void upperStallDetection() {
+    if ((motorIntakeUpper.getMotorOutputPercent() < upperIntakeSpeed)) {
+      setUpperIntakeSpeed(0);
+      System.out.println("The upper intake has stopped due to a stalling issue.");
+    }
+  }
+
 }
