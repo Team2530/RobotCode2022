@@ -26,8 +26,33 @@ public class AutonomousDrive extends CommandBase {
   double currentRotation = 0;
   double orginalRotation = 0;
 
-  public AutonomousDrive(DriveTrain driveTrain) {
+  public AutonomousDrive(DriveTrain driveTrain, double distance, String direction, double rotation) {
     // Use addRequirements() here to declare subsystem dependencies.
+    if (direction == "forward") {
+      forwardBack = 0.5;
+    }
+    if (direction == "back") {
+      forwardBack = -0.5;
+    }
+    if (direction == "left") {
+      leftRight = -0.5;
+    }
+    if (direction == "right") {
+      leftRight = 0.5;
+    }
+    timer.reset();
+    timer.start();
+    orginalRotation = ahrs.getAngle();
+  // start doing motor stuff
+  // check to see if you are rotating or going a cardinal direction
+  if(direction != ""){
+    driveTrain.singleJoystickDrive(leftRight, forwardBack, 0);
+    if (direction == "forward" || direction == "back") {
+      velocity = ahrs.getVelocityY();
+    } else {
+      velocity = ahrs.getVelocityX();
+    }
+  }
   }
 
   // Called when the command is initially scheduled.
@@ -51,6 +76,16 @@ public class AutonomousDrive extends CommandBase {
   // Returns true when the command should end.
   @Override
   public boolean isFinished() {
+    timeElapsed = timer.get();
+    // Distance = Rate * Time
+    if(direction ==  ""){
+    distanceTraveled = distanceTraveled + Math.abs(velocity * (timeElapsed - lastKnownTime));
+    lastKnownTime = timer.get();
+    } else {
+      // if not going a cardinal direction, do spin
+     driveTrain.singleJoystickDrive(0 , 0, Math.signum(rotation) * 0.2 );
+      currentRotation = ahrs.getAngle();
+    }
     // check to see if you are turning or going a cardinal direction and set end condition
     if(direction != ""){
      if (distanceTraveling < distanceTraveled) {
