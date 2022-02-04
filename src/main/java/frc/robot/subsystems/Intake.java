@@ -9,6 +9,8 @@ import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import com.ctre.phoenix.motorcontrol.can.WPI_TalonFX;
 import frc.robot.Constants;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
+import edu.wpi.first.wpilibj.DriverStation;
+import edu.wpi.first.wpilibj.DriverStation.Alliance;
 // import frc.robot.subsystems.Rev3ColorSensor;
 
 /**
@@ -33,6 +35,7 @@ public class Intake extends SubsystemBase {
     checkChamberColors();
     lowerStallDetection();
     upperStallDetection();
+    removeBall();
   }
 
   /**
@@ -89,4 +92,15 @@ public class Intake extends SubsystemBase {
     }
   }
 
+  // Needs a stop condition
+  // Also possibly gradient speed from current to backwards?
+  // Might cause issues if trying to drive intake motors as this is running
+  public void removeBall() {
+    if ((DriverStation.getAlliance() == Alliance.Red) && (lowerChamberColor() == "Blue")) {
+      setLowerIntakeSpeed(-0.75);
+    }
+    if ((DriverStation.getAlliance() == Alliance.Blue) && (lowerChamberColor() == "Red")) {
+      setLowerIntakeSpeed(-0.75);
+    }
+  }
 }
