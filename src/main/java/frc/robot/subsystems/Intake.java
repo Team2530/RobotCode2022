@@ -74,16 +74,16 @@ public class Intake extends SubsystemBase {
     SmartDashboard.putString("Upper Chamber", upperChamberColor());
   }
 
-  // These might need either a sign change or absolute value to account for motors moving opposite directions
+  // These might need a sign change/absolute value to account for motors moving opposite directions
   public void lowerStallDetection() {
-    if ((motorIntakeLower.getMotorOutputPercent() < lowerIntakeSpeed)) {
+    if (motorIntakeLower.getMotorOutputPercent() < (lowerIntakeSpeed * 60)) {
       setLowerIntakeSpeed(0);
       System.out.println("The lower intake has stopped due to a stalling issue.");
     }
   }
 
   public void upperStallDetection() {
-    if ((motorIntakeUpper.getMotorOutputPercent() < upperIntakeSpeed)) {
+    if (motorIntakeUpper.getMotorOutputPercent() < (upperIntakeSpeed * 60)) {
       setUpperIntakeSpeed(0);
       System.out.println("The upper intake has stopped due to a stalling issue.");
     }
