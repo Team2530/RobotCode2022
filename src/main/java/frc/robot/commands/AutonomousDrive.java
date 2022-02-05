@@ -32,6 +32,19 @@ public class AutonomousDrive extends CommandBase {
      // figure out which direction to go   (1 is forward) (2 is back) (3 is right) (4 is left)
     timer.reset();
     timer.start();
+    ahrs.reset();
+    if(direction == 1){
+      driveTrain.singleJoystickDrive(0.1, 0.0, 0.0);
+    }
+    if(direction == 2){
+      driveTrain.singleJoystickDrive(-0.1, 0.0, 0.0);
+    }
+    if(direction == 3){
+      driveTrain.singleJoystickDrive(0.0, 0.1, 0.0);
+    }
+    if(direction == 4){
+      driveTrain.singleJoystickDrive(0.0, -0.1, 0.0);
+    }
   }
   
   // Called every time the scheduler runs while the command is scheduled.
@@ -43,7 +56,9 @@ public class AutonomousDrive extends CommandBase {
 
   // Called once the command ends or is interrupted.
   @Override
-  public void end(boolean interrupted) {}
+  public void end(boolean interrupted) {
+    driveTrain.singleJoystickDrive(0.0, 0.0, 0.0);
+  }
 
   // Returns true when the command should end.
   @Override
@@ -53,7 +68,7 @@ public class AutonomousDrive extends CommandBase {
 
 
 public double robotVelocity() {
-  if(direction == 1 || direction ==2) {
+  if(direction == 1 || direction == 2) {
     return ahrs.getVelocityY();
   } else {
     return ahrs.getVelocityX();
@@ -73,5 +88,4 @@ public boolean endCondition(){
   }
 
 }
-
 }
