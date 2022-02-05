@@ -6,19 +6,21 @@ package frc.robot.subsystems;
 
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 
-import com.ctre.phoenix.motorcontrol.can.WPI_TalonFX;
-import com.ctre.phoenix.motorcontrol.can.WPI_VictorSPX;
+import com.ctre.phoenix.motorcontrol.can.WPI_TalonSRX;
+import edu.wpi.first.wpilibj.DigitalInput;
 import frc.robot.Constants;
 
 public class Climber extends SubsystemBase {
-  private static WPI_TalonFX climberMotorL = new WPI_TalonFX(Constants.CLIMBER_MOTOR_PORT_L);
-  private static WPI_TalonFX climberMotorR = new WPI_TalonFX(Constants.CLIMBER_MOTOR_PORT_R);
+  private static WPI_TalonSRX climberMotorL = new WPI_TalonSRX(Constants.CLIMBER_MOTOR_PORT_L);
+  private static WPI_TalonSRX climberMotorR = new WPI_TalonSRX(Constants.CLIMBER_MOTOR_PORT_R);
+  private static DigitalInput limitSwitch = new DigitalInput(Constants.LIMIT_SWITCH_PORT);
   /** Creates a new Climber. */
   public Climber() {}
 
   @Override
   public void periodic() {
     // This method will be called once per scheduler run
+    checkLimitSwitch();
   }
 
   /**
@@ -26,10 +28,15 @@ public class Climber extends SubsystemBase {
    * @param speed Any value from -1.0 to 1.0.
    */
   public void setClimberSpeed(double speed) {
-    climberMotorL.set(speed);
-    climberMotorR.set(speed);
+      if ((limitSwitch.get() == false) && (speed > 0)) {
+        climberMotorL.set(speed);
+        climberMotorR.set(speed);
+      }  
+    }
 
-    // This method will be called once per scheduler run
-
+  public void checkLimitSwitch() {
+    if (limitSwitch.get() == true) {
+      setClimberSpeed(0);
+    }
   }
 }
