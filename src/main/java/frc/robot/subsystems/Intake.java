@@ -37,7 +37,7 @@ public class Intake extends SubsystemBase {
   public void periodic() {
     // This method will be called once per scheduler run
     // lowerStallDetection();
-    stallDetection();
+    // stallDetection();
     removeBall();
     // intakeSpeedGradient();
   }
@@ -52,16 +52,27 @@ public class Intake extends SubsystemBase {
     intakeMotorSpeeds[idx] = speed;
   }
 
+  // public void intakeSpeedGradient() {
+  // for (int g = 0; g < 2; ++g) {
+  // if (intakeMotorSpeeds[g] - intakeMotors[g].get() > 0.1) {
+  // // figuring things out
+  // intakeMotors[g].set(intakeMotors[g].get() + 0.1 *
+  // Math.signum(intakeMotorSpeeds[g] - intakeMotors[g].get()));
+  // } else
+  // intakeMotors[g].set(intakeMotorSpeeds[g]);
+  // }
+  // }
+
   // These might need a sign change/absolute value to account for motors moving
   // opposite directions
-  public void stallDetection() {
-    for (int i = 0; i < 2; ++i) {
-      if (intakeMotors[i].getMotorOutputPercent() < (intakeMotorSpeeds[i] * 60)) {
-        setIntakeMotorSpeed(i, 0);
-        System.out.println("The lower intake has stopped due to a stalling issue.");
-      }
-    }
-  }
+  // public void stallDetection() {
+  // for (int i = 0; i < 2; ++i) {
+  // if (intakeMotors[i].getMotorOutputPercent() < (intakeMotorSpeeds[i] * 60)) {
+  // setIntakeMotorSpeed(i, 0);
+  // System.out.println("The lower intake has stopped due to a stalling issue.");
+  // }
+  // }
+  // }
 
   // Needs a stop condition
   // Also possibly gradient speed from current to backwards?
