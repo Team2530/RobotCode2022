@@ -35,7 +35,8 @@ public class RobotContainer {
   private final DriveTrain m_driveTrain = new DriveTrain();
   private final Hood m_hood = new Hood();
   private final Revolver m_revolver = new Revolver();
-  private final Intake m_intake = new Intake();
+  private final Intake intake = new Intake();
+  private final BallDetection ballDetection = new BallDetection(3);
 
   // -------------------- Joysticks and Buttons -------------------- \\
   // Joysticks
@@ -143,11 +144,11 @@ public class RobotContainer {
     // m_hood));
 
     // Intake control
-    new JoystickButton(stick1, 11).whenPressed(() -> m_intake.setLowerIntakeSpeed(0.85))
-        .whenReleased(() -> m_intake.setLowerIntakeSpeed(0));
+    new JoystickButton(stick1, 11).whenPressed(() -> intake.setLowerIntakeSpeed(0.85))
+        .whenReleased(() -> intake.setLowerIntakeSpeed(0));
 
-    new JoystickButton(stick1, 12).whenPressed(() -> m_intake.setUpperIntakeSpeed(0.85))
-        .whenReleased(() -> m_intake.setUpperIntakeSpeed(0));
+    new JoystickButton(stick1, 12).whenPressed(() -> intake.setUpperIntakeSpeed(0.85))
+        .whenReleased(() -> intake.setUpperIntakeSpeed(0));
 
     new JoystickButton(stick1, 1).whenPressed(() -> m_driveTrain.driveStraight(0.5))
         .whenReleased(() -> m_driveTrain.driveStraight(0));

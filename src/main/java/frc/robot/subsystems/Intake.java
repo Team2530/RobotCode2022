@@ -8,6 +8,7 @@ import edu.wpi.first.wpilibj2.command.SubsystemBase;
 
 import com.ctre.phoenix.motorcontrol.can.WPI_TalonFX;
 import frc.robot.Constants;
+import frc.robot.subsystems.BallDetection.BallState;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj.DriverStation;
 import edu.wpi.first.wpilibj.DriverStation.Alliance;
@@ -32,7 +33,6 @@ public class Intake extends SubsystemBase {
   @Override
   public void periodic() {
     // This method will be called once per scheduler run
-    checkChamberColors();
     lowerStallDetection();
     upperStallDetection();
     removeBall();
@@ -50,31 +50,6 @@ public class Intake extends SubsystemBase {
   public void setUpperIntakeSpeed(double speed) {
     motorIntakeUpper.set(speed);
     upperIntakeSpeed = speed;
-  }
-
-  public String lowerChamberColor() { 
-    if (colorSensorLower.isBallRed() == true) {
-      return "Red";
-    } else if (colorSensorLower.isBallBlue() == true) {
-      return "Blue";
-    } else {
-      return "Empty";
-    }
-  }
-
-  public String upperChamberColor() { 
-    if (colorSensorUpper.isBallRed() == true) {
-      return "Red";
-    } else if (colorSensorUpper.isBallBlue() == true) {
-      return "Blue";
-    } else {
-      return "Empty";
-    }
-  }
-
-  public void checkChamberColors() {
-    SmartDashboard.putString("Lower Chamber", lowerChamberColor());
-    SmartDashboard.putString("Upper Chamber", upperChamberColor());
   }
 
   // These might need a sign change/absolute value to account for motors moving opposite directions
@@ -96,11 +71,8 @@ public class Intake extends SubsystemBase {
   // Also possibly gradient speed from current to backwards?
   // Might cause issues if trying to drive intake motors as this is running
   public void removeBall() {
-    if ((DriverStation.getAlliance() == Alliance.Red) && (lowerChamberColor() == "Blue")) {
+    if (((DriverStation.getAlliance() == Alliance.Red)? BallState.Blue : BallState.Red) == BallDetection.states[0])
       setLowerIntakeSpeed(-0.75);
-    }
-    if ((DriverStation.getAlliance() == Alliance.Blue) && (lowerChamberColor() == "Red")) {
-      setLowerIntakeSpeed(-0.75);
-    }
+    
   }
 }
