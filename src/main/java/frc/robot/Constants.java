@@ -35,7 +35,6 @@ public final class Constants {
     public static final int motor_intake_port = 72;
     public static final int CLIMBER_MOTOR_PORT_L = 80;
     public static final int CLIMBER_MOTOR_PORT_R = 81;
-    public static final int LIMIT_SWITCH_PORT = 1;
     public static final int motor_flywheel_port = 3;
     public static final int motor_turret_port = 4;
     public static final int motor_hood_port = 6;

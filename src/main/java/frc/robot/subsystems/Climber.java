@@ -6,14 +6,13 @@ package frc.robot.subsystems;
 
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 
+import com.ctre.phoenix.motorcontrol.can.TalonSRX;
 import com.ctre.phoenix.motorcontrol.can.WPI_TalonSRX;
-import edu.wpi.first.wpilibj.DigitalInput;
 import frc.robot.Constants;
 
 public class Climber extends SubsystemBase {
   private static WPI_TalonSRX climberMotorL = new WPI_TalonSRX(Constants.CLIMBER_MOTOR_PORT_L);
   private static WPI_TalonSRX climberMotorR = new WPI_TalonSRX(Constants.CLIMBER_MOTOR_PORT_R);
-  private static DigitalInput limitSwitch = new DigitalInput(Constants.LIMIT_SWITCH_PORT);
   /** Creates a new Climber. */
   public Climber() {}
 
@@ -28,15 +27,16 @@ public class Climber extends SubsystemBase {
    * @param speed Any value from -1.0 to 1.0.
    */
   public void setClimberSpeed(double speed) {
-      if ((limitSwitch.get() == false) && (speed > 0)) {
+      if ((climberMotorL.isFwdLimitSwitchClosed() == 0) && (climberMotorR.isFwdLimitSwitchClosed() == 0)) {
         climberMotorL.set(speed);
         climberMotorR.set(speed);
       }  
     }
 
   public void checkLimitSwitch() {
-    if (limitSwitch.get() == true) {
-      setClimberSpeed(0);
+    if ((climberMotorL.isFwdLimitSwitchClosed() == 1) || (climberMotorR.isFwdLimitSwitchClosed() == 1)) {
+      climberMotorL.set(0);
+      climberMotorR.set(0);
     }
   }
 }
