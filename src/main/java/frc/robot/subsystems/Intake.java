@@ -39,6 +39,7 @@ public class Intake extends SubsystemBase {
     // lowerStallDetection();
     stallDetection();
     removeBall();
+    // intakeSpeedGradient();
   }
 
   /**
