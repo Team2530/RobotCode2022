@@ -143,10 +143,10 @@ public class RobotContainer {
     // m_hood));
 
     // Intake control
-    new JoystickButton(stick1, 11).whenPressed(() -> m_intake.setLowerIntakeSpeed(0.5))
+    new JoystickButton(stick1, 11).whenPressed(() -> m_intake.setLowerIntakeSpeed(0.85))
         .whenReleased(() -> m_intake.setLowerIntakeSpeed(0));
 
-    new JoystickButton(stick1, 12).whenPressed(() -> m_intake.setUpperIntakeSpeed(0.5))
+    new JoystickButton(stick1, 12).whenPressed(() -> m_intake.setUpperIntakeSpeed(0.85))
         .whenReleased(() -> m_intake.setUpperIntakeSpeed(0));
 
     new JoystickButton(stick1, 1).whenPressed(() -> m_driveTrain.driveStraight(0.5))
