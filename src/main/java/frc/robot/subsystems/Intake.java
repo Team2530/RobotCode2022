@@ -36,21 +36,36 @@ public class Intake extends SubsystemBase {
     lowerStallDetection();
     upperStallDetection();
     removeBall();
+    intakeSpeedGradient();
   }
 
   /**
    * Sets the speed and direction of the intake motor.
+   * 
    * @param speed Any value from -1.0 to 1.0.
    */
   public void setLowerIntakeSpeed(double speed) {
-    motorIntakeLower.set(speed);
     lowerIntakeSpeed = speed;
   }
 
   public void setUpperIntakeSpeed(double speed) {
-    motorIntakeUpper.set(speed);
     upperIntakeSpeed = speed;
   }
+
+  public void intakeSpeedGradient() {
+    if (upperIntakeSpeed - motorIntakeUpper.get() > 0.1) {
+      // figuring things out
+      motorIntakeUpper.set(motorIntakeUpper.get() + 0.1 * Math.signum(upperIntakeSpeed - motorIntakeUpper.get()));
+    } else
+      motorIntakeUpper.set(upperIntakeSpeed);
+
+    if (lowerIntakeSpeed - motorIntakeLower.get() > 0.1) {
+      // figuring things out
+      motorIntakeLower.set(motorIntakeLower.get() + 0.1 * Math.signum(lowerIntakeSpeed - motorIntakeLower.get()));
+    } else
+      motorIntakeLower.set(lowerIntakeSpeed);
+
+    }
 
   public String lowerChamberColor() { 
     if (colorSensorLower.isBallRed() == true) {
@@ -77,16 +92,17 @@ public class Intake extends SubsystemBase {
     SmartDashboard.putString("Upper Chamber", upperChamberColor());
   }
 
-  // These might need a sign change/absolute value to account for motors moving opposite directions
+  // These might need a sign change/absolute value to account for motors moving
+  // opposite directions
   public void lowerStallDetection() {
-    if (motorIntakeLower.getMotorOutputPercent() < (lowerIntakeSpeed * 60)) {
+    if (motorIntakeLower.getMotorOutputPercent() < (motorIntakeLower.get() * 60)) {
       setLowerIntakeSpeed(0);
       System.out.println("The lower intake has stopped due to a stalling issue.");
     }
   }
 
   public void upperStallDetection() {
-    if (motorIntakeUpper.getMotorOutputPercent() < (upperIntakeSpeed * 60)) {
+    if (motorIntakeUpper.getMotorOutputPercent() < (motorIntakeUpper.get() * 60)) {
       setUpperIntakeSpeed(0);
       System.out.println("The upper intake has stopped due to a stalling issue.");
     }
