@@ -190,4 +190,14 @@ public class DriveTrain extends SubsystemBase {
     SmartDashboard.putNumber("Accumulated yaw ", ahrs.getAngle());
     SmartDashboard.putNumber("Rotational velocity (raw)", ahrs.getRawGyroZ());
   }
+
+  /**
+   * Rotates 180, Why not?
+   */
+  public void deathBlossom(){
+    yawTarget += 180;
+  }
+
+
+
 }
