@@ -27,14 +27,14 @@ public class Climber extends SubsystemBase {
    * @param speed Any value from -1.0 to 1.0.
    */
   public void setClimberSpeed(double speed) {
-      if ((climberMotorL.isFwdLimitSwitchClosed() == 0) && (climberMotorR.isFwdLimitSwitchClosed() == 0)) {
+      if ((climberMotorL.isFwdLimitSwitchClosed() == 1) && (climberMotorR.isFwdLimitSwitchClosed() == 1)) {
         climberMotorL.set(speed);
         climberMotorR.set(speed);
       }  
     }
 
   public void checkLimitSwitch() {
-    if ((climberMotorL.isFwdLimitSwitchClosed() == 1) || (climberMotorR.isFwdLimitSwitchClosed() == 1)) {
+    if ((climberMotorL.isFwdLimitSwitchClosed() == 0) || (climberMotorR.isFwdLimitSwitchClosed() == 0)) {
       climberMotorL.set(0);
       climberMotorR.set(0);
     }
