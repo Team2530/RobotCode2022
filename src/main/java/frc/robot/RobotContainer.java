@@ -36,6 +36,7 @@ public class RobotContainer {
   private final Hood m_hood = new Hood();
   private final Revolver m_revolver = new Revolver();
   private final Intake m_intake = new Intake();
+  private final Pixy pixy = new Pixy();
 
   // -------------------- Joysticks and Buttons -------------------- \\
   // Joysticks
