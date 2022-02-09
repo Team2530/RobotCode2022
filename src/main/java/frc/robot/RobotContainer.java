@@ -141,7 +141,7 @@ public class RobotContainer {
     // m_hood));
 
     // Climber control
-    new JoystickButton(stick1, 4).whenPressed(() -> m_climber.setClimberSpeed(0.5))
+    new JoystickButton(stick1, 4).whenPressed(() -> m_climber.setClimberSpeed(0.1))
         .whenReleased(() -> m_climber.setClimberSpeed(0));
 
     // Intake control
