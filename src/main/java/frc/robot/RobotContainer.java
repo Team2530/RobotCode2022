@@ -37,6 +37,7 @@ public class RobotContainer {
   private final Revolver m_revolver = new Revolver();
   private final Intake m_intake = new Intake();
   private final Climber m_climber = new Climber();
+  private final USBCamera usbCamera = new USBCamera();
 
   // -------------------- Joysticks and Buttons -------------------- \\
   // Joysticks
