@@ -96,8 +96,7 @@ public class RobotContainer {
    * passing it to a {@link edu.wpi.first.wpilibj2.command.button.JoystickButton}.
    */
   private void configureButtonBindings() {
-    new JoystickButton(stick1, 12).whenPressed(() -> m_hood.flywheelRotateSpeed(1))
-        .whenReleased(() -> m_hood.flywheelRotateSpeed(0));
+    new JoystickButton(stick1, 12).whenPressed(() -> m_driveTrain.deathBlossom());
     // new JoystickButton(stick1, 3)
     // .whenPressed(() -> m_hood.flywheelRotateSpeed(0.9))
     // .whenReleased(() -> m_hood.setHoodPosition(0));
