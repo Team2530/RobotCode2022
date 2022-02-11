@@ -33,7 +33,7 @@ public class RobotContainer {
   // -------------------- Subsystems -------------------- \\
 
   private final DriveTrain m_driveTrain = new DriveTrain();
-  private final Hood m_hood = new Hood();
+  // private final Hood m_hood = new Hood();
   private final Revolver m_revolver = new Revolver();
   private final Intake m_intake = new Intake();
   private final Climber m_climber = new Climber();
@@ -100,8 +100,9 @@ public class RobotContainer {
    * passing it to a {@link edu.wpi.first.wpilibj2.command.button.JoystickButton}.
    */
   private void configureButtonBindings() {
-    new JoystickButton(stick1, 12).whenPressed(() -> m_hood.flywheelRotateSpeed(1))
-        .whenReleased(() -> m_hood.flywheelRotateSpeed(0));
+    // new JoystickButton(stick1, 12).whenPressed(() ->
+    // m_hood.flywheelRotateSpeed(1))
+    // .whenReleased(() -> m_hood.flywheelRotateSpeed(0));
     // new JoystickButton(stick1, 3)
     // .whenPressed(() -> m_hood.flywheelRotateSpeed(0.9))
     // .whenReleased(() -> m_hood.setHoodPosition(0));
@@ -110,39 +111,41 @@ public class RobotContainer {
     // .whenReleased(() -> m_hood.setHoodPosition(0));
 
     // Rotates the revolver 90 degrees
-    Button5.whenPressed(new TurnRevolver(m_revolver));
+    // Button5.whenPressed(new TurnRevolver(m_revolver));
 
     // Manually rotates the revolver in the positive direction
     new JoystickButton(stick1, 2).whenPressed(() -> m_revolver.setRevolverSpeed(0.25))
         .whenReleased(() -> m_revolver.setRevolverSpeed(0));
 
-    /* Manually rotates the revolver in the negative direction
-    new JoystickButton(stick1, 3).whenPressed(() -> m_revolver.setRevolverSpeed(-0.25))
-        .whenReleased(() -> m_revolver.setRevolverSpeed(0));
-    
-    //Manually moves hood to specific angles
-    new JoystickButton(stick1, 9).whileHeld(() -> m_hood.setHood(-1));
-    new JoystickButton(stick1, 9).whenReleased(() -> m_hood.setHood(0));
-    new JoystickButton(stick1, 10).whileHeld(() -> m_hood.setHood(1));
-    new JoystickButton(stick1, 10).whenReleased(() -> m_hood.setHood(0));
-    new JoystickButton(stick1, 7).whileHeld(() -> m_hood.setTurretPower(1));
-    new JoystickButton(stick1, 7).whenReleased(() -> m_hood.setTurretPower(0));
-    new JoystickButton(stick1, 8).whileHeld(() -> m_hood.setTurretPower(-1));
-    new JoystickButton(stick1, 8).whenReleased(() -> m_hood.setTurretPower(0));
-    
-    new JoystickButton(stick1, 4).whenPressed(() -> m_hood.toggleAim());
-    */
+    /*
+     * Manually rotates the revolver in the negative direction
+     * new JoystickButton(stick1, 3).whenPressed(() ->
+     * m_revolver.setRevolverSpeed(-0.25))
+     * .whenReleased(() -> m_revolver.setRevolverSpeed(0));
+     * 
+     * //Manually moves hood to specific angles
+     * new JoystickButton(stick1, 9).whileHeld(() -> m_hood.setHood(-1));
+     * new JoystickButton(stick1, 9).whenReleased(() -> m_hood.setHood(0));
+     * new JoystickButton(stick1, 10).whileHeld(() -> m_hood.setHood(1));
+     * new JoystickButton(stick1, 10).whenReleased(() -> m_hood.setHood(0));
+     * new JoystickButton(stick1, 7).whileHeld(() -> m_hood.setTurretPower(1));
+     * new JoystickButton(stick1, 7).whenReleased(() -> m_hood.setTurretPower(0));
+     * new JoystickButton(stick1, 8).whileHeld(() -> m_hood.setTurretPower(-1));
+     * new JoystickButton(stick1, 8).whenReleased(() -> m_hood.setTurretPower(0));
+     * 
+     * new JoystickButton(stick1, 4).whenPressed(() -> m_hood.toggleAim());
+     */
     // Toggles the LimeLight camera mode (aiming to drive cam)
-    new JoystickButton(stick1, 5).whenPressed(() -> m_hood.toggleCamMode());
-    // Toggles the LimeLight LEDs (useful for not blinding people)
-    new JoystickButton(stick1, 6).whenPressed(() -> m_hood.toggleLight());
+    // new JoystickButton(stick1, 5).whenPressed(() -> m_hood.toggleCamMode());
+    // // Toggles the LimeLight LEDs (useful for not blinding people)
+    // new JoystickButton(stick1, 6).whenPressed(() -> m_hood.toggleLight());
 
     // Automatically shoots balls
     // new JoystickButton(xbox, 1).whenPressed(() -> new AutoShoot(m_revolver,
     // m_hood));
 
     // Climber control
-    new JoystickButton(stick1, 4).whenPressed(() -> m_climber.setClimberSpeed(0.1))
+    new JoystickButton(stick1, 4).whenPressed(() -> m_climber.setClimberSpeed(0.5))
         .whenReleased(() -> m_climber.setClimberSpeed(0));
 
     // Intake control
@@ -165,8 +168,7 @@ public class RobotContainer {
 
   public Command getTelopCommand() {
     // Toggles dual joystick, should be replaced with an actual check in the future
-    return new ParallelCommandGroup(new ManualAimHood(stick1, m_hood, m_revolver),
-        new SingleJoystickDrive(m_driveTrain, stick1));
+    return new SingleJoystickDrive(m_driveTrain, stick1);
   }
 
 }

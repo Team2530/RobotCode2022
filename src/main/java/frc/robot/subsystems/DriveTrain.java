@@ -52,6 +52,8 @@ public class DriveTrain extends SubsystemBase {
   PIDController rot_pid = new PIDController(kP, kI, kD);
 
   public MecanumDrive mecanumDrive;
+  double deadzone = 0.1;
+
   // public final SimpleMotorFeedforward m_feedforward = new
   // SimpleMotorFeedforward(Constants.kS, Constants.kV,
   // Constants.kA);
@@ -75,8 +77,6 @@ public class DriveTrain extends SubsystemBase {
     // motorBL.configFactoryDefault();
     // motorBR.configFactoryDefault();
     setCoast(NeutralMode.Brake);
-    motorFR.setInverted(true);
-    motorBR.setInverted(true);
     motorFL.setSelectedSensorPosition(0);
     motorFR.setSelectedSensorPosition(0);
     motorBL.setSelectedSensorPosition(0);
@@ -85,11 +85,13 @@ public class DriveTrain extends SubsystemBase {
     // motorFR.feed();
     // motorBL.feed();
     // motorBR.feed();
+    motorFL.setInverted(false);
+    motorBL.setInverted(false);
     motorFR.setInverted(true);
     motorBR.setInverted(true);
 
     mecanumDrive = new MecanumDrive(motorFL, motorBL, motorFR, motorBR);
-    mecanumDrive.setSafetyEnabled(true);
+    mecanumDrive.setSafetyEnabled(false);
   }
 
   @Override
@@ -120,11 +122,15 @@ public class DriveTrain extends SubsystemBase {
    * @param z The joystick's vertical "twist". Any value from -1.0 to 1.0.
    */
   public void singleJoystickDrive(double x, double y, double yawTarget) {
+
+    // TODO : Test deadzone
     // mecanumDrive.driveCartesian(y, -x, -z);
     mecanumDrive.driveCartesian(
-        y,
-        -x,
-        -rot_pid.calculate(ahrs.getAngle() / 360.0, yawTarget / 360) * 0.25);
+        Deadzone.deadZone(y,
+            deadzone),
+        Deadzone.deadZone(-x,
+            deadzone),
+        0.0); // -rot_pid.calculate(ahrs.getAngle() / 360.0, yawTarget / 360) * 0.25);
   }
 
   public void stop() {
