@@ -99,7 +99,7 @@ public class Chambers extends InCANDevice {
 
     @Override
     public void onDataReceived(byte[] data) {
-        for (int si = 0; si < 2; ++si)
+        for (int si = 0; si < states.length; ++si)
             states[si] = BallState.values()[data[si]];
 
         SmartDashboard.putString("Ball states: ", String.format("%s\n", Arrays.toString(states)));
@@ -107,7 +107,6 @@ public class Chambers extends InCANDevice {
 
     @Override
     public void periodic() {
-        SmartDashboard.putNumber("Lerp test", Deadzone.deadZone(1.0, 0.1));
         super.periodic(); // Make sure to call super, InCANDevice needs to look for CAN messages
     }
 }
