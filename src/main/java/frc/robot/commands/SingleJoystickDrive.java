@@ -51,7 +51,7 @@ public class SingleJoystickDrive extends CommandBase {
 
     // if' (stick.getMagnitude() < 0.2) return;
     double m = stick.getRawButton(1) ? 1.0 : 0.5;
-    m *= (stick.getRawAxis(3) + 1.0) / 2.0;
+    //m *= (stick.getRawAxis(3) + 1.0) / 2.0;
 
     double deltaTime = Timer.getFPGATimestamp() - lastExecuted;
     lastExecuted = Timer.getFPGATimestamp();
