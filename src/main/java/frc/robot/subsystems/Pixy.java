@@ -4,52 +4,31 @@
 
 package frc.robot.subsystems;
 
+import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import java.util.ArrayList;
 
-import edu.wpi.first.wpilibj.TimedRobot;
+import edu.wpi.first.wpilibj.DriverStation;
+import edu.wpi.first.wpilibj.DriverStation.Alliance;
+import edu.wpi.first.wpilibj.I2C.Port;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import io.github.pseudoresonance.pixy2api.Pixy2;
 import io.github.pseudoresonance.pixy2api.Pixy2CCC;
 import io.github.pseudoresonance.pixy2api.Pixy2CCC.Block;
 import io.github.pseudoresonance.pixy2api.links.I2CLink;
-import io.github.pseudoresonance.pixy2api.links.SPILink;
 
-/**
- * The VM is configured to automatically run this class, and to call the
- * functions corresponding to each mode, as described in the TimedRobot
- * documentation. If you change the name of this class or the package after
- * creating this project, you must also update the build.gradle file in the
- * project.
- */
-public class Pixy extends TimedRobot {
-  // SPI Slave Select pin (wired to CS0 on the practice chassix).
-  private static final int kPixySSPort = 0;
-
+public class Pixy extends SubsystemBase {
   private Pixy2 pixy;
-
   private boolean blockFound;
   private int x, y, width, height;
   private int fps;
 
-  /**
-   * Prints a error code from a pixy2 function.
-   * 
-   * @param errorCode
-   */
-  private void logPixyError(int errorCode) {
-    System.out.println("[PIXY ERROR AGHHHH] " + errorCode);
-  }
-
-  /**
-   * This function is run when the robot is first started up and should be used
-   * for any initialization code.
-   */
-  @Override
-  public void robotInit() {
+  /** Creates a new Pixy. */
+  public Pixy() {
     // Initialize Pixy2.
     pixy = Pixy2.createInstance(new I2CLink());
-    int err = pixy.init(kPixySSPort);
+    int err = pixy.init();
     if (err < 0) {
+      System.out.println("An error occurred while the roboRIO was trying to initialize the Pixy.");
       logPixyError(err);
     }
 
@@ -65,32 +44,28 @@ public class Pixy extends TimedRobot {
   }
 
   @Override
-  public void robotPeriodic() {
-  }
+  public void periodic() {
+    // This method will be called once per scheduler run
 
-  @Override
-  public void autonomousInit() {
-  }
-
-  @Override
-  public void autonomousPeriodic() {
     // Error codes returned from pixy2 functions.
     int err;
 
     fps = pixy.getFPS();
 
-    // Get which alliance (true for blue, false for red) the robot is playing on,
+    // Get which alliance the robot is playing on,
     // and set the signature of the pixy accordingly. As of now, signature 1 is for
-    // the blue cargo, signature 2 is for the red cargo.
-    byte signature = SmartDashboard.getBoolean("Pixy/alliance", false) ? Pixy2CCC.CCC_SIG1 : Pixy2CCC.CCC_SIG2;
+    // the red cargo, signature 2 is for the blue cargo.
+    byte signature = DriverStation.getAlliance() == Alliance.Red ? Pixy2CCC.CCC_SIG1 : Pixy2CCC.CCC_SIG2;
 
     // First argument is set to true to stop the PIXY_RESULT_BUSY error.
     err = pixy.getCCC().getBlocks(true, signature, 25);
     if (err <= 0) {
       blockFound = false;
 
-      if (err < 0)
+      if (err < 0) {
+        System.out.println("An error occurred while the roboRIO was trying to get blocks from the Pixy.");
         logPixyError(err);
+      }
     } else {
       blockFound = true;
 
@@ -122,27 +97,17 @@ public class Pixy extends TimedRobot {
     SmartDashboard.putNumber("Pixy/fps", (double) fps);
   }
 
-  @Override
-  public void teleopInit() {
-  }
-
-  @Override
-  public void teleopPeriodic() {
-  }
-
-  @Override
-  public void disabledInit() {
-  }
-
-  @Override
-  public void disabledPeriodic() {
-  }
-
-  @Override
-  public void testInit() {
-  }
-
-  @Override
-  public void testPeriodic() {
+  /**
+   * Prints a error code from a pixy2 function.
+   * 
+   * @param errorCode
+   */
+  private void logPixyError(int errorCode) {
+    String[] errors = { "The Pixy isn't connected to the robot!" };
+    System.out.print("Pixy error " + errorCode);
+    if (Math.abs(errorCode) - 1 < errors.length)
+      System.out.println(": " + (errors[Math.abs(errorCode) - 1]));
+    else
+      System.out.println();
   }
 }
