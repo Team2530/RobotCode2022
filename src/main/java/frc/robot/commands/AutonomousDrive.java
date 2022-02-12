@@ -14,42 +14,46 @@ public class AutonomousDrive extends CommandBase {
   DriveTrain driveTrain;
   AHRS ahrs = new AHRS();
   Timer timer = new Timer();
-  int speed = 0;
   int direction = 0;
   double distance = 0;
   double currentVelocity = 0.0;
   double timeSinceChecked = 0.0;
   double deltaTime = 0.0;
   double distanceTraveled = 0.0;
+
+  /**
+   * 1 is forward, 2 is back, 3 is right, 4 is left
+   */
   public AutonomousDrive(DriveTrain driveTrain, double distance, int direction) {
     this.direction = direction;
     this.distance = distance;
   }
- 
+
   // Called when the command is initially scheduled.
   @Override
-  public void initialize(){
-     // figure out which direction to go   (1 is forward) (2 is back) (3 is right) (4 is left)
-    timer.reset();
-    timer.start();
+  public void initialize() {
+    // figure out which direction to go (1 is forward) (2 is back) (3 is right) (4
+    // is left)
     ahrs.reset();
-    if(direction == 1){
+    if (direction == 1) {
       driveTrain.singleJoystickDrive(0.1, 0.0, 0.0);
     }
-    if(direction == 2){
+    if (direction == 2) {
       driveTrain.singleJoystickDrive(-0.1, 0.0, 0.0);
     }
-    if(direction == 3){
+    if (direction == 3) {
       driveTrain.singleJoystickDrive(0.0, 0.1, 0.0);
     }
-    if(direction == 4){
+    if (direction == 4) {
       driveTrain.singleJoystickDrive(0.0, -0.1, 0.0);
     }
+    timer.reset();
+    timer.start();
   }
-  
+
   // Called every time the scheduler runs while the command is scheduled.
   @Override
-  public void execute(){
+  public void execute() {
     currentVelocity = robotVelocity();
     distanceMaths();
   }
@@ -66,26 +70,25 @@ public class AutonomousDrive extends CommandBase {
     return endCondition();
   }
 
-
-public double robotVelocity() {
-  if(direction == 1 || direction == 2) {
-    return ahrs.getVelocityY();
-  } else {
-    return ahrs.getVelocityX();
-  }
-}
-public void distanceMaths() {
-  deltaTime = Timer.getFPGATimestamp() - timeSinceChecked;
-  timeSinceChecked = Timer.getFPGATimestamp();
-  distanceTraveled = distanceTraveled + (currentVelocity * deltaTime);
-}
-
-public boolean endCondition(){
-  if(distanceTraveled >= distance){
-    return true;
-  } else {
-    return false;
+  public double robotVelocity() {
+    if (direction == 1 || direction == 2) {
+      return ahrs.getVelocityY();
+    } else {
+      return ahrs.getVelocityX();
+    }
   }
 
-}
+  public void distanceMaths() {
+    deltaTime = Timer.getFPGATimestamp() - timeSinceChecked;
+    timeSinceChecked = Timer.getFPGATimestamp();
+    distanceTraveled = distanceTraveled + Math.abs((currentVelocity * deltaTime));
+  }
+
+  public boolean endCondition() {
+    if (distanceTraveled >= distance) {
+      return true;
+    } else {
+      return false;
+    }
+  }
 }

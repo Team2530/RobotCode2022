@@ -10,17 +10,26 @@ import frc.robot.subsystems.DriveTrain;
 public class Autonomous extends CommandBase {
   /** Creates a new Autonomous. */
   DriveTrain driveTrain = new DriveTrain();
+
   public Autonomous(DriveTrain driveTrain) {
     // Use addRequirements() here to declare subsystem dependencies.
     this.driveTrain = driveTrain;
 
   }
 
+  boolean perhaps = false;
+
   // Called when the command is initially scheduled.
   @Override
   public void initialize() {
-    AutonomousDrive thing = new AutonomousDrive(driveTrain, 1.5, 1);
-    thing.schedule();
+    AutonomousDrive autoVroomVroom = new AutonomousDrive(driveTrain, 1.5, 1);
+    autoVroomVroom.schedule();
+
+
+
+
+    // at end of all autonomous, sToP
+    perhaps = true;
   }
   // Called every time the scheduler runs while the command is scheduled.
   @Override
@@ -33,6 +42,6 @@ public class Autonomous extends CommandBase {
   // Returns true when the command should end.
   @Override
   public boolean isFinished() {
-    return false;
+    return perhaps;
   }
 }
