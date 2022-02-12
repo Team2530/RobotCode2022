@@ -55,7 +55,8 @@ public class AutonomousDrive extends CommandBase {
   // Called every time the scheduler runs while the command is scheduled.
   @Override
   public void execute() {
-    currentVelocity = robotVelocity();
+    //currentVelocity = robotVelocity();
+    currentVelocity = 0.00015;
     distanceMaths();
   }
 

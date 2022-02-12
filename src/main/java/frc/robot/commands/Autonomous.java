@@ -6,10 +6,10 @@ package frc.robot.commands;
 
 import edu.wpi.first.wpilibj2.command.CommandBase;
 import edu.wpi.first.wpilibj2.command.SequentialCommandGroup;
-import frc.robot.commands.AutonomousDrive;
 import frc.robot.subsystems.DriveTrain;
 
 public class Autonomous extends CommandBase {
+  System.out.println("Instancing a new Autonomous command.");
   /** Creates a new Autonomous. */
   DriveTrain driveTrain = new DriveTrain();
 

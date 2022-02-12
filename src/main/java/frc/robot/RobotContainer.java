@@ -93,6 +93,7 @@ public class RobotContainer {
    * @return the command to run in autonomous
    */
   public Command getAutonomousCommand(Trajectory trajectory) {
+    System.out.println("Getting autonomous command");
     return new Autonomous(m_driveTrain);
   }
 
