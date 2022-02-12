@@ -35,6 +35,7 @@ public class RobotContainer {
   private final USBCamera usbCamera = new USBCamera();
   private final Intake intake = new Intake();
   private final BallDetection ballDetection = new BallDetection(3);
+  private final LimeLight m_limeLight = new LimeLight();
 
   // -------------------- Joysticks and Buttons -------------------- \\
   // Joysticks
@@ -68,6 +69,11 @@ public class RobotContainer {
     // Climber control
     new JoystickButton(stick1, 4).whenPressed(() -> m_climber.setClimberSpeed(0.5))
         .whenReleased(() -> m_climber.setClimberSpeed(0));
+
+    // Toggles the LimeLight camera mode (aiming to drive cam)
+    new JoystickButton(stick1, 5).whenPressed(() -> m_limeLight.toggleCamMode());
+    // Toggles the LimeLight LEDs (useful for blinding people)
+    new JoystickButton(stick1, 3).whenPressed(() -> m_limeLight.toggleLight());
 
     // Intake control
     new JoystickButton(stick1, 11).whenPressed(() -> intake.setIntakeMotorSpeed(0, 0.85))
