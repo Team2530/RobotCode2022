@@ -29,9 +29,6 @@ public class Autonomous extends CommandBase {
     // add more commands here
     );
     autoVroomVroom.schedule();
-
-    // at end of all autonomous, sToP
-    perhaps = true;
   }
 
   // Called every time the scheduler runs while the command is scheduled.

@@ -25,6 +25,7 @@ public class AutonomousDrive extends CommandBase {
    * 1 is forward, 2 is back, 3 is right, 4 is left
    */
   public AutonomousDrive(DriveTrain driveTrain, double distance, int direction) {
+    this.driveTrain = driveTrain;
     this.direction = direction;
     this.distance = distance;
   }
@@ -62,6 +63,7 @@ public class AutonomousDrive extends CommandBase {
   @Override
   public void end(boolean interrupted) {
     driveTrain.singleJoystickDrive(0.0, 0.0, 0.0);
+    throw new Error("You're done");
   }
 
   // Returns true when the command should end.
@@ -85,10 +87,6 @@ public class AutonomousDrive extends CommandBase {
   }
 
   public boolean endCondition() {
-    if (distanceTraveled >= distance) {
-      return true;
-    } else {
-      return false;
-    }
+    return distanceTraveled >= distance;
   }
 }
