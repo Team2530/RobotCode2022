@@ -31,9 +31,14 @@ public final class Constants {
     public static final int MOTOR_BL_DRIVE_PORT = 3;
     public static final int MOTOR_BR_DRIVE_PORT = 4;
 
-    public enum DriveMotors {
+     public enum DriveMotors {
         FL, FR, BL, BR;
     }
+
+    // Intake motors
+    // TODO: Add real intake port
+    public static final int LOWER_INTAKE_PORT = 4;
+    public static final int UPPER_INTAKE_PORT = 40;
 
     // Climber motors
     public static final int CLIMBER_MOTOR_PORT_L = 10;
@@ -44,6 +49,7 @@ public final class Constants {
     public static final int kSlotIdx = 0;
     public static final int kPIDLoopIdx = 0;
     public static final int kTimeoutMs = 30;
+    public static final int COLOR_SENSOR_PORT = 777778;
 
     // ----------Driving Constants----------\\
     // The ratio between the encoder and the driven wheels

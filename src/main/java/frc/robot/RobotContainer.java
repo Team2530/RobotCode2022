@@ -31,9 +31,10 @@ public class RobotContainer {
   // -------------------- Subsystems -------------------- \\
 
   private final DriveTrain m_driveTrain = new DriveTrain();
-  // private final Intake m_intake = new Intake();
   private final Climber m_climber = new Climber();
   private final USBCamera usbCamera = new USBCamera();
+  private final Intake intake = new Intake();
+  private final BallDetection ballDetection = new BallDetection(3);
 
   // -------------------- Joysticks and Buttons -------------------- \\
   // Joysticks
@@ -67,6 +68,13 @@ public class RobotContainer {
     // Climber control
     new JoystickButton(stick1, 4).whenPressed(() -> m_climber.setClimberSpeed(0.5))
         .whenReleased(() -> m_climber.setClimberSpeed(0));
+
+    // Intake control
+    new JoystickButton(stick1, 11).whenPressed(() -> intake.setIntakeMotorSpeed(0, 0.85))
+        .whenReleased(() -> intake.setIntakeMotorSpeed(0, 0));
+
+    new JoystickButton(stick1, 12).whenPressed(() -> intake.setIntakeMotorSpeed(1, 0.85))
+        .whenReleased(() -> intake.setIntakeMotorSpeed(1, 0));
 
     // new JoystickButton(stick1, 1).whenPressed(() ->
     // m_driveTrain.driveStraight(0.5))
