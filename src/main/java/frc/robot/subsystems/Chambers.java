@@ -80,7 +80,7 @@ import frc.robot.libraries.Deadzone;
 // }
 // }
 
-public class BallDetection extends InCANDevice {
+public class Chambers extends InCANDevice {
     public static enum BallState {
         IDK,
         Red,
@@ -91,7 +91,7 @@ public class BallDetection extends InCANDevice {
 
     public static BallState[] states = new BallState[2];
 
-    public BallDetection(
+    public Chambers(
             int deviceNum) {
         super(deviceNum);
         this.apiID = 32 << 4;

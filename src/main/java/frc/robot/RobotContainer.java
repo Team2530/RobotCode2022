@@ -34,7 +34,7 @@ public class RobotContainer {
   private final Climber m_climber = new Climber();
   private final USBCamera usbCamera = new USBCamera();
   private final Intake intake = new Intake();
-  private final BallDetection ballDetection = new BallDetection(3);
+  private final Chambers ballDetection = new Chambers(3);
   private final LimeLight m_limeLight = new LimeLight();
 
   // -------------------- Joysticks and Buttons -------------------- \\

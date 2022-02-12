@@ -2,8 +2,8 @@ package frc.robot.subsystems;
 
 import frc.robot.InCANDevice;
 
-public class CANLights extends InCANDevice {
-    public CANLights(int deviceNum) {
+public class LEDStrips extends InCANDevice {
+    public LEDStrips(int deviceNum) {
         super(deviceNum);
         this.apiID = 25 << 4;
     }
