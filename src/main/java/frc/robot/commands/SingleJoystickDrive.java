@@ -9,7 +9,9 @@ package frc.robot.commands;
 
 import edu.wpi.first.wpilibj.Joystick;
 import edu.wpi.first.wpilibj.Timer;
+import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.CommandBase;
+import frc.robot.libraries.Deadzone;
 import frc.robot.subsystems.DriveTrain;
 
 public class SingleJoystickDrive extends CommandBase {
@@ -46,14 +48,14 @@ public class SingleJoystickDrive extends CommandBase {
 
     // if' (stick.getMagnitude() < 0.2) return;
     double m = stick.getRawButton(1) ? 1.0 : 0.5;
-    m *= (stick.getRawAxis(3) + 1.0) / 2.0;
+    //m *= (stick.getRawAxis(3) + 1.0) / 2.0;
 
     double deltaTime = Timer.getFPGATimestamp() - lastExecuted;
     lastExecuted = Timer.getFPGATimestamp();
 
     // double turn = stick.getRawAxis(3) - stick.getRawAxis(2);
     yawTarget += stick.getZ() * yawRate * deltaTime;
-    m_drivetrain.singleJoystickDrive(stick.getX() * m, stick.getY() * m, yawTarget);
+    m_drivetrain.singleJoystickDrive(stick.getRawAxis(1) * m, stick.getRawAxis(0) * m, stick.getRawAxis(2) * m);
     // m_drivetrain.singleJoystickDrive(stick.getX() * m, 0, 0);
   }
 

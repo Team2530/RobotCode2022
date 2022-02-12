@@ -8,6 +8,7 @@ import edu.wpi.first.wpilibj.I2C;
 import edu.wpi.first.wpilibj.I2C.Port;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import frc.robot.InCANDevice;
+import frc.robot.libraries.Deadzone;
 
 // public class InCANceivable extends SubsystemBase {
 // private int dvc_num;
@@ -106,6 +107,7 @@ public class BallDetection extends InCANDevice {
 
     @Override
     public void periodic() {
+        SmartDashboard.putNumber("Lerp test", Deadzone.deadZone(1.0, 0.1));
         super.periodic(); // Make sure to call super, InCANDevice needs to look for CAN messages
     }
 }

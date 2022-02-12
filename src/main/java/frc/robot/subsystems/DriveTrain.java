@@ -114,7 +114,7 @@ public class DriveTrain extends SubsystemBase {
    * @param y The joystick's sideways tilt. Any value from -1.0 to 1.0.
    * @param z The joystick's vertical "twist". Any value from -1.0 to 1.0.
    */
-  public void singleJoystickDrive(double x, double y, double yawTarget) {
+  public void singleJoystickDrive(double x, double y, double z) {
 
     // TODO : Test deadzone
     // mecanumDrive.driveCartesian(y, -x, -z);
@@ -123,7 +123,8 @@ public class DriveTrain extends SubsystemBase {
             deadzone),
         Deadzone.deadZone(-x,
             deadzone),
-        0.0); // -rot_pid.calculate(ahrs.getAngle() / 360.0, yawTarget / 360) * 0.25);
+        Deadzone.deadZone(z,
+            deadzone)); // -rot_pid.calculate(ahrs.getAngle() / 360.0, yawTarget / 360) * 0.25);
   }
 
   public void stop() {
