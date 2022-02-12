@@ -24,35 +24,32 @@ import frc.robot.libraries.Gains;
 public final class Constants {
     // ! NEED TO BE ACTUALLY SET
     // --------------------Motor Ports--------------------\\
-    // DriveTrain Motors
-    // ports set up for test drivetrain currently
-    public static final int MOTOR_FL_DRIVE_PORT = 10;
-    public static final int MOTOR_FR_DRIVE_PORT = 40;
-    public static final int MOTOR_BL_DRIVE_PORT = 30;
-    public static final int MOTOR_BR_DRIVE_PORT = 20;
-    public static final int motor_revolver_port = 5;
-    // TODO: Add real intake port
-    public static final int motor_intake_port = 72;
-    public static final int motor_flywheel_port = 3;
-    public static final int motor_turret_port = 4;
-    public static final int motor_hood_port = 6;
-    public static final int turret_encoder = 9;
+    // Drivetrain motors
+    // ports set up for the competition robot currently
+    public static final int MOTOR_FL_DRIVE_PORT = 1;
+    public static final int MOTOR_FR_DRIVE_PORT = 2;
+    public static final int MOTOR_BL_DRIVE_PORT = 3;
+    public static final int MOTOR_BR_DRIVE_PORT = 4;
 
-    public enum DriveMotors {
+     public enum DriveMotors {
         FL, FR, BL, BR;
     }
 
+    // Intake motors
+    // TODO: Add real intake port
+    public static final int LOWER_INTAKE_PORT = 4;
+    public static final int UPPER_INTAKE_PORT = 40;
+
+    // Climber motors
+    public static final int CLIMBER_MOTOR_PORT_L = 10;
+    public static final int CLIMBER_MOTOR_PORT_R = 00;
+
     // ----------Sensor Constants-----------\\
     public static final int ENCODER_TICKS_PER_REVOLUTION = 2048;
-    public static final int gyroDrift = 5;
-    // Mounting height, in inches
-    public static final double sensor_Limelight_Height = 25;
-    // TODO: I based this off of the gear tooth ratios, but don't know if that's
-    // right
-    public static final double HOOD_GEAR_RATIO = 11 / 72;
     public static final int kSlotIdx = 0;
     public static final int kPIDLoopIdx = 0;
     public static final int kTimeoutMs = 30;
+    public static final int COLOR_SENSOR_PORT = 777778;
 
     // ----------Driving Constants----------\\
     // The ratio between the encoder and the driven wheels
@@ -99,36 +96,12 @@ public final class Constants {
     // ----------Field Constants----------\\
     // The gravity on Earth (should be changed if we compete on the Moon)
     public static final double gravity = 9.81;
-    // temp test value (in meters)
-    public static final double target_Height = 105 * 2.54 / 100;
     // ? pounds?
     public static final double ball_Weight = 0.3125;
 
     // ----------Control (Joystick) Constants----------\\
     public static final double deadzone = 0.1;
-    public static final int JoystickPort = 0;
-
-    // ----------Control (Shooting) Constants----------\\
-    // From floor to center of opening, in meters.
-    public static final double SHOOTER_HEIGHT = 20 * 2.54 / 100;
-    // Moment of inertia
-    public static final float I = 1;
-    // In cm
-    public static final double SHOOTER_WHEEL_RADIUS = 6 * 2.54;
-    // Effective efficiency percentage
-    public static final double eff = 0.8;
-    // In meters
-    public static final double MAX_SHOOTING_DISTANCE = 2.54;
-    // In meters per second
-    public static final int MAX_SHOOTING_VELOCITY = 20;
-    // In degrees
-    public static final int MIN_SHOOTING_ANGLE = 0;
-    // In degrees
-    public static final int MAX_SHOOTING_ANGLE = 30;
-    // In cm
-    public static final int IDEAL_SHOOTING_DISTANCE = 190;
-    // In cm
-    public static final double distanceTolerance = 10;
-    // In degrees
-    public static final double angleTolerance = 10;
+    public static final int stickport1 = 0; // stick port for joystick 1
+    public static final int stickport2 = 1; // stick port for joystick 2 (tankdrive and things like that)
+    public static final int xboxport = 0; // xbox controller port
 }

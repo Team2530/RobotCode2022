@@ -7,22 +7,15 @@
 
 package frc.robot.subsystems;
 
-import edu.wpi.first.math.filter.SlewRateLimiter;
 import edu.wpi.first.math.controller.PIDController;
-import edu.wpi.first.math.controller.SimpleMotorFeedforward;
 import edu.wpi.first.wpilibj.drive.MecanumDrive;
-import edu.wpi.first.wpilibj.interfaces.Gyro;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import frc.robot.Constants;
 import frc.robot.libraries.Deadzone;
 
-import com.ctre.phoenix.motorcontrol.ControlMode;
 import com.ctre.phoenix.motorcontrol.NeutralMode;
-import com.ctre.phoenix.motorcontrol.can.TalonFX;
-import com.ctre.phoenix.motorcontrol.can.TalonFXConfiguration;
 import com.ctre.phoenix.motorcontrol.can.WPI_TalonFX;
-import com.ctre.phoenix.motorcontrol.can.WPI_TalonSRX;
 import com.kauailabs.navx.frc.AHRS;
 
 /**
@@ -52,6 +45,8 @@ public class DriveTrain extends SubsystemBase {
   PIDController rot_pid = new PIDController(kP, kI, kD);
 
   public MecanumDrive mecanumDrive;
+  double deadzone = 0.1;
+
   // public final SimpleMotorFeedforward m_feedforward = new
   // SimpleMotorFeedforward(Constants.kS, Constants.kV,
   // Constants.kA);
@@ -75,8 +70,6 @@ public class DriveTrain extends SubsystemBase {
     // motorBL.configFactoryDefault();
     // motorBR.configFactoryDefault();
     setCoast(NeutralMode.Brake);
-    motorFR.setInverted(true);
-    motorBR.setInverted(true);
     motorFL.setSelectedSensorPosition(0);
     motorFR.setSelectedSensorPosition(0);
     motorBL.setSelectedSensorPosition(0);
@@ -85,11 +78,13 @@ public class DriveTrain extends SubsystemBase {
     // motorFR.feed();
     // motorBL.feed();
     // motorBR.feed();
+    motorFL.setInverted(false);
+    motorBL.setInverted(false);
     motorFR.setInverted(true);
     motorBR.setInverted(true);
 
     mecanumDrive = new MecanumDrive(motorFL, motorBL, motorFR, motorBR);
-    mecanumDrive.setSafetyEnabled(true);
+    mecanumDrive.setSafetyEnabled(false);
   }
 
   @Override
@@ -119,12 +114,17 @@ public class DriveTrain extends SubsystemBase {
    * @param y The joystick's sideways tilt. Any value from -1.0 to 1.0.
    * @param z The joystick's vertical "twist". Any value from -1.0 to 1.0.
    */
-  public void singleJoystickDrive(double x, double y, double yawTarget) {
+  public void singleJoystickDrive(double x, double y, double z) {
+
+    // TODO : Test deadzone
     // mecanumDrive.driveCartesian(y, -x, -z);
     mecanumDrive.driveCartesian(
-        y,
-        -x,
-        -rot_pid.calculate(ahrs.getAngle() / 360.0, yawTarget / 360) * 0.25);
+        Deadzone.deadZone(y,
+            deadzone),
+        Deadzone.deadZone(-x,
+            deadzone),
+        Deadzone.deadZone(z,
+            deadzone)); // -rot_pid.calculate(ahrs.getAngle() / 360.0, yawTarget / 360) * 0.25);
   }
 
   public void stop() {
