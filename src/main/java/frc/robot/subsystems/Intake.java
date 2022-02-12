@@ -26,6 +26,7 @@ public class Intake extends SubsystemBase {
       new WPI_TalonSRX(Constants.UPPER_INTAKE_PORT)
   };
 
+  /** The target expected motor speeds. */
   private static double[] intakeMotorSpeeds = { 0, 0 };
 
   /** Creates a new {@link Intake}. */
@@ -39,7 +40,7 @@ public class Intake extends SubsystemBase {
     // lowerStallDetection();
     // stallDetection();
     removeBall();
-    // intakeSpeedGradient();
+    intakeSpeedGradient();
   }
 
   /**
@@ -48,20 +49,27 @@ public class Intake extends SubsystemBase {
    * @param speed Any value from -1.0 to 1.0.
    */
   public void setIntakeMotorSpeed(int idx, double speed) {
-    intakeMotors[idx].set(speed);
     intakeMotorSpeeds[idx] = speed;
   }
 
-  // public void intakeSpeedGradient() {
-  // for (int g = 0; g < 2; ++g) {
-  // if (intakeMotorSpeeds[g] - intakeMotors[g].get() > 0.1) {
-  // // figuring things out
-  // intakeMotors[g].set(intakeMotors[g].get() + 0.1 *
-  // Math.signum(intakeMotorSpeeds[g] - intakeMotors[g].get()));
-  // } else
-  // intakeMotors[g].set(intakeMotorSpeeds[g]);
-  // }
-  // }
+  public void intakeSpeedGradient() {
+    // Do for each intake motor
+    for (int motor = 0; motor < 2; ++motor) {
+      /*
+       * Calculate difference between target expected motor speed and current expected
+       * motor speed
+       */
+      if (Math.abs(intakeMotorSpeeds[motor] - intakeMotors[motor].get()) > 0.1) {
+        // If we're not there yet
+        intakeMotors[motor].set(
+            intakeMotors[motor].get()
+                + 0.1 * Math.signum(intakeMotorSpeeds[motor] - intakeMotors[motor].get()));
+      } else {
+        // If our patience has paid off
+        intakeMotors[motor].set(intakeMotorSpeeds[motor]);
+      }
+    }
+  }
 
   // These might need a sign change/absolute value to account for motors moving
   // opposite directions
