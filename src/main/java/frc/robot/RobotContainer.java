@@ -37,6 +37,7 @@ public class RobotContainer {
   private final Chambers ballDetection = new Chambers(3);
   private final LimeLight m_limeLight = new LimeLight();
 
+
   // -------------------- Joysticks and Buttons -------------------- \\
   // Joysticks
   final Joystick stick1 = new Joystick(Constants.stickport1); // Creates a joystick on port 1
@@ -92,7 +93,7 @@ public class RobotContainer {
    *
    * @return the command to run in autonomous
    */
-  public Command getAutonomousCommand(Trajectory trajectory) {
+  public Command getAutonomousCommand(DriveTrain driveTrain) {
     System.out.println("Getting autonomous command");
     return new Autonomous(m_driveTrain);
   }

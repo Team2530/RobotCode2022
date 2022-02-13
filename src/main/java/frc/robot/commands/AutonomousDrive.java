@@ -15,11 +15,11 @@ public class AutonomousDrive extends CommandBase {
   AHRS ahrs = new AHRS();
   Timer timer = new Timer();
   int direction = 0;
-  double distance = 0;
+  public double distance = 0;
   double currentVelocity = 0.0;
   double timeSinceChecked = 0.0;
   double deltaTime = 0.0;
-  double distanceTraveled = 0.0;
+  public double distanceTraveled = 0.0;
 
   /**
    * 1 is forward, 2 is back, 3 is right, 4 is left
@@ -37,16 +37,16 @@ public class AutonomousDrive extends CommandBase {
     // is left)
     ahrs.reset();
     if (direction == 1) {
-      driveTrain.singleJoystickDrive(0.1, 0.0, 0.0);
+      driveTrain.singleJoystickDrive(0.2, 0.0, 0.0);
     }
     if (direction == 2) {
-      driveTrain.singleJoystickDrive(-0.1, 0.0, 0.0);
+      driveTrain.singleJoystickDrive(-0.2, 0.0, 0.0);
     }
     if (direction == 3) {
-      driveTrain.singleJoystickDrive(0.0, 0.1, 0.0);
+      driveTrain.singleJoystickDrive(0.0, 0.2, 0.0);
     }
     if (direction == 4) {
-      driveTrain.singleJoystickDrive(0.0, -0.1, 0.0);
+      driveTrain.singleJoystickDrive(0.0, -0.2, 0.0);
     }
     timer.reset();
     timer.start();
@@ -56,7 +56,8 @@ public class AutonomousDrive extends CommandBase {
   @Override
   public void execute() {
     //currentVelocity = robotVelocity();
-    currentVelocity = 0.00015;
+    //currentVelocity = robotVelocity();
+    currentVelocity = 0.05;
     distanceMaths();
   }
 
@@ -85,6 +86,7 @@ public class AutonomousDrive extends CommandBase {
     deltaTime = Timer.getFPGATimestamp() - timeSinceChecked;
     timeSinceChecked = Timer.getFPGATimestamp();
     distanceTraveled = distanceTraveled + Math.abs((currentVelocity * deltaTime));
+    System.out.println("distance to go : " + (distance - distanceTraveled));
   }
 
   public boolean endCondition() {

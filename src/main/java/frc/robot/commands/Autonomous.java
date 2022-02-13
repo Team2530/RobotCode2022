@@ -9,7 +9,6 @@ import edu.wpi.first.wpilibj2.command.SequentialCommandGroup;
 import frc.robot.subsystems.DriveTrain;
 
 public class Autonomous extends CommandBase {
-  System.out.println("Instancing a new Autonomous command.");
   /** Creates a new Autonomous. */
   DriveTrain driveTrain = new DriveTrain();
 
@@ -25,10 +24,13 @@ public class Autonomous extends CommandBase {
   @Override
   public void initialize() {
     SequentialCommandGroup autoVroomVroom = new SequentialCommandGroup(
-        new AutonomousDrive(driveTrain, 1.5, 1)
-    // add more commands here
+      new AutonomousDrive(driveTrain, 1.5, 1)
     );
     autoVroomVroom.schedule();
+   
+    // add more commands here
+    // autoVroomVroom.schedule();
+    // System.out.println("Scheduled!");
   }
 
   // Called every time the scheduler runs while the command is scheduled.
