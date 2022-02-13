@@ -15,11 +15,12 @@ public class AutonomousDrive extends CommandBase {
   AHRS ahrs = new AHRS();
   Timer timer = new Timer();
   int direction = 0;
-  public double distance = 0;
+  double distance = 0;
   double currentVelocity = 0.0;
   double timeSinceChecked = 0.0;
   double deltaTime = 0.0;
-  public double distanceTraveled = 0.0;
+  double distanceTraveled = 0.0;
+  double Dtime = 0.0;
 
   /**
    * 1 is forward, 2 is back, 3 is right, 4 is left
@@ -28,6 +29,8 @@ public class AutonomousDrive extends CommandBase {
     this.driveTrain = driveTrain;
     this.direction = direction;
     this.distance = distance;
+    currentVelocity = 0.0;
+    distanceTraveled = 0.0;
   }
 
   // Called when the command is initially scheduled.
@@ -36,6 +39,7 @@ public class AutonomousDrive extends CommandBase {
     // figure out which direction to go (1 is forward) (2 is back) (3 is right) (4
     // is left)
     ahrs.reset();
+    distanceTraveled = 0;
     if (direction == 1) {
       driveTrain.singleJoystickDrive(0.2, 0.0, 0.0);
     }
@@ -57,7 +61,7 @@ public class AutonomousDrive extends CommandBase {
   public void execute() {
     //currentVelocity = robotVelocity();
     //currentVelocity = robotVelocity();
-    currentVelocity = 0.05;
+    currentVelocity = -0.2;
     distanceMaths();
   }
 
@@ -65,7 +69,7 @@ public class AutonomousDrive extends CommandBase {
   @Override
   public void end(boolean interrupted) {
     driveTrain.singleJoystickDrive(0.0, 0.0, 0.0);
-    throw new Error("You're done");
+    //throw new Error("You're done");
   }
 
   // Returns true when the command should end.
@@ -83,10 +87,10 @@ public class AutonomousDrive extends CommandBase {
   }
 
   public void distanceMaths() {
-    deltaTime = Timer.getFPGATimestamp() - timeSinceChecked;
-    timeSinceChecked = Timer.getFPGATimestamp();
+    deltaTime = timer.get() - timeSinceChecked;
+    timeSinceChecked = timer.get();
     distanceTraveled = distanceTraveled + Math.abs((currentVelocity * deltaTime));
-    System.out.println("distance to go : " + (distance - distanceTraveled));
+    System.out.println("distance to go : " + (distance - distanceTraveled)+ " Dtime :    " + deltaTime);
   }
 
   public boolean endCondition() {

@@ -24,8 +24,11 @@ public class Autonomous extends CommandBase {
   @Override
   public void initialize() {
     SequentialCommandGroup autoVroomVroom = new SequentialCommandGroup(
-      new AutonomousDrive(driveTrain, 1.5, 1)
+        new AutonomousDrive(driveTrain, 2.0, 2),
+        new AutonomousDrive(driveTrain, 1.0, 1)
+        
     );
+    System.out.println("Statring Autonomous Commands...");
     autoVroomVroom.schedule();
    
     // add more commands here
