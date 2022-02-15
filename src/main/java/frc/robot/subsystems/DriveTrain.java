@@ -39,6 +39,11 @@ public class DriveTrain extends SubsystemBase {
   WPI_TalonFX motorBR = new WPI_TalonFX(Constants.MOTOR_BR_DRIVE_PORT);
   AHRS ahrs = new AHRS();
 
+  /** The actual joystick input on each axis. */
+  private static double[] joystickInput = { 0, 0, 0 };
+  /** The current joystick interpolation on each axis. */
+  private static double[] joystickLerp = { 0, 0, 0 };
+
   // NOTE: Yaw is in degrees, need small pid constants
   // private final double kP = 0.05, kI = 0.0015, kD = 0.00175;
   private final double kP = 18.7, kI = 1.7, kD = 1.4;
@@ -90,6 +95,22 @@ public class DriveTrain extends SubsystemBase {
   @Override
   public void periodic() {
     putNavXInfo();
+    // Do for each joystick axis
+    for (int axis = 0; axis < 3; ++axis) {
+      /*
+       * Calculate difference between target expected motor speed and current expected
+       * motor speed
+       */
+      if (Math.abs(joystickLerp[axis] - joystickInput[axis]) > Constants.RAMP_INTERVAL) {
+        // If we're not there yet
+        joystickLerp[axis] = (joystickLerp[axis]
+            + Constants.RAMP_INTERVAL * Math.signum(joystickInput[axis] - joystickLerp[axis]));
+      } else {
+        // If our patience has paid off
+        joystickLerp[axis] = joystickInput[axis];
+      }
+    }
+    actuallyDrive(joystickLerp[1], -joystickLerp[0], joystickLerp[2]);
   }
 
   public void setCoast(NeutralMode neutralSetting) {
@@ -115,7 +136,12 @@ public class DriveTrain extends SubsystemBase {
    * @param z The joystick's vertical "twist". Any value from -1.0 to 1.0.
    */
   public void singleJoystickDrive(double x, double y, double z) {
+    joystickInput[0] = x;
+    joystickInput[1] = y;
+    joystickInput[2] = z;
+  }
 
+  public void actuallyDrive(double x, double y, double z) {
     // TODO : Test deadzone
     // mecanumDrive.driveCartesian(y, -x, -z);
     mecanumDrive.driveCartesian(
@@ -125,6 +151,8 @@ public class DriveTrain extends SubsystemBase {
             deadzone),
         Deadzone.deadZone(-z,
             deadzone)); // -rot_pid.calculate(ahrs.getAngle() / 360.0, yawTarget / 360) * 0.25);
+            SmartDashboard.putNumber("Inputted speed", joystickInput[0]);
+            SmartDashboard.putNumber("Actual speed", y);
   }
 
   public void stop() {

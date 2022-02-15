@@ -31,13 +31,13 @@ public final class Constants {
     public static final int MOTOR_BL_DRIVE_PORT = 3;
     public static final int MOTOR_BR_DRIVE_PORT = 4;
 
-     public enum DriveMotors {
+    public enum DriveMotors {
         FL, FR, BL, BR;
     }
 
     // Intake motors
     // TODO: Add real intake port
-    public static final int LOWER_INTAKE_PORT = 4;
+    public static final int LOWER_INTAKE_PORT = 50;
     public static final int UPPER_INTAKE_PORT = 40;
 
     // Climber motors
@@ -101,6 +101,7 @@ public final class Constants {
 
     // ----------Control (Joystick) Constants----------\\
     public static final double deadzone = 0.1;
+    public static final double RAMP_INTERVAL = 0.05; // Lower is slower
     public static final int stickport1 = 0; // stick port for joystick 1
     public static final int stickport2 = 1; // stick port for joystick 2 (tankdrive and things like that)
     public static final int xboxport = 0; // xbox controller port
