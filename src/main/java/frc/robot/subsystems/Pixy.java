@@ -5,6 +5,8 @@
 package frc.robot.subsystems;
 
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
+import frc.robot.commands.SingleJoystickDrive;
+
 import java.util.ArrayList;
 
 import edu.wpi.first.wpilibj.DriverStation;
@@ -83,18 +85,20 @@ public class Pixy extends SubsystemBase {
       }
 
       x = largestBlock.getX();
-      y = largestBlock.getY();
       width = largestBlock.getWidth();
       height = largestBlock.getHeight();
     }
-
+    
+    int tolerance = 1;
     // Log everything to SmartDashboard
     SmartDashboard.putBoolean("Pixy/Found Block", blockFound);
     SmartDashboard.putNumber("Pixy/x", (double) x);
-    SmartDashboard.putNumber("Pixy/y", (double) y);
     SmartDashboard.putNumber("Pixy/width", (double) width);
     SmartDashboard.putNumber("Pixy/height", (double) height);
     SmartDashboard.putNumber("Pixy/fps", (double) fps);
+    while (x > 157.5 + tolerance) {
+      
+    }
   }
 
   /**
