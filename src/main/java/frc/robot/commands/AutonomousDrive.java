@@ -11,7 +11,7 @@ import edu.wpi.first.wpilibj.Timer;
 
 public class AutonomousDrive extends CommandBase {
   /** Creates a new AutonomousDrive. */
-  DriveTrain driveTrain;
+  DriveTrain driveTrain = new DriveTrain();
   AHRS ahrs = new AHRS();
   Timer timer = new Timer();
   int direction = 0;
@@ -41,16 +41,16 @@ public class AutonomousDrive extends CommandBase {
     ahrs.reset();
     distanceTraveled = 0;
     if (direction == 1) {
-      driveTrain.singleJoystickDrive(0.2, 0.0, 0.0);
-    }
-    if (direction == 2) {
-      driveTrain.singleJoystickDrive(-0.2, 0.0, 0.0);
-    }
-    if (direction == 3) {
       driveTrain.singleJoystickDrive(0.0, 0.2, 0.0);
     }
-    if (direction == 4) {
+    if (direction == 2) {
       driveTrain.singleJoystickDrive(0.0, -0.2, 0.0);
+    }
+    if (direction == 3) {
+      driveTrain.singleJoystickDrive(0.2, 0.0, 0.0);
+    }
+    if (direction == 4) {
+      driveTrain.singleJoystickDrive(-0.2, 0.0, 0.0);
     }
     timer.reset();
     timer.start();
@@ -59,7 +59,8 @@ public class AutonomousDrive extends CommandBase {
   // Called every time the scheduler runs while the command is scheduled.
   @Override
   public void execute() {
-    currentVelocity = robotVelocity();
+    //currentVelocity = robotVelocity();
+    currentVelocity = 0.2;
     distanceMaths();
   }
 
