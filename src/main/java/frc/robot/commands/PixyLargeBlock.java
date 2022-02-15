@@ -2,11 +2,9 @@
 // Open Source Software; you can modify and/or share it under the terms of
 // the WPILib BSD license file in the root directory of this project.
 
-package frc.robot.subsystems;
+package frc.robot.commands;
 
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
-import frc.robot.commands.SingleJoystickDrive;
-
 import java.util.ArrayList;
 
 import edu.wpi.first.wpilibj.DriverStation;
@@ -18,7 +16,7 @@ import io.github.pseudoresonance.pixy2api.Pixy2CCC;
 import io.github.pseudoresonance.pixy2api.Pixy2CCC.Block;
 import io.github.pseudoresonance.pixy2api.links.I2CLink;
 
-public class Pixy extends SubsystemBase {
+public class PixyLargeBlock extends SubsystemBase {
   private Pixy2 pixy;
   private boolean blockFound;
   private int x, y, width, height;
@@ -27,13 +25,12 @@ public class Pixy extends SubsystemBase {
   
 
   /** Creates a new Pixy. */
-  public Pixy() {
+  public void Pixy() {
     // Initialize Pixy2.
     pixy = Pixy2.createInstance(new I2CLink());
     int err = pixy.init();
     if (err < 0) {
-      System.out.println("An error occurred while the roboRIO was trying to initialize the Pixy.");
-      logPixyError(err);
+      System.out.println("FINN YOU DIDN'T CONNECT IT (or someone else touched)");
     }
 
     // Print Pixy2 firmware version info.
@@ -67,8 +64,7 @@ public class Pixy extends SubsystemBase {
       blockFound = false;
 
       if (err < 0) {
-        System.out.println("An error occurred while the roboRIO was trying to get blocks from the Pixy.");
-        logPixyError(err);
+        System.out.println("FINN YOU DIDN'T CONNECT IT (or someone else touched)");
       }
     } else {
       blockFound = true;
@@ -87,33 +83,23 @@ public class Pixy extends SubsystemBase {
       }
 
       x = largestBlock.getX();
+      y = largestBlock.getY();
       width = largestBlock.getWidth();
       height = largestBlock.getHeight();
     }
-    
-    int tolerance = 1;
+
     // Log everything to SmartDashboard
-    SmartDashboard.putBoolean("Pixy/Found Block", blockFound);
-    SmartDashboard.putNumber("Pixy/x", (double) x);
-    SmartDashboard.putNumber("Pixy/width", (double) width);
-    SmartDashboard.putNumber("Pixy/height", (double) height);
-    SmartDashboard.putNumber("Pixy/fps", (double) fps);
-    while (x > 157.5 + tolerance) {
-      
-    }
+    SmartDashboard.putBoolean("Did it work...?", blockFound);
+    SmartDashboard.putNumber("PixyX", (double) x);
+    SmartDashboard.putNumber("PixyY", (double) y);
+    SmartDashboard.putNumber("PixyWidth", (double) width);
+    SmartDashboard.putNumber("PixyHeight", (double) height);
+    SmartDashboard.putNumber("PixyFps", (double) fps);
+
   }
 
-  /**
-   * Prints a error code from a pixy2 function.
-   * 
-   * @param errorCode
-   */
-  private void logPixyError(int errorCode) {
-    String[] errors = { "The Pixy isn't connected to the robot!" };
-    System.out.print("Pixy error " + errorCode);
-    if (Math.abs(errorCode) - 1 < errors.length)
-      System.out.println(": " + (errors[Math.abs(errorCode) - 1]));
-    else
-      System.out.println("good...?");
+  public Block getBigBlock() {
+    return largestBlock;
   }
+
 }
