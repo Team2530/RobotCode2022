@@ -101,10 +101,10 @@ public class DriveTrain extends SubsystemBase {
        * Calculate difference between target expected motor speed and current expected
        * motor speed
        */
-      if (Math.abs(joystickLerp[axis] - joystickInput[axis]) > Constants.RAMP_INTERVAL) {
+      if (Math.abs(joystickLerp[axis] - joystickInput[axis]) > Constants.DRIVE_RAMP_INTERVAL) {
         // If we're not there yet
         joystickLerp[axis] = (joystickLerp[axis]
-            + Constants.RAMP_INTERVAL * Math.signum(joystickInput[axis] - joystickLerp[axis]));
+            + Constants.DRIVE_RAMP_INTERVAL * Math.signum(joystickInput[axis] - joystickLerp[axis]));
       } else {
         // If our patience has paid off
         joystickLerp[axis] = joystickInput[axis];

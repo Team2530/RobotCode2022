@@ -59,11 +59,11 @@ public class Intake extends SubsystemBase {
        * Calculate difference between target expected motor speed and current expected
        * motor speed
        */
-      if (Math.abs(intakeMotorSpeeds[motor] - intakeMotors[motor].get()) > 0.1) {
+      if (Math.abs(intakeMotorSpeeds[motor] - intakeMotors[motor].get()) > Constants.INTAKE_RAMP_INTERVAL) {
         // If we're not there yet
         intakeMotors[motor].set(
             intakeMotors[motor].get()
-                + 0.1 * Math.signum(intakeMotorSpeeds[motor] - intakeMotors[motor].get()));
+                + Constants.INTAKE_RAMP_INTERVAL * Math.signum(intakeMotorSpeeds[motor] - intakeMotors[motor].get()));
       } else {
         // If our patience has paid off
         intakeMotors[motor].set(intakeMotorSpeeds[motor]);
