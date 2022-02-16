@@ -36,6 +36,7 @@ public class RobotContainer {
   private final Intake intake = new Intake();
   private final Chambers ballDetection = new Chambers(3);
   private final LimeLight m_limeLight = new LimeLight();
+  private final UltraSonic ultrasonic = new UltraSonic();
 
   // -------------------- Joysticks and Buttons -------------------- \\
   // Joysticks
@@ -71,9 +72,9 @@ public class RobotContainer {
         .whenReleased(() -> m_climber.setClimberSpeed(0));
 
     // Toggles the LimeLight camera mode (aiming to drive cam)
-    new JoystickButton(stick1, 5).whenPressed(() -> m_limeLight.toggleCamMode());
+    new JoystickButton(stick1, 9).whenPressed(() -> m_limeLight.toggleCamMode());
     // Toggles the LimeLight LEDs (useful for blinding people)
-    new JoystickButton(stick1, 3).whenPressed(() -> m_limeLight.toggleLight());
+    new JoystickButton(stick1, 10).whenPressed(() -> m_limeLight.toggleLight());
 
     // Intake control
     new JoystickButton(stick1, 11).whenPressed(() -> intake.setIntakeMotorSpeed(0, 0.85))
@@ -81,7 +82,9 @@ public class RobotContainer {
 
     new JoystickButton(stick1, 12).whenPressed(() -> intake.setIntakeMotorSpeed(1, 0.85))
         .whenReleased(() -> intake.setIntakeMotorSpeed(1, 0));
-
+    
+    new JoystickButton(stick1, 5).whileHeld(() -> ultrasonic.ultraSonicBoom())
+        .whenReleased(() -> ultrasonic.runIntoSomething = 1);
     // new JoystickButton(stick1, 1).whenPressed(() ->
     // m_driveTrain.driveStraight(0.5))
     // .whenReleased(() -> m_driveTrain.driveStraight(0));
@@ -98,7 +101,7 @@ public class RobotContainer {
 
   public Command getTelopCommand() {
     // Toggles dual joystick, should be replaced with an actual check in the future
-    return new SingleJoystickDrive(m_driveTrain, stick1);
+    return new SingleJoystickDrive(m_driveTrain, stick1, ultrasonic);
   }
 
 }

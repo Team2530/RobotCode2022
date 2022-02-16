@@ -13,6 +13,7 @@ import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.CommandBase;
 import frc.robot.libraries.Deadzone;
 import frc.robot.subsystems.DriveTrain;
+import frc.robot.subsystems.UltraSonic;
 
 public class SingleJoystickDrive extends CommandBase {
   /**
@@ -20,14 +21,16 @@ public class SingleJoystickDrive extends CommandBase {
    */
   DriveTrain m_drivetrain;
   Joystick stick;
+  UltraSonic ultrasonic;
   private double yawTarget = 0.0;
 
   private final double yawRate = 310.0;
   private double lastExecuted = Timer.getFPGATimestamp();
 
-  public SingleJoystickDrive(DriveTrain m_drivetrain, Joystick stick) {
+  public SingleJoystickDrive(DriveTrain m_drivetrain, Joystick stick, UltraSonic ultrasonic) {
     this.m_drivetrain = m_drivetrain;
     this.stick = stick;
+    this.ultrasonic = ultrasonic;
     // Use addRequirements() here to declare subsystem dependencies.
   }
 
@@ -48,14 +51,15 @@ public class SingleJoystickDrive extends CommandBase {
 
     // if' (stick.getMagnitude() < 0.2) return;
     double m = stick.getRawButton(1) ? 1.0 : 0.5;
+    int e = ultrasonic.runIntoSomething;
     // m *= (stick.getRawAxis(3) + 1.0) / 2.0;
 
     double deltaTime = Timer.getFPGATimestamp() - lastExecuted;
     lastExecuted = Timer.getFPGATimestamp();
-
+    
     // double turn = stick.getRawAxis(3) - stick.getRawAxis(2);
     yawTarget += stick.getZ() * yawRate * deltaTime;
-    m_drivetrain.singleJoystickDrive(stick.getRawAxis(1) * m, stick.getRawAxis(0) * m, stick.getRawAxis(2));
+    m_drivetrain.singleJoystickDrive(stick.getRawAxis(1) * m * e, stick.getRawAxis(0) * m * e, stick.getRawAxis(2) * e);
     // m_drivetrain.singleJoystickDrive(stick.getX() * m, 0, 0);
   }
 
