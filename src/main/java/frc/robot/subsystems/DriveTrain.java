@@ -12,6 +12,7 @@ import edu.wpi.first.wpilibj.drive.MecanumDrive;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import frc.robot.Constants;
+import frc.robot.RobotContainer;
 import frc.robot.libraries.Deadzone;
 
 import com.ctre.phoenix.motorcontrol.NeutralMode;
@@ -101,7 +102,8 @@ public class DriveTrain extends SubsystemBase {
        * Calculate difference between target expected motor speed and current expected
        * motor speed
        */
-      if (Math.abs(joystickLerp[axis] - joystickInput[axis]) > Constants.DRIVE_RAMP_INTERVAL) {
+      if (!RobotContainer.getManualMode()
+          && Math.abs(joystickLerp[axis] - joystickInput[axis]) > Constants.DRIVE_RAMP_INTERVAL) {
         // If we're not there yet
         joystickLerp[axis] = (joystickLerp[axis]
             + Constants.DRIVE_RAMP_INTERVAL * Math.signum(joystickInput[axis] - joystickLerp[axis]));
@@ -131,9 +133,12 @@ public class DriveTrain extends SubsystemBase {
   /**
    * Initializes a drive mode where only one joystick controls the drive motors.
    * 
-   * @param x The joystick's forward/backward tilt. Any value from -1.0 to 1.0.
-   * @param y The joystick's sideways tilt. Any value from -1.0 to 1.0.
-   * @param z The joystick's vertical "twist". Any value from -1.0 to 1.0.
+   * @param x The joystick's forward/backward tilt. Any value from
+   *          -1.0 to 1.0.
+   * @param y The joystick's sideways tilt. Any value from -1.0 to
+   *          1.0.
+   * @param z The joystick's vertical "twist". Any value from -1.0 to
+   *          1.0.
    */
   public void singleJoystickDrive(double x, double y, double z) {
     joystickInput[0] = x;
@@ -151,8 +156,6 @@ public class DriveTrain extends SubsystemBase {
             deadzone),
         Deadzone.deadZone(-z,
             deadzone)); // -rot_pid.calculate(ahrs.getAngle() / 360.0, yawTarget / 360) * 0.25);
-            SmartDashboard.putNumber("Inputted speed", joystickInput[0]);
-            SmartDashboard.putNumber("Actual speed", y);
   }
 
   public void stop() {

@@ -51,6 +51,10 @@ public class RobotContainer {
   // -------------------- Telop Commands -------------------- \\
   // insert teleop commands here
 
+  // -------------------- Global Toggles -------------------- \\
+  /** Whether or not autonomous/smart systems are disabled. */
+  private static boolean manualMode = false;
+
   /**
    * The container for the robot. Contains subsystems, OI devices, and commands.
    */
@@ -66,6 +70,13 @@ public class RobotContainer {
    * passing it to a {@link edu.wpi.first.wpilibj2.command.button.JoystickButton}.
    */
   private void configureButtonBindings() {
+    // Button for disabling autonomous/smart functions
+    new JoystickButton(stick1, 2).whenPressed(() -> {
+      manualMode = true;
+    }).whenReleased(() -> {
+      manualMode = false;
+    });
+
     // Climber control
     new JoystickButton(stick1, 4).whenPressed(() -> m_climber.setClimberSpeed(0.5))
         .whenReleased(() -> m_climber.setClimberSpeed(0));
@@ -85,6 +96,11 @@ public class RobotContainer {
     // new JoystickButton(stick1, 1).whenPressed(() ->
     // m_driveTrain.driveStraight(0.5))
     // .whenReleased(() -> m_driveTrain.driveStraight(0));
+  }
+
+  /** Returns whether or not autonomous/smart systems are disabled. */
+  public static boolean getManualMode() {
+    return manualMode;
   }
 
   /**
