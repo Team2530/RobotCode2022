@@ -79,8 +79,10 @@ public class AutonomousDrive extends CommandBase {
   public double robotVelocity() {
     if (direction == 1 || direction == 2) {
       return ahrs.getVelocityX();
-    } else {
+    } else if (direction == 3 || direction == 4) {
       return ahrs.getVelocityY();
+    } else {
+      return 0.0;
     }
   }
 
