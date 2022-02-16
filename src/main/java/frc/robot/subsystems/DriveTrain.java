@@ -98,12 +98,13 @@ public class DriveTrain extends SubsystemBase {
     putNavXInfo();
     // Do for each joystick axis
     for (int axis = 0; axis < 3; ++axis) {
-      /*
-       * Calculate difference between target expected motor speed and current expected
-       * motor speed
-       */
-      if (!RobotContainer.getManualMode()
-          && Math.abs(joystickLerp[axis] - joystickInput[axis]) > Constants.DRIVE_RAMP_INTERVAL) {
+      // Is the magnitude of the actual joystick input greater than the magnitude of
+      // the current joystick interpolation?
+      boolean isIncreasing = Math.abs(joystickInput[axis]) > Math.abs(joystickLerp[axis]);
+      // Is the difference between the actual and interpolated joystick input greater
+      // than the acceptable margin?
+      boolean isOutsideMargin = Math.abs(joystickLerp[axis] - joystickInput[axis]) > Constants.DRIVE_RAMP_INTERVAL;
+      if (!RobotContainer.getManualMode() && isIncreasing && isOutsideMargin) {
         // If we're not there yet
         joystickLerp[axis] = (joystickLerp[axis]
             + Constants.DRIVE_RAMP_INTERVAL * Math.signum(joystickInput[axis] - joystickLerp[axis]));
