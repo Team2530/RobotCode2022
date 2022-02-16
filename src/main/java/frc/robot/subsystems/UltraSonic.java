@@ -37,7 +37,7 @@ public void ultraSonicBoom(){
   SmartDashboard.putNumber("Ultrasonic range", currentDistanceInches1);
   SmartDashboard.putNumber("YOU STUPID", runIntoSomething);
 
-  if ((currentDistanceInches1 <= 1) || (currentDistanceInches2 <= 1)){
+  if ((currentDistanceInches1 <= 12) || (currentDistanceInches2 <= 12)){
       runIntoSomething = 0;
     } else {
       runIntoSomething = 1;
