@@ -4,7 +4,10 @@
 
 package frc.robot.subsystems;
 
+import edu.wpi.first.wpilibj2.command.InstantCommand;
+import edu.wpi.first.wpilibj2.command.SequentialCommandGroup;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
+import edu.wpi.first.wpilibj2.command.WaitCommand;
 
 import com.ctre.phoenix.motorcontrol.can.TalonSRX;
 import com.ctre.phoenix.motorcontrol.can.WPI_TalonFX;
@@ -25,7 +28,6 @@ public class Intake extends SubsystemBase {
       new WPI_TalonSRX(Constants.LOWER_INTAKE_PORT),
       new WPI_TalonSRX(Constants.UPPER_INTAKE_PORT)
   };
-
   /** The target expected motor speeds. */
   private static double[] intakeMotorSpeeds = { 0, 0 };
 
@@ -69,6 +71,34 @@ public class Intake extends SubsystemBase {
         intakeMotors[motor].set(intakeMotorSpeeds[motor]);
       }
     }
+  }
+
+
+
+  public void ImIndecisiveDumperGoBrrr() {
+    System.out.println("Get Decisive"); 
+  }
+
+  public void DumperTopGoBrrr(int speed) {
+    intakeMotors[1].set(speed);
+  }
+  public void DumperBothGoBrrr(int speed) {
+    intakeMotors[0].set(speed);
+    intakeMotors[1].set(speed);
+  }
+
+  public void BothDumberGoBrrrr(double speed) {
+    SequentialCommandGroup commands = new SequentialCommandGroup(
+      new InstantCommand(() -> DumperBothGoBrrr(1)), new WaitCommand(3), 
+      new InstantCommand(() -> DumperBothGoBrrr(0)));
+    commands.schedule();
+  }
+
+  public void TopDumberGoBrrrr(double speed) {
+    SequentialCommandGroup commands = new SequentialCommandGroup(
+      new InstantCommand(() -> DumperTopGoBrrr(1)), new WaitCommand(3), 
+      new InstantCommand(() -> DumperTopGoBrrr(0)));
+    commands.schedule();
   }
 
   // These might need a sign change/absolute value to account for motors moving

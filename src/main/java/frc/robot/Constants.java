@@ -44,6 +44,10 @@ public final class Constants {
     public static final int CLIMBER_MOTOR_PORT_L = 10;
     public static final int CLIMBER_MOTOR_PORT_R = 00;
 
+    // Dumping Motor
+    public static final double DUMPER_PORT = 1.5;
+
+
     // ----------Sensor Constants-----------\\
     public static final int ENCODER_TICKS_PER_REVOLUTION = 2048;
     public static final int kSlotIdx = 0;
