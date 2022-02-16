@@ -61,9 +61,15 @@ public final class Constants {
     public static final double WHEEL_RADIUS = 6 * 2.54;
     public static final double DISTANCE_PER_PULSE = Constants.ENCODER_TICKS_PER_REVOLUTION * Math.PI
             * Math.pow(Constants.WHEEL_RADIUS, 2);
-    public static final double kS = 0.761;
-    public static final double kV = 0.0631;
-    public static final double kA = 0.0095;
+    // Teenage resistance
+    public static final double rotPIDGainsP = 18.7, rotPIDGainsI = 1.7, rotPIDGainsD = 1.4;
+    // Rotation rate control
+    public static final double ratePIDGainsP = 1.0, ratePIDGainsI = 0.0, ratePIDGainsD = 0.0; // TODO: Tune
+    // Left and right rate control
+    public static final double strafePIDGainsP = 1.0, strafePIDGainsI = 0.0, strafePIDGainsD = 0.0; // TODO: Tune
+    // Forward and backward rate control
+    public static final double drivePIDGainsP = 1.0, drivePIDGainsI = 0.0, drivePIDGainsD = 0.0; // TODO: Tune
+    public static final double yawRate = 310.0;
     public static final double kRamseteB = 2.0;
     public static final double kRamseteZeta = 0.7;
     public static final double kMaxSpeed = 2.7;
@@ -91,7 +97,8 @@ public final class Constants {
     public static final int setPoint = 1;
 
     // ! TODO: This needs to be set
-    public static final double maxVelocityMetersPerSecond = 2.7;
+    public static final double maxMetersPerSecondForwards = 1.0;
+    public static final double maxMetersPerSecondStrafe = maxMetersPerSecondForwards / Math.sqrt(2); // TODO: Actually test
     // ! TODO: This needs to be set
     public static final double maxAccelerationMetersPerSecondSq = 6.47;
     public static final double autoVoltageConstraint = 9.5;

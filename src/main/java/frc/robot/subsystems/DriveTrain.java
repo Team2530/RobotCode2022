@@ -44,28 +44,26 @@ public class DriveTrain extends SubsystemBase {
 
   // "Teenage resistance"
   // private final double hkP = 0.05, hkI = 0.0015, hkD = 0.00175;
-  private final Gains rotPIDGains = new Gains(18.7, 1.7, 1.4);
+  private final Gains rotPIDGains = new Gains(Constants.rotPIDGainsP, Constants.rotPIDGainsI, Constants.rotPIDGainsD);
 
   // Turn rate control (Z angular velocity control)
-  private final Gains ratePIDGains = new Gains(1.0, 0.0, 0.0); // TODO: Tune
+  private final Gains ratePIDGains = new Gains(Constants.ratePIDGainsP, Constants.ratePIDGainsI,
+      Constants.ratePIDGainsD);
 
   // Left and right rate control
-  private final Gains strafePIDGains = new Gains(1.0, 0.0, 0.0); // TODO: Tune
+  private final Gains strafePIDGains = new Gains(Constants.strafePIDGainsP, Constants.strafePIDGainsI,
+      Constants.strafePIDGainsD);
 
   // Forward and back rate control
-  private final Gains drivePIDGains = new Gains(1.0, 0.0, 0.0); // TODO: Tune
+  private final Gains drivePIDGains = new Gains(Constants.drivePIDGainsP, Constants.drivePIDGainsI,
+      Constants.drivePIDGainsD);
 
   PIDController rotPID = rotPIDGains.getPID();
   PIDController turnrate_pid = ratePIDGains.getPID();
-
   PIDController strafePID = drivePIDGains.getPID();
   PIDController drivePID = strafePIDGains.getPID();
 
-  private final double maxMetersPerSecondForwards = 1.0;
-  private final double maxMetersPerSecondStrafe = maxMetersPerSecondForwards / Math.sqrt(2); // TODO: Actually test
-
   public double yawTarget = 0.0;
-  public final double yawRate = 310.0;
 
   public MecanumDrive mecanumDrive;
   // public final SimpleMotorFeedforward m_feedforward = new
@@ -163,15 +161,15 @@ public class DriveTrain extends SubsystemBase {
     // yawTarget = ahrs.getAngle();
 
     if (headingAdjust)
-      yawTarget += z * yawRate * deltaTime;
+      yawTarget += z * Constants.yawRate * deltaTime;
 
     // Rate control driving for x/y, heading select steering currently, needs work
     // and testing
     mecanumDrive.driveCartesian(
         // TODO: Double check the accelerometer orientation on the robot
         // TODO: Double check strafe speed calculation
-        strafePID.calculate(ahrs.getVelocityX(), Deadzone.deadZone(y, 0.1) * maxMetersPerSecondStrafe),
-        drivePID.calculate(ahrs.getVelocityY(), Deadzone.deadZone(-x, 0.1) * maxMetersPerSecondForwards),
+        strafePID.calculate(ahrs.getVelocityX(), Deadzone.deadZone(y, 0.1) * Constants.maxMetersPerSecondStrafe),
+        drivePID.calculate(ahrs.getVelocityY(), Deadzone.deadZone(-x, 0.1) * Constants.maxMetersPerSecondForwards),
         // TODO: Rate control when turning, otherwise lock heading for stability
         Deadzone.cutOff(-rotPID.calculate(ahrs.getAngle() / 360.0, yawTarget / 360) * 0.25, 0.01));
   }
