@@ -71,19 +71,15 @@ public class Intake extends SubsystemBase {
     }
   }
 
-  // These might need a sign change/absolute value to account for motors moving
-  // opposite directions
-  // public void stallDetection() {
-  // for (int i = 0; i < 2; ++i) {
-  // if (intakeMotors[i].getMotorOutputPercent() < (intakeMotorSpeeds[i] * 60)) {
-  // setIntakeMotorSpeed(i, 0);
-  // System.out.println("The lower intake has stopped due to a stalling issue.");
-  // }
-  // }
-  // }
+  public void stallDetection() {
+    for (int i = 0; i < 2; ++i) {
+      if ((intakeMotors[i].getMotorOutputPercent()) < (Math.abs(intakeMotorSpeeds[i] * 60))) {
+        setIntakeMotorSpeed(i, 0);
+        System.out.println("The lower intake has stopped due to a stalling issue.");
+      }
+    }
+  }
 
-  // Needs a stop condition
-  // Also possibly gradient speed from current to backwards?
   // Might cause issues if trying to drive intake motors as this is running
   public void removeBall() {
     for (int i = 0; i < 2; ++i) {
