@@ -42,28 +42,38 @@ public class DriveTrain extends SubsystemBase {
 
   // ------------------------ PID gains ------------------------- \\
 
-  // "Teenage resistance"
+  // "Teenage resistance" for rotation
   // private final double hkP = 0.05, hkI = 0.0015, hkD = 0.00175;
   private final Gains rotPIDGains = new Gains(Constants.rotPIDGainsP, Constants.rotPIDGainsI, Constants.rotPIDGainsD);
 
-  // Turn rate control (Z angular velocity control)
+  // Rotation velocity control (Z angular velocity control)
   private final Gains ratePIDGains = new Gains(Constants.ratePIDGainsP, Constants.ratePIDGainsI,
       Constants.ratePIDGainsD);
 
-  // Left and right rate control
+  // "Teenage resistance" for strafing
+  private final Gains resistStrafePIDGains = new Gains(Constants.resistStrafePIDGainsP, Constants.resistStrafePIDGainsI,
+      Constants.resistStrafePIDGainsD);
+
+  // Left and right velocity control
   private final Gains strafePIDGains = new Gains(Constants.strafePIDGainsP, Constants.strafePIDGainsI,
       Constants.strafePIDGainsD);
 
-  // Forward and back rate control
+  // "Teenage resistance" for forward/backward
+  private final Gains resistDrivePIDGains = new Gains(Constants.resistDrivePIDGainsP, Constants.resistDrivePIDGainsI,
+      Constants.resistDrivePIDGainsD);
+
+  // Forward and backward velocity control
   private final Gains drivePIDGains = new Gains(Constants.drivePIDGainsP, Constants.drivePIDGainsI,
       Constants.drivePIDGainsD);
 
   PIDController rotPID = rotPIDGains.getPID();
-  PIDController turnrate_pid = ratePIDGains.getPID();
+  PIDController turnRatePID = ratePIDGains.getPID();
   PIDController strafePID = drivePIDGains.getPID();
   PIDController drivePID = strafePIDGains.getPID();
+  PIDController resistStrafePID = resistStrafePIDGains.getPID();
+  PIDController resistDrivePID = resistDrivePIDGains.getPID();
 
-  public double yawTarget = 0.0;
+  // ------------------------ States ------------------------- \\
 
   public MecanumDrive mecanumDrive;
   // public final SimpleMotorFeedforward m_feedforward = new
@@ -124,6 +134,7 @@ public class DriveTrain extends SubsystemBase {
    */
   public void reset() {
     ahrs.zeroYaw();
+    ahrs.resetDisplacement();
   }
 
   /**
@@ -140,38 +151,44 @@ public class DriveTrain extends SubsystemBase {
    */
   public void singleJoystickDrive(double x, double y, double z, double deltaTime, boolean headingAdjust) {
     // mecanumDrive.driveCartesian(y, -x, -z);
-    // TODO: Deadzones for pid output
+    // TODO: Double check the accelerometer orientation on the robot
+    // TEST: X and Y axis velocity PIDs and independent deadzones
 
-    /*
-     * 
-     * TODO: While driving, PID for turn rate (gyro angular velocity Z axis,
-     * `getRate()`)
-     * TODO: While not turning, lock heading and use the "teenage resistance" PID to
-     * drive
-     * straight.
-     * 
-     * TEST: X and Y axis velocity PIDs and independent deadzones
-     * TODO: Position-locking PID when not moving? It could even have a really high
-     * I setting to resist being shoved.
-     * 
-     */
+    // PID control for robot forward/backward/strafing control
+    // TODO: Double check strafe speed calculation
+    double yPIDCalc, xPIDCalc, yTarget, xTarget;
+    if (Math.abs(y) < 0.1 && Math.abs(x) < 0.1) {
+      // If we're not intentionally strafing or driving forwards/backwards, engage
+      // teenage resistance (positional lock)
+      yTarget = ahrs.getDisplacementY() + y * Constants.maxMetersPerSecondStrafe * deltaTime;
+      yPIDCalc = Deadzone.cutOff(-resistStrafePID.calculate(ahrs.getDisplacementY() / 360.0, yTarget / 360) * 0.25,
+          0.01);
+      xTarget = ahrs.getDisplacementX() + x * Constants.maxMetersPerSecondForwards * deltaTime;
+      xPIDCalc = Deadzone.cutOff(-resistStrafePID.calculate(ahrs.getDisplacementX() / 360.0, xTarget / 360) * 0.25,
+          0.01);
+    } else {
+      // If we *are* intentionally strafing, use regular velocity control
+      ahrs.resetDisplacement();
+      yPIDCalc = strafePID.calculate(ahrs.getVelocityX(),
+          Deadzone.deadZone(y, 0.1) * Constants.maxMetersPerSecondStrafe);
+      xPIDCalc = drivePID.calculate(ahrs.getVelocityY(),
+          Deadzone.deadZone(-x, 0.1) * Constants.maxMetersPerSecondForwards);
+    }
 
-    // NOTE: Disabled because rate/heading switchover not implemented
-    // if (Math.abs(z) >= 0.1)
-    // yawTarget = ahrs.getAngle();
+    // PID control for robot rotation
+    double zPIDCalc, zTarget;
+    if (Math.abs(z) < 0.1) {
+      // If we're not intentionally turning, engage teenage resistance (directional
+      // lock)
+      zTarget = ahrs.getAngle() + z * Constants.maxMetersPerSecondRotate * deltaTime;
+      zPIDCalc = Deadzone.cutOff(-rotPID.calculate(ahrs.getAngle() / 360.0, zTarget / 360) * 0.25, 0.01);
+    } else {
+      // If we *are* intentionally turning, use regular velocity control
+      zPIDCalc = turnRatePID.calculate(ahrs.getRate(),
+          Deadzone.deadZone(-z, 0.1) * Constants.maxMetersPerSecondRotate);
+    }
 
-    if (headingAdjust)
-      yawTarget += z * Constants.yawRate * deltaTime;
-
-    // Rate control driving for x/y, heading select steering currently, needs work
-    // and testing
-    mecanumDrive.driveCartesian(
-        // TODO: Double check the accelerometer orientation on the robot
-        // TODO: Double check strafe speed calculation
-        strafePID.calculate(ahrs.getVelocityX(), Deadzone.deadZone(y, 0.1) * Constants.maxMetersPerSecondStrafe),
-        drivePID.calculate(ahrs.getVelocityY(), Deadzone.deadZone(-x, 0.1) * Constants.maxMetersPerSecondForwards),
-        // TODO: Rate control when turning, otherwise lock heading for stability
-        Deadzone.cutOff(-rotPID.calculate(ahrs.getAngle() / 360.0, yawTarget / 360) * 0.25, 0.01));
+    mecanumDrive.driveCartesian(yPIDCalc, xPIDCalc, zPIDCalc);
   }
 
   public void stop() {
