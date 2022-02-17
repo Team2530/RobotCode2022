@@ -87,10 +87,10 @@ public class RobotContainer {
     new JoystickButton(stick1, 3).whenPressed(() -> m_limeLight.toggleLight());
 
     // Intake control
-    new JoystickButton(stick1, 11).whenPressed(() -> intake.setIntakeMotorSpeed(0, 0.85))
+    new JoystickButton(stick1, 11).whenPressed(() -> intake.setIntakeMotorSpeed(0, 0.2))
         .whenReleased(() -> intake.setIntakeMotorSpeed(0, 0));
 
-    new JoystickButton(stick1, 12).whenPressed(() -> intake.setIntakeMotorSpeed(1, 0.85))
+    new JoystickButton(stick1, 12).whenPressed(() -> intake.setIntakeMotorSpeed(1, 0.2))
         .whenReleased(() -> intake.setIntakeMotorSpeed(1, 0));
 
     // new JoystickButton(stick1, 1).whenPressed(() ->

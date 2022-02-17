@@ -37,12 +37,12 @@ public final class Constants {
 
     // Intake motors
     // TODO: Add real intake port
-    public static final int LOWER_INTAKE_PORT = 50;
-    public static final int UPPER_INTAKE_PORT = 40;
+    public static final int LOWER_INTAKE_PORT = 10;
+    public static final int UPPER_INTAKE_PORT = 30;
 
     // Climber motors
-    public static final int CLIMBER_MOTOR_PORT_L = 10;
-    public static final int CLIMBER_MOTOR_PORT_R = 00;
+    public static final int CLIMBER_MOTOR_PORT_L = 15;
+    public static final int CLIMBER_MOTOR_PORT_R = 20;
 
     // ----------Sensor Constants-----------\\
     public static final int ENCODER_TICKS_PER_REVOLUTION = 2048;
@@ -106,4 +106,4 @@ public final class Constants {
     public static final int stickport1 = 0; // stick port for joystick 1
     public static final int stickport2 = 1; // stick port for joystick 2 (tankdrive and things like that)
     public static final int xboxport = 0; // xbox controller port
-}
+    }
