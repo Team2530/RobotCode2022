@@ -96,7 +96,7 @@ public class RobotContainer {
   public Command getAutonomousCommand(DriveTrain driveTrain) {
     // Creates a new Autonomous Command for the robot
     System.out.println("Getting autonomous command");
-    return new Autonomous(m_driveTrain);
+    return new Autonomous(m_driveTrain, intake);
   }
 
   public Command getTelopCommand() {

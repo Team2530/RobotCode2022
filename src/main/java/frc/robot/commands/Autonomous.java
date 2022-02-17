@@ -5,17 +5,25 @@
 package frc.robot.commands;
 
 import edu.wpi.first.wpilibj2.command.CommandBase;
+import edu.wpi.first.wpilibj2.command.InstantCommand;
 import edu.wpi.first.wpilibj2.command.SequentialCommandGroup;
 import frc.robot.subsystems.DriveTrain;
+import frc.robot.subsystems.Intake;
+import edu.wpi.first.wpilibj.Timer;
+import edu.wpi.first.wpilibj2.command.WaitCommand;
 
 public class Autonomous extends CommandBase {
+  
   /** Creates a new Autonomous. */
   DriveTrain driveTrain = new DriveTrain();
+  Intake intake = new Intake();
+  Timer timer = new Timer();
 
-  public Autonomous(DriveTrain driveTrain) {
+  public Autonomous(DriveTrain driveTrain, Intake intake) {
     // Use addRequirements() here to declare subsystem dependencies.
     this.driveTrain = driveTrain;
-
+    this.intake = intake;
+    timer.start();
   }
 
   boolean perhaps = false;
@@ -24,11 +32,12 @@ public class Autonomous extends CommandBase {
   @Override
   public void initialize() {
     SequentialCommandGroup autoVroomVroom = new SequentialCommandGroup(
-        new AutonomousDrive(driveTrain, 2.0, 2),
-        new AutonomousDrive(driveTrain, 1.0, 1)
-        
+      new InstantCommand(() -> intake.setIntakeMotorSpeed(1, 0.85)),
+      new WaitCommand(5),
+      new InstantCommand(() -> intake.setIntakeMotorSpeed(1, 0)),
+      new AutonomousDrive(driveTrain, 2, 1)
     );
-    System.out.println("Statring Autonomous Commands...");
+    System.out.println("Starting Autonomous Commands...");
     autoVroomVroom.schedule();
    
     // add more commands here
