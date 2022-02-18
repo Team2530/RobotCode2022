@@ -99,6 +99,8 @@ public class DriveTrain extends SubsystemBase {
     // motorBL.configFactoryDefault();
     // motorBR.configFactoryDefault();
     setCoast(NeutralMode.Brake);
+    motorFL.setInverted(false);
+    motorBL.setInverted(false);
     motorFR.setInverted(true);
     motorBR.setInverted(true);
     motorFL.setSelectedSensorPosition(0);
@@ -109,8 +111,6 @@ public class DriveTrain extends SubsystemBase {
     // motorFR.feed();
     // motorBL.feed();
     // motorBR.feed();
-    motorFR.setInverted(true);
-    motorBR.setInverted(true);
 
     mecanumDrive = new MecanumDrive(motorFL, motorBL, motorFR, motorBR);
     mecanumDrive.setSafetyEnabled(true);
@@ -172,7 +172,7 @@ public class DriveTrain extends SubsystemBase {
       yPIDCalc = strafePID.calculate(ahrs.getVelocityX(),
           Deadzone.deadZone(y, 0.1) * Constants.maxMetersPerSecondStrafe);
       xPIDCalc = drivePID.calculate(ahrs.getVelocityY(),
-          Deadzone.deadZone(-x, 0.1) * Constants.maxMetersPerSecondForwards);
+          Deadzone.deadZone(x, 0.1) * Constants.maxMetersPerSecondForwards);
     }
 
     // PID control for robot rotation
