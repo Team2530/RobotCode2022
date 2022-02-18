@@ -40,11 +40,12 @@ public class Climber extends SubsystemBase {
       climberMotorR.set(clamp(-speed, -1.0, 0.0));
     }
   }
-
+/*
   public void checkLimitSwitch() {
     if ((climberMotorL.isFwdLimitSwitchClosed() == 0) || (climberMotorR.isFwdLimitSwitchClosed() == 0)) {
       climberMotorL.set(0);
       climberMotorR.set(0);
     }
   }
+*/
 }
