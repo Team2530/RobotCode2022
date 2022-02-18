@@ -21,9 +21,9 @@ import edu.wpi.first.wpilibj.DriverStation.Alliance;
  * This is Team 2530's Intake class.
  */
 public class Intake extends SubsystemBase {
-  private static WPI_TalonSRX[] intakeMotors = {
-      new WPI_TalonSRX(Constants.LOWER_INTAKE_PORT),
-      new WPI_TalonSRX(Constants.UPPER_INTAKE_PORT)
+  private static WPI_TalonFX[] intakeMotors = {
+      new WPI_TalonFX(Constants.LOWER_INTAKE_PORT),
+      new WPI_TalonFX(Constants.UPPER_INTAKE_PORT)
   };
 
   /** The target expected motor speeds. */
@@ -37,7 +37,7 @@ public class Intake extends SubsystemBase {
   @Override
   public void periodic() {
     // This method will be called once per scheduler run
-    stallDetection();
+    // stallDetection();
     // removeBall();
     intakeSpeedGradient();
   }

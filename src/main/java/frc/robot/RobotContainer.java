@@ -86,10 +86,11 @@ public class RobotContainer {
     // Toggles the LimeLight LEDs (useful for blinding people)
     new JoystickButton(stick1, 3).whenPressed(() -> m_limeLight.toggleLight());
 
-    // Intake control
+    // Lower intake control
     new JoystickButton(stick1, 11).whenPressed(() -> intake.setIntakeMotorSpeed(0, 0.2))
         .whenReleased(() -> intake.setIntakeMotorSpeed(0, 0));
 
+    // Upper intake control
     new JoystickButton(stick1, 12).whenPressed(() -> intake.setIntakeMotorSpeed(1, 0.2))
         .whenReleased(() -> intake.setIntakeMotorSpeed(1, 0));
 
