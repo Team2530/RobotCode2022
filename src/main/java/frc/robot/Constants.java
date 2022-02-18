@@ -37,12 +37,12 @@ public final class Constants {
 
     // Intake motors
     // TODO: Add real intake port
-    public static final int LOWER_INTAKE_PORT = 45678;
-    public static final int UPPER_INTAKE_PORT = 40;
+    public static final int LOWER_INTAKE_PORT = 10;
+    public static final int UPPER_INTAKE_PORT = 30;
 
     // Climber motors
-    public static final int CLIMBER_MOTOR_PORT_L = 10;
-    public static final int CLIMBER_MOTOR_PORT_R = 00;
+    public static final int CLIMBER_MOTOR_PORT_L = 15;
+    public static final int CLIMBER_MOTOR_PORT_R = 20;
 
     // Dumping Motor
     public static final double DUMPER_PORT = 1.5;
