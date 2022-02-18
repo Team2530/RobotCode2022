@@ -26,17 +26,10 @@ public final class Constants {
     // --------------------Motor Ports--------------------\\
     // DriveTrain Motors
     // ports set up for test drivetrain currently
-    public static final int MOTOR_FL_DRIVE_PORT = 10;
-    public static final int MOTOR_FR_DRIVE_PORT = 40;
-    public static final int MOTOR_BL_DRIVE_PORT = 30;
-    public static final int MOTOR_BR_DRIVE_PORT = 20;
-    public static final int motor_revolver_port = 5;
-    // TODO: Add real intake port
-    public static final int motor_intake_port = 72;
-    public static final int motor_flywheel_port = 3;
-    public static final int motor_turret_port = 4;
-    public static final int motor_hood_port = 6;
-    public static final int turret_encoder = 9;
+    public static final int MOTOR_FL_DRIVE_PORT = 1;
+    public static final int MOTOR_FR_DRIVE_PORT = 2;
+    public static final int MOTOR_BL_DRIVE_PORT = 3;
+    public static final int MOTOR_BR_DRIVE_PORT = 4;
 
     public enum DriveMotors {
         FL, FR, BL, BR;
