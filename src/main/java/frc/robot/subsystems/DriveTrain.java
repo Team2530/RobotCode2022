@@ -84,7 +84,7 @@ public class DriveTrain extends SubsystemBase {
     // motorFR.feed();
     // motorBL.feed();
     // motorBR.feed();
-    motorFL.setInverted(true);
+    motorFL.setInverted(false);
     motorBL.setInverted(false);
     motorFR.setInverted(true);
     motorBR.setInverted(true);
@@ -153,7 +153,7 @@ public class DriveTrain extends SubsystemBase {
     mecanumDrive.driveCartesian(
         Deadzone.deadZone(y,
             deadzone),
-        Deadzone.deadZone(-x,
+        Deadzone.deadZone(x,
             deadzone),
         Deadzone.deadZone(-z,
             deadzone)); // -rot_pid.calculate(ahrs.getAngle() / 360.0, yawTarget / 360) * 0.25);
