@@ -35,10 +35,10 @@ public class Climber extends SubsystemBase {
    * @param speed Any value from -1.0 to 1.0.
    */
   public void setClimberSpeed(double speed) {
-    if (timer.getMatchTime() >= 105) {
+    //if (Timer.getMatchTime() >= 105) {
       climberMotorL.set(clamp(-speed, -1.0, 0.0));
       climberMotorR.set(clamp(-speed, -1.0, 0.0));
-    }
+    //}
   }
 /*
   public void checkLimitSwitch() {
