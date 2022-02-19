@@ -100,13 +100,13 @@ public class DriveTrain extends SubsystemBase {
     double xo = Math.sin(Math.toRadians(ahrs.getAngle()));
     double yo = Math.cos(Math.toRadians(ahrs.getAngle()));
 
-    double fwd = (xo * joystickInput[0] +
-        0 * joystickInput[1]);
+    double fwd = (yo * joystickInput[0] +
+        xo * joystickInput[1]);
 
-    double side = (0 * joystickInput[0] +
+    double side = (xo * joystickInput[0] +
         yo * joystickInput[1]);
 
-    actuallyDrive(-fwd, side, joystickInput[2]);
+    actuallyDrive(side, -fwd, joystickInput[2]);
   }
 
   public void setCoast(NeutralMode neutralSetting) {
