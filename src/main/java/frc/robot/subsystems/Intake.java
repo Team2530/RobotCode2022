@@ -81,13 +81,13 @@ public class Intake extends SubsystemBase {
 
   // Might cause issues if trying to drive intake motors as this is running
   // Don't want to put balls out the bottom yet
-  /* 
-  public void removeBall() {
-    for (int i = 0; i < 2; ++i) {
-      if (((DriverStation.getAlliance() == Alliance.Red) ? BallState.Blue : BallState.Red) == Chambers.states[i]) {
-        setIntakeMotorSpeed(i, 1.0);
-      }
-    }
-  }
-  */
+  
+  // public void removeBall() {
+  //   for (int i = 0; i < 2; ++i) {
+  //     if (((DriverStation.getAlliance() == Alliance.Red) ? BallState.Blue : BallState.Red) == Chambers.states[i]) {
+  //       setIntakeMotorSpeed(i, 1.0);
+  //     }
+  //   }
+  // }
+  
 }

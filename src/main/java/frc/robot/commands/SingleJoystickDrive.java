@@ -48,6 +48,7 @@ public class SingleJoystickDrive extends CommandBase {
 
     // if' (stick.getMagnitude() < 0.2) return;
     double m = stick.getRawButton(1) ? 1.0 : 0.5;
+    double s = stick.getRawButton(2) ? 0.5 : 1;
     // m *= (stick.getRawAxis(3) + 1.0) / 2.0;
 
     double deltaTime = Timer.getFPGATimestamp() - lastExecuted;
@@ -55,7 +56,7 @@ public class SingleJoystickDrive extends CommandBase {
 
     // double turn = stick.getRawAxis(3) - stick.getRawAxis(2);
     yawTarget += stick.getZ() * yawRate * deltaTime;
-    m_drivetrain.singleJoystickDrive(stick.getRawAxis(1) * m, stick.getRawAxis(0) * m, stick.getRawAxis(2));
+    m_drivetrain.singleJoystickDrive(stick.getRawAxis(1) * m * s, stick.getRawAxis(0) * m * s, stick.getRawAxis(2) * m * s);
     // m_drivetrain.singleJoystickDrive(stick.getX() * m, 0, 0);
   }
 

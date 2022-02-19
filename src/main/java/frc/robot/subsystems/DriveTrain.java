@@ -113,7 +113,7 @@ public class DriveTrain extends SubsystemBase {
         joystickLerp[axis] = joystickInput[axis];
       }
     }
-    actuallyDrive(joystickLerp[1], -joystickLerp[0], joystickLerp[2]);
+    actuallyDrive(joystickInput[1], joystickInput[0], joystickInput[2]);
   }
 
   public void setCoast(NeutralMode neutralSetting) {
@@ -153,7 +153,7 @@ public class DriveTrain extends SubsystemBase {
     mecanumDrive.driveCartesian(
         Deadzone.deadZone(y,
             deadzone),
-        Deadzone.deadZone(x,
+        Deadzone.deadZone(-x,
             deadzone),
         Deadzone.deadZone(-z,
             deadzone)); // -rot_pid.calculate(ahrs.getAngle() / 360.0, yawTarget / 360) * 0.25);
