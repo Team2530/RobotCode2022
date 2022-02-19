@@ -104,6 +104,9 @@ public class RobotContainer {
     new JoystickButton(stick1, 10).whenPressed(() -> intake.setIntakeMotorSpeed(1, 0.75))
         .whenReleased(() -> intake.setIntakeMotorSpeed(1, 0));
 
+    // Zero navX rotation
+    new JoystickButton(stick1, 8).whenPressed(() -> m_driveTrain.reset());
+
     // new JoystickButton(stick1, 1).whenPressed(() ->
     // m_driveTrain.driveStraight(0.5))
     // .whenReleased(() -> m_driveTrain.driveStraight(0));
