@@ -36,8 +36,8 @@ public class Climber extends SubsystemBase {
    */
   public void setClimberSpeed(double speed) {
     if (timer.getMatchTime() >= 105) {
-      climberMotorL.set(clamp(-speed, -1.0, 0.0));
-      climberMotorR.set(clamp(-speed, -1.0, 0.0));
+      climberMotorL.set(clamp(speed * -1, -1.0, 0.0));
+      climberMotorR.set(clamp(speed * -1, -1.0, 0.0));
     }
   }
 /*
