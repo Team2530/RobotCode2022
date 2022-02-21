@@ -35,7 +35,7 @@ public class Autonomous extends CommandBase {
       new InstantCommand(() -> intake.setIntakeMotorSpeed(1, 0.85)),
       new WaitCommand(5),
       new InstantCommand(() -> intake.setIntakeMotorSpeed(1, 0)),
-      new AutonomousDrive(driveTrain, 2, 1)
+      new AutonomousDrive(driveTrain, 3, 1) 
     );
     System.out.println("Starting Autonomous Commands...");
     autoVroomVroom.schedule();
