@@ -11,6 +11,9 @@ import edu.wpi.first.math.controller.PIDController;
 import edu.wpi.first.wpilibj.drive.MecanumDrive;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
+import edu.wpi.first.wpilibj.smartdashboard.Field2d;
+import edu.wpi.first.math.geometry.Pose2d;
+import edu.wpi.first.math.geometry.Rotation2d;
 import frc.robot.Constants;
 import frc.robot.RobotContainer;
 import frc.robot.libraries.Deadzone;
@@ -40,10 +43,23 @@ public class DriveTrain extends SubsystemBase {
   WPI_TalonFX motorBR = new WPI_TalonFX(Constants.MOTOR_BR_DRIVE_PORT);
   AHRS ahrs = new AHRS();
 
+  // --------------------Field2d Stuff------------------------\\
+  Field2d m_field = new Field2d();
+  Pose2d m_pose = new Pose2d();
+  Rotation2d m_rotation = new Rotation2d();
+  Rotation2d rotation;
+  double fieldXPos = 8.0;
+  double fieldYPos = 4.0;
+  double fieldRotation = 0.0;
+  /**
+   * Speed for Field2d (X, Y, Rotation)
+   */
+  double fieldSpeed[] = { 0.0, 0.0, 0.0 };
+
   /** The actual joystick input on each axis. */
-  private static double[] joystickInput = { 0, 0, 0 };
+  public static double[] joystickInput = { 0, 0, 0 };
   /** The current joystick interpolation on each axis. */
-  private static double[] joystickLerp = { 0, 0, 0 };
+  public static double[] joystickLerp = { 0, 0, 0 };
 
   // NOTE: Yaw is in degrees, need small pid constants
   // private final double kP = 0.05, kI = 0.0015, kD = 0.00175;
@@ -96,6 +112,7 @@ public class DriveTrain extends SubsystemBase {
   @Override
   public void periodic() {
     putNavXInfo();
+    field2d();
     // Do for each joystick axis
     for (int axis = 0; axis < 3; ++axis) {
       // Is the magnitude of the actual joystick input greater than the magnitude of
@@ -172,5 +189,49 @@ public class DriveTrain extends SubsystemBase {
     SmartDashboard.putNumber("Velocity_Z", ahrs.getVelocityZ());
     SmartDashboard.putNumber("Accumulated yaw ", ahrs.getAngle());
     SmartDashboard.putNumber("Rotational velocity (raw)", ahrs.getRawGyroZ());
+  }
+
+  public void field2d() {
+    m_field.setRobotPose(fieldXPos, fieldYPos, m_rotation);
+    SmartDashboard.putData(m_field);
+    // Calculations for Movement, Physics, etc...
+    if (Math.abs(joystickInput[1]) >= .1) {
+      fieldSpeed[0] = (joystickLerp[1] / 5);
+      } else {
+      fieldSpeed[0] = fieldSpeed[0] * 0.92;
+    }
+    fieldXPos = fieldXPos + fieldSpeed[0];
+    if (Math.abs(joystickInput[0]) >= .1) {
+      fieldSpeed[1] = (joystickLerp[0] / 5);
+    } else {
+      fieldSpeed[1] = fieldSpeed[1] * 0.92;
+    }
+    fieldYPos = fieldYPos - fieldSpeed[1];
+    if (Math.abs(joystickInput[2]) >= .5) {
+      fieldSpeed[2] = fieldSpeed[2] + (joystickLerp[2] / 3);
+    } else {
+      fieldSpeed[2] = fieldSpeed[2] * 0.8;
+    }
+    fieldRotation = fieldRotation - fieldSpeed[2];
+    m_rotation = Rotation2d.fromDegrees(fieldRotation);
+    field2dBounds();
+  }
+
+/**
+ * Makes sure the robot dosen't go off screen
+ */
+  public void field2dBounds() {
+    if (fieldXPos > 16) {
+      fieldXPos = 16;
+    }
+    if (fieldXPos < 0) {
+      fieldXPos = 0;
+    }
+    if (fieldYPos < 0) {
+      fieldYPos = 0;
+    }
+    if (fieldYPos > 8) {
+      fieldYPos = 8;
+    }
   }
 }
