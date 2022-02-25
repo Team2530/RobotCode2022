@@ -149,7 +149,8 @@ public class DriveTrain extends SubsystemBase {
         Deadzone.deadZone(-x,
             deadzone),
         Deadzone.deadZone(-z,
-            deadzone)); // -rot_pid.calculate(ahrs.getAngle() / 360.0, yawTarget / 360) * 0.25);
+            deadzone),
+        ahrs.getYaw()); // -rot_pid.calculate(ahrs.getAngle() / 360.0, yawTarget / 360) * 0.25);
   }
 
   public void stop() {
