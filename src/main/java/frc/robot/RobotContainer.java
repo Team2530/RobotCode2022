@@ -78,9 +78,9 @@ public class RobotContainer {
     });
 
     // Climber control
-    new JoystickButton(stick1, 4).whenPressed(() -> m_climber.setClimberSpeed(1.0))
+    new JoystickButton(xbox, 6).whenPressed(() -> m_climber.setClimberSpeed(1.0))
         .whenReleased(() -> m_climber.setClimberSpeed(0));
-    new JoystickButton(stick1, 6).whenPressed(() -> m_climber.setClimberSpeed(0.1))
+    new JoystickButton(xbox, 5).whenPressed(() -> m_climber.setClimberSpeed(0.1))
         .whenReleased(() -> m_climber.setClimberSpeed(0));
         
     // Toggles the LimeLight camera mode (aiming to drive cam)
@@ -89,20 +89,16 @@ public class RobotContainer {
     new JoystickButton(stick1, 3).whenPressed(() -> m_limeLight.toggleLight());
 
     // Lower intake up
-    new JoystickButton(stick1, 11).whenPressed(() -> intake.setIntakeMotorSpeed(0, -0.75))
+    new JoystickButton(xbox, 1).whenPressed(() -> intake.setIntakeMotorSpeed(0, -0.75))
         .whenReleased(() -> intake.setIntakeMotorSpeed(0, 0));
 
     // Upper intake up
-    new JoystickButton(stick1, 12).whenPressed(() -> intake.setIntakeMotorSpeed(1, -0.75))
+    new JoystickButton(xbox, 3).whenPressed(() -> intake.setIntakeMotorSpeed(1, -0.75))
         .whenReleased(() -> intake.setIntakeMotorSpeed(1, 0));
 
     // Lower intake down
-    new JoystickButton(stick1, 9).whenPressed(() -> intake.setIntakeMotorSpeed(0, 0.75))
+    new JoystickButton(xbox, 2).whenPressed(() -> intake.setIntakeMotorSpeed(0, 0.75))
         .whenReleased(() -> intake.setIntakeMotorSpeed(0, 0));
-
-    // Upper intake down
-    new JoystickButton(stick1, 10).whenPressed(() -> intake.setIntakeMotorSpeed(1, 0.75))
-        .whenReleased(() -> intake.setIntakeMotorSpeed(1, 0));
 
     // Zero navX rotation
     new JoystickButton(stick1, 8).whenPressed(() -> m_driveTrain.reset());
