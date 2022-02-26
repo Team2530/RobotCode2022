@@ -195,26 +195,11 @@ public class DriveTrain extends SubsystemBase {
     m_field.setRobotPose(fieldXPos, fieldYPos, m_rotation);
     SmartDashboard.putData(m_field);
     // Calculations for Movement, Physics, etc...
-    if (Math.abs(joystickInput[1]) >= .1) {
-      fieldSpeed[0] = (joystickLerp[1] / 5);
-      } else {
-      fieldSpeed[0] = fieldSpeed[0] * 0.92;
-    }
-    fieldXPos = fieldXPos + fieldSpeed[0];
-    if (Math.abs(joystickInput[0]) >= .1) {
-      fieldSpeed[1] = (joystickLerp[0] / 5);
-    } else {
-      fieldSpeed[1] = fieldSpeed[1] * 0.92;
-    }
-    fieldYPos = fieldYPos - fieldSpeed[1];
-    if (Math.abs(joystickInput[2]) >= .5) {
-      fieldSpeed[2] = fieldSpeed[2] + (joystickLerp[2] / 3);
-    } else {
-      fieldSpeed[2] = fieldSpeed[2] * 0.8;
-    }
-    fieldRotation = fieldRotation - fieldSpeed[2];
-    m_rotation = Rotation2d.fromDegrees(fieldRotation);
-    field2dBounds();
+    fieldXPos = fieldXPos + ahrs.getVelocityX();
+    fieldYPos = fieldYPos + ahrs.getVelocityY();
+    fieldRotation = fieldRotation + ahrs.getVelocityZ();
+    field2dSimuationMode();
+    
   }
 
 /**
@@ -233,5 +218,28 @@ public class DriveTrain extends SubsystemBase {
     if (fieldYPos > 8) {
       fieldYPos = 8;
     }
+  }
+  /** To use when using field2d on simuation mode */
+  public void field2dSimuationMode(){
+    if (Math.abs(joystickInput[1]) >= .1) {
+      fieldSpeed[0] = (joystickLerp[1] / 8);
+      } else {
+      fieldSpeed[0] = fieldSpeed[0] * 0.92;
+    }
+    fieldXPos = fieldXPos + fieldSpeed[0];
+    if (Math.abs(joystickInput[0]) >= .1) {
+      fieldSpeed[1] = (joystickLerp[0] / 8);
+    } else {
+      fieldSpeed[1] = fieldSpeed[1] * 0.92;
+    }
+    fieldYPos = fieldYPos - fieldSpeed[1];
+    if (Math.abs(joystickInput[2]) >= .5) {
+      fieldSpeed[2] = fieldSpeed[2] + (joystickLerp[2] / 3);
+    } else {
+      fieldSpeed[2] = fieldSpeed[2] * 0.8;
+    }
+    fieldRotation = fieldRotation - fieldSpeed[2];
+    m_rotation = Rotation2d.fromDegrees(fieldRotation);
+    field2dBounds();
   }
 }
