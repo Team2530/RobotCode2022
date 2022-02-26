@@ -97,16 +97,7 @@ public class DriveTrain extends SubsystemBase {
   public void periodic() {
     putNavXInfo();
 
-    double xo = Math.sin(Math.toRadians(ahrs.getAngle()));
-    double yo = Math.cos(Math.toRadians(ahrs.getAngle()));
-
-    double fwd = (yo * joystickInput[0] +
-        xo * joystickInput[1]);
-
-    double side = (xo * joystickInput[0] +
-        yo * joystickInput[1]);
-
-    actuallyDrive(side, -fwd, joystickInput[2]);
+    actuallyDrive(joystickInput[1], -joystickInput[0], joystickInput[2]);
   }
 
   public void setCoast(NeutralMode neutralSetting) {
@@ -144,7 +135,7 @@ public class DriveTrain extends SubsystemBase {
     // TODO : Test deadzone
     // mecanumDrive.driveCartesian(y, -x, -z);
     mecanumDrive.driveCartesian(
-        Deadzone.deadZone(y,
+        Deadzone.deadZone(-y,
             deadzone),
         Deadzone.deadZone(-x,
             deadzone),
