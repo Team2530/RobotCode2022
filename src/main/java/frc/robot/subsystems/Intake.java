@@ -48,7 +48,15 @@ public class Intake extends SubsystemBase {
    * @param speed Any value from -1.0 to 1.0.
    */
   public void setIntakeMotorSpeed(int idx, double speed) {
-    intakeMotorSpeeds[idx] = speed;
+    if ((Chambers.states[2] == BallState.Red) && (Chambers.states[3] == BallState.Red)) {
+      intakeMotorSpeeds[0] = speed;
+      intakeMotorSpeeds[1] = speed;
+    } else if ((Chambers.states[2] == BallState.Blue) && (Chambers.states[3] == BallState.Blue)) {
+      intakeMotorSpeeds[0] = speed;
+      intakeMotorSpeeds[1] = speed;
+    } else {
+      intakeMotorSpeeds[idx] = speed;
+    }
   }
 
   public void intakeSpeedGradient() {
@@ -81,13 +89,14 @@ public class Intake extends SubsystemBase {
 
   // Might cause issues if trying to drive intake motors as this is running
   // Don't want to put balls out the bottom yet
-  
+
   // public void removeBall() {
-  //   for (int i = 0; i < 2; ++i) {
-  //     if (((DriverStation.getAlliance() == Alliance.Red) ? BallState.Blue : BallState.Red) == Chambers.states[i]) {
-  //       setIntakeMotorSpeed(i, 1.0);
-  //     }
-  //   }
+  // for (int i = 0; i < 2; ++i) {
+  // if (((DriverStation.getAlliance() == Alliance.Red) ? BallState.Blue :
+  // BallState.Red) == Chambers.states[i]) {
+  // setIntakeMotorSpeed(i, 1.0);
   // }
-  
+  // }
+  // }
+
 }
