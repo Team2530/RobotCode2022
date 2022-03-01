@@ -41,7 +41,7 @@ public class DriveTrain extends SubsystemBase {
   AHRS ahrs = new AHRS();
 
   /** The actual joystick input on each axis. */
-  private static double[] joystickInput = { 0, 0, 0 , 0};
+  private static double[] joystickInput = { 0, 0, 0 };
   /** The current joystick interpolation on each axis. */
   private static double[] joystickLerp = { 0, 0, 0 };
 
@@ -106,7 +106,7 @@ public class DriveTrain extends SubsystemBase {
     double side = (xo * joystickInput[0] +
         yo * joystickInput[1]);
 
-    actuallyDrive(side, -fwd, joystickInput[2] - joystickInput[3]);
+    actuallyDrive(side, -fwd, joystickInput[2]);
   }
 
   public void setCoast(NeutralMode neutralSetting) {
