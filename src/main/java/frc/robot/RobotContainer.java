@@ -99,27 +99,23 @@ public class RobotContainer {
       manualMode = false;
     });
 
-    // Climber control (temporary until Xbox operator controls are merged)
-    new JoystickButton(stick1, 7).whenPressed(() -> m_climber.setClimberSpeed(1.0))
+    // Climber control
+    new JoystickButton(xbox, 6).whenPressed(() -> m_climber.setClimberSpeed(1.0))
         .whenReleased(() -> m_climber.setClimberSpeed(0));
-    new JoystickButton(stick1, 8).whenPressed(() -> m_climber.setClimberSpeed(0.1))
+    new JoystickButton(xbox, 5).whenPressed(() -> m_climber.setClimberSpeed(0.1))
         .whenReleased(() -> m_climber.setClimberSpeed(0));
 
-    // Lower intake down (temporary until Xbox operator controls are merged)
-    new JoystickButton(stick1, 9).whenPressed(() -> intake.setIntakeMotorSpeed(0, 0.75))
+    // Lower intake up
+    new JoystickButton(xbox, 1).whenPressed(() -> intake.setIntakeMotorSpeed(0, -0.75))
         .whenReleased(() -> intake.setIntakeMotorSpeed(0, 0));
 
-    // Upper intake down (temporary until Xbox operator controls are merged)
-    new JoystickButton(stick1, 10).whenPressed(() -> intake.setIntakeMotorSpeed(1, 0.75))
+    // Upper intake up
+    new JoystickButton(xbox, 3).whenPressed(() -> intake.setIntakeMotorSpeed(1, -0.75))
         .whenReleased(() -> intake.setIntakeMotorSpeed(1, 0));
 
-    // Lower intake up (temporary until Xbox operator controls are merged)
-    new JoystickButton(stick1, 11).whenPressed(() -> intake.setIntakeMotorSpeed(0, -0.75))
+    // Lower intake down
+    new JoystickButton(xbox, 2).whenPressed(() -> intake.setIntakeMotorSpeed(0, 0.75))
         .whenReleased(() -> intake.setIntakeMotorSpeed(0, 0));
-
-    // Upper intake up (temporary until Xbox operator controls are merged)
-    new JoystickButton(stick1, 12).whenPressed(() -> intake.setIntakeMotorSpeed(1, -0.75))
-        .whenReleased(() -> intake.setIntakeMotorSpeed(1, 0));
   }
 
   /** Returns whether or not the robot is driving at full speed. */
