@@ -40,7 +40,6 @@ public class RobotContainer {
   // -------------------- Joysticks and Buttons -------------------- \\
   // Joysticks
   final Joystick stick1 = new Joystick(Constants.stickport1); // Creates a joystick on port 1
-  final Joystick stick2 = new Joystick(Constants.stickport2); // Creates a joystick on port 2
 
   // Xbox Controller
   final XboxController xbox = new XboxController(Constants.xboxport);
@@ -54,6 +53,8 @@ public class RobotContainer {
   // -------------------- Global Toggles -------------------- \\
   /** Whether or not autonomous/smart systems are disabled. */
   private static boolean manualMode = false;
+  private static boolean boostMode = false;
+  private static boolean slowMode = false;
 
   /**
    * The container for the robot. Contains subsystems, OI devices, and commands.
@@ -70,46 +71,65 @@ public class RobotContainer {
    * passing it to a {@link edu.wpi.first.wpilibj2.command.button.JoystickButton}.
    */
   private void configureButtonBindings() {
-    // Button for disabling autonomous/smart functions
+    // Button for driving at full speed
+    new JoystickButton(stick1, 1).whenPressed(() -> {
+      boostMode = true;
+    }).whenReleased(() -> {
+      boostMode = false;
+    });
+
+    // Button for driving slowly
     new JoystickButton(stick1, 2).whenPressed(() -> {
+      slowMode = true;
+    }).whenReleased(() -> {
+      slowMode = false;
+    });
+
+    // Disable rotation (not yet in this branch)
+
+    // Zero navX rotation
+    new JoystickButton(stick1, 4).whenPressed(() -> m_driveTrain.reset());
+
+    // Velocity retention (not yet in this branch)
+
+    // Button for disabling autonomous/smart functions
+    new JoystickButton(stick1, 6).whenPressed(() -> {
       manualMode = true;
     }).whenReleased(() -> {
       manualMode = false;
     });
 
-    // Climber control
-    new JoystickButton(stick1, 4).whenPressed(() -> m_climber.setClimberSpeed(1.0))
+    // Climber control (temporary until Xbox operator controls are merged)
+    new JoystickButton(stick1, 7).whenPressed(() -> m_climber.setClimberSpeed(1.0))
         .whenReleased(() -> m_climber.setClimberSpeed(0));
-    new JoystickButton(stick1, 6).whenPressed(() -> m_climber.setClimberSpeed(0.1))
+    new JoystickButton(stick1, 8).whenPressed(() -> m_climber.setClimberSpeed(0.1))
         .whenReleased(() -> m_climber.setClimberSpeed(0));
-        
-    // Toggles the LimeLight camera mode (aiming to drive cam)
-    // new JoystickButton(stick1, 5).whenPressed(() -> m_limeLight.toggleCamMode());
-    // Toggles the LimeLight LEDs (useful for blinding people)
-    // new JoystickButton(stick1, 3).whenPressed(() -> m_limeLight.toggleLight());
 
-    // Lower intake up
-    new JoystickButton(stick1, 11).whenPressed(() -> intake.setIntakeMotorSpeed(0, -0.75))
-        .whenReleased(() -> intake.setIntakeMotorSpeed(0, 0));
-
-    // Upper intake up
-    new JoystickButton(stick1, 12).whenPressed(() -> intake.setIntakeMotorSpeed(1, -0.75))
-        .whenReleased(() -> intake.setIntakeMotorSpeed(1, 0));
-
-    // Lower intake down
+    // Lower intake down (temporary until Xbox operator controls are merged)
     new JoystickButton(stick1, 9).whenPressed(() -> intake.setIntakeMotorSpeed(0, 0.75))
         .whenReleased(() -> intake.setIntakeMotorSpeed(0, 0));
 
-    // Upper intake down
+    // Upper intake down (temporary until Xbox operator controls are merged)
     new JoystickButton(stick1, 10).whenPressed(() -> intake.setIntakeMotorSpeed(1, 0.75))
         .whenReleased(() -> intake.setIntakeMotorSpeed(1, 0));
 
-    // Zero navX rotation
-    new JoystickButton(stick1, 5).whenPressed(() -> m_driveTrain.reset());
+    // Lower intake up (temporary until Xbox operator controls are merged)
+    new JoystickButton(stick1, 11).whenPressed(() -> intake.setIntakeMotorSpeed(0, -0.75))
+        .whenReleased(() -> intake.setIntakeMotorSpeed(0, 0));
 
-    // new JoystickButton(stick1, 1).whenPressed(() ->
-    // m_driveTrain.driveStraight(0.5))
-    // .whenReleased(() -> m_driveTrain.driveStraight(0));
+    // Upper intake up (temporary until Xbox operator controls are merged)
+    new JoystickButton(stick1, 12).whenPressed(() -> intake.setIntakeMotorSpeed(1, -0.75))
+        .whenReleased(() -> intake.setIntakeMotorSpeed(1, 0));
+  }
+
+  /** Returns whether or not the robot is driving at full speed. */
+  public static boolean getBoostMode() {
+    return boostMode;
+  }
+
+  /** Returns whether or not the robot is driving in slow mode. */
+  public static boolean getSlowMode() {
+    return slowMode;
   }
 
   /** Returns whether or not autonomous/smart systems are disabled. */

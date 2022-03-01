@@ -11,6 +11,7 @@ import edu.wpi.first.wpilibj.Joystick;
 import edu.wpi.first.wpilibj.Timer;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.CommandBase;
+import frc.robot.RobotContainer;
 import frc.robot.libraries.Deadzone;
 import frc.robot.subsystems.DriveTrain;
 
@@ -41,14 +42,9 @@ public class SingleJoystickDrive extends CommandBase {
   // Called every time the scheduler runs while the command is scheduled.
   @Override
   public void execute() {
-    // m_drivetrain.setBrakeMode(stick.getRawButton(2));
-
-    // m_drivetrain.setCoast(stick.getRawButton(2) ? NeutralMode.Coast :
-    // NeutralMode.Brake);
-
     // if' (stick.getMagnitude() < 0.2) return;
-    double m = stick.getRawButton(1) ? 1.0 : 0.5;
-    double s = stick.getRawButton(2) ? 0.5 : 1;
+    double m = RobotContainer.getBoostMode() ? 1.0 : 0.5;
+    double s = RobotContainer.getSlowMode() ? 0.5 : 1;
     // m *= (stick.getRawAxis(3) + 1.0) / 2.0;
 
     double deltaTime = Timer.getFPGATimestamp() - lastExecuted;
