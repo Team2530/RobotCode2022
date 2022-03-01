@@ -57,7 +57,7 @@ public class SingleJoystickDrive extends CommandBase {
     // double turn = stick.getRawAxis(3) - stick.getRawAxis(2);
     yawTarget += stick.getZ() * yawRate * deltaTime;
     m_drivetrain.singleJoystickDrive(stick.getRawAxis(1) * m * s, stick.getRawAxis(0) * m * s,
-        stick.getRawAxis(2) * m * s);
+        (stick.getRawAxis(2) * m * s) - (stick.getRawAxis(3) * m * s ));
     // m_drivetrain.singleJoystickDrive(stick.getX() * m, 0, 0);
   }
 
