@@ -99,21 +99,21 @@ public class RobotContainer {
       manualMode = false;
     });
 
-    // Climber control
+    // Climber control (RB for full power and LB for low power)
     new JoystickButton(xbox, 6).whenPressed(() -> m_climber.setClimberSpeed(1.0))
         .whenReleased(() -> m_climber.setClimberSpeed(0));
     new JoystickButton(xbox, 5).whenPressed(() -> m_climber.setClimberSpeed(0.1))
         .whenReleased(() -> m_climber.setClimberSpeed(0));
 
-    // Lower intake up
+    // Lower intake up (A button)
     new JoystickButton(xbox, 1).whenPressed(() -> intake.setIntakeMotorSpeed(0, -0.75))
         .whenReleased(() -> intake.setIntakeMotorSpeed(0, 0));
 
-    // Upper intake up
+    // Upper intake up (X button)
     new JoystickButton(xbox, 3).whenPressed(() -> intake.setIntakeMotorSpeed(1, -0.75))
         .whenReleased(() -> intake.setIntakeMotorSpeed(1, 0));
 
-    // Lower intake down
+    // Lower intake down (B button)
     new JoystickButton(xbox, 2).whenPressed(() -> intake.setIntakeMotorSpeed(0, 0.75))
         .whenReleased(() -> intake.setIntakeMotorSpeed(0, 0));
   }
