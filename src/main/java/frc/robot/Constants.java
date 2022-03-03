@@ -103,6 +103,6 @@ public final class Constants {
     public static final double deadzone = 0.1;
     public static final double DRIVE_RAMP_INTERVAL = 0.05; // Lower is slower
     public static final double INTAKE_RAMP_INTERVAL = 0.1; // Lower is slower
-    public static final int stickport1 = 0; // stick port for joystick 1
-    public static final int xboxport = 1; // xbox controller port
+    public static final int stickport1 = 1; // stick port for joystick 1
+    public static final int xboxport = 0; // xbox controller port
     }
