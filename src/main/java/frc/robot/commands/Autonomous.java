@@ -11,6 +11,7 @@ import frc.robot.subsystems.DriveTrain;
 import frc.robot.subsystems.Intake;
 import edu.wpi.first.wpilibj.Timer;
 import edu.wpi.first.wpilibj2.command.WaitCommand;
+import com.kauailabs.navx.frc.AHRS;
 
 public class Autonomous extends CommandBase {
   
@@ -31,13 +32,16 @@ public class Autonomous extends CommandBase {
   // Called when the command is initially scheduled.
   @Override
   public void initialize() {
+    AHRS ahrs = new AHRS();
+    ahrs.reset();
     SequentialCommandGroup autoVroomVroom = new SequentialCommandGroup(
       new InstantCommand(() -> intake.setIntakeMotorSpeed(1, 0.85)),
-      new WaitCommand(5),
+      new WaitCommand(3),
       new InstantCommand(() -> intake.setIntakeMotorSpeed(1, 0)),
       new AutonomousDrive(driveTrain, 3, 1) 
     );
     System.out.println("Starting Autonomous Commands...");
+    System.out.println("Please don't run into something!");
     autoVroomVroom.schedule();
    
     // add more commands here
