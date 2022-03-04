@@ -142,12 +142,12 @@ public class DriveTrain extends SubsystemBase {
   public void actuallyDrive(double x, double y, double z) {
     // TODO : Test deadzone
     // mecanumDrive.driveCartesian(y, -x, -z);
-    if (stick.getRawButton(Constants.driveStraightButton) == true) {
+    if (stick.getRawButton(Constants.velocityRetentionButton) == true) {
       x = lastJoystickInput[0];
       y = lastJoystickInput[1];
       z = 0;
     }
-    if (stick.getRawButton(3) == true) {
+    if (stick.getRawButton(Constants.driveStraightButton) == true) {
       z = 0;
     }
       mecanumDrive.driveCartesian(
