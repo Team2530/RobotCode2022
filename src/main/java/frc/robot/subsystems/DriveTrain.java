@@ -8,6 +8,7 @@
 package frc.robot.subsystems;
 
 import edu.wpi.first.math.controller.PIDController;
+import edu.wpi.first.wpilibj.Joystick;
 import edu.wpi.first.wpilibj.drive.MecanumDrive;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
@@ -38,12 +39,15 @@ public class DriveTrain extends SubsystemBase {
   WPI_TalonFX motorFR = new WPI_TalonFX(Constants.MOTOR_FR_DRIVE_PORT);
   WPI_TalonFX motorBL = new WPI_TalonFX(Constants.MOTOR_BL_DRIVE_PORT);
   WPI_TalonFX motorBR = new WPI_TalonFX(Constants.MOTOR_BR_DRIVE_PORT);
+  Joystick stick = new Joystick(Constants.stickport1);
   AHRS ahrs = new AHRS();
 
   /** The actual joystick input on each axis. */
   private static double[] joystickInput = { 0, 0, 0 };
   /** The current joystick interpolation on each axis. */
   private static double[] joystickLerp = { 0, 0, 0 };
+  /**Last joystick input when button 3 is pressed */
+  private static double[] lastJoystickInput = {0, 0, 0};
 
   // NOTE: Yaw is in degrees, need small pid constants
   // private final double kP = 0.05, kI = 0.0015, kD = 0.00175;
@@ -51,7 +55,6 @@ public class DriveTrain extends SubsystemBase {
   PIDController rot_pid = new PIDController(kP, kI, kD);
 
   public MecanumDrive mecanumDrive;
-  double deadzone = 0.1;
 
   // public final SimpleMotorFeedforward m_feedforward = new
   // SimpleMotorFeedforward(Constants.kS, Constants.kV,
@@ -98,6 +101,11 @@ public class DriveTrain extends SubsystemBase {
     putNavXInfo();
 
     actuallyDrive(joystickInput[1], -joystickInput[0], joystickInput[2]);
+
+    if(!stick.getRawButton(Constants.driveStraightButton)){
+      lastJoystickInput[0] = joystickInput[1];
+      lastJoystickInput[1] = -joystickInput[0];
+    }
   }
 
   public void setCoast(NeutralMode neutralSetting) {
@@ -134,13 +142,21 @@ public class DriveTrain extends SubsystemBase {
   public void actuallyDrive(double x, double y, double z) {
     // TODO : Test deadzone
     // mecanumDrive.driveCartesian(y, -x, -z);
-    mecanumDrive.driveCartesian(
+    if (stick.getRawButton(Constants.driveStraightButton) == true) {
+      x = lastJoystickInput[0];
+      y = lastJoystickInput[1];
+      z = 0;
+    }
+    if (stick.getRawButton(3) == true) {
+      z = 0;
+    }
+      mecanumDrive.driveCartesian(
         Deadzone.deadZone(-y,
-            deadzone),
+            Constants.deadzone),
         Deadzone.deadZone(-x,
-            deadzone),
+            Constants.deadzone),
         Deadzone.deadZone(-z,
-            deadzone),
+            Constants.deadzoneZ),
         ahrs.getYaw()); // -rot_pid.calculate(ahrs.getAngle() / 360.0, yawTarget / 360) * 0.25);
   }
 
