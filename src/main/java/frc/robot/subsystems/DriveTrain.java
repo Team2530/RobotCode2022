@@ -120,7 +120,7 @@ public class DriveTrain extends SubsystemBase {
 
     actuallyDrive(joystickInput[1], -joystickInput[0], joystickInput[2]);
 
-    if(!stick.getRawButton(Constants.driveStraightButton)){
+    if(!stick.getRawButton(Constants.velocityRetentionButton)){
       lastJoystickInput[0] = joystickInput[1];
       lastJoystickInput[1] = -joystickInput[0];
     }
