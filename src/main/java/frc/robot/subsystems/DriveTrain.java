@@ -118,7 +118,7 @@ public class DriveTrain extends SubsystemBase {
       }
     }
 
-    actuallyDrive(joystickInput[1], -joystickInput[0], joystickInput[2]);
+    actuallyDrive(joystickLerp[1], -joystickLerp[0], joystickLerp[2]);
 
     if(!stick.getRawButton(Constants.velocityRetentionButton)){
       lastJoystickInput[0] = joystickInput[1];
@@ -168,6 +168,8 @@ public class DriveTrain extends SubsystemBase {
     if (stick.getRawButton(Constants.driveStraightButton) == true) {
       z = 0;
     }
+    SmartDashboard.putNumber("twist", Deadzone.deadZone(-z,
+        Constants.deadzoneZ));
       mecanumDrive.driveCartesian(
         Deadzone.deadZone(-y,
             Constants.deadzone),
