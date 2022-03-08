@@ -8,10 +8,13 @@
 package frc.robot.subsystems;
 
 import edu.wpi.first.math.controller.PIDController;
+import edu.wpi.first.wpilibj.Joystick;
+import edu.wpi.first.wpilibj.Timer;
 import edu.wpi.first.wpilibj.drive.MecanumDrive;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import frc.robot.Constants;
+import frc.robot.RobotContainer;
 import frc.robot.libraries.Deadzone;
 import frc.robot.libraries.Gains;
 
@@ -38,6 +41,7 @@ public class DriveTrain extends SubsystemBase {
   WPI_TalonFX motorFR = new WPI_TalonFX(Constants.MOTOR_FR_DRIVE_PORT);
   WPI_TalonFX motorBL = new WPI_TalonFX(Constants.MOTOR_BL_DRIVE_PORT);
   WPI_TalonFX motorBR = new WPI_TalonFX(Constants.MOTOR_BR_DRIVE_PORT);
+  Joystick stick = new Joystick(Constants.stickport1);
   AHRS ahrs = new AHRS();
 
   // ------------------------ PID gains ------------------------- \\
@@ -74,8 +78,17 @@ public class DriveTrain extends SubsystemBase {
   PIDController resistDrivePID = resistDrivePIDGains.getPID();
 
   // ------------------------ States ------------------------- \\
+  /** The actual joystick input on each axis. */
+  private static double[] joystickInput = { 0, 0, 0 };
+  /** The current joystick interpolation on each axis. */
+  private static double[] joystickLerp = { 0, 0, 0 };
+  /** Last joystick input when button 3 is pressed */
+  private static double[] lastJoystickInput = { 0, 0, 0 };
+
+  private double lastExecuted = Timer.getFPGATimestamp();
 
   public MecanumDrive mecanumDrive;
+
   // public final SimpleMotorFeedforward m_feedforward = new
   // SimpleMotorFeedforward(Constants.kS, Constants.kV,
   // Constants.kA);
@@ -99,10 +112,6 @@ public class DriveTrain extends SubsystemBase {
     // motorBL.configFactoryDefault();
     // motorBR.configFactoryDefault();
     setCoast(NeutralMode.Brake);
-    motorFL.setInverted(false);
-    motorBL.setInverted(false);
-    motorFR.setInverted(true);
-    motorBR.setInverted(true);
     motorFL.setSelectedSensorPosition(0);
     motorFR.setSelectedSensorPosition(0);
     motorBL.setSelectedSensorPosition(0);
@@ -111,14 +120,45 @@ public class DriveTrain extends SubsystemBase {
     // motorFR.feed();
     // motorBL.feed();
     // motorBR.feed();
+    motorFL.setInverted(false);
+    motorBL.setInverted(false);
+    motorFR.setInverted(true);
+    motorBR.setInverted(true);
 
     mecanumDrive = new MecanumDrive(motorFL, motorBL, motorFR, motorBR);
-    mecanumDrive.setSafetyEnabled(true);
+    mecanumDrive.setSafetyEnabled(false);
+
+    lastExecuted = Timer.getFPGATimestamp();
   }
 
   @Override
   public void periodic() {
     putNavXInfo();
+
+    // Do for each joystick axis
+    for (int axis = 0; axis < 3; ++axis) {
+      // Is the magnitude of the actual joystick input greater than the magnitude of
+      // the current joystick interpolation?
+      boolean isIncreasing = Math.abs(joystickInput[axis]) > Math.abs(joystickLerp[axis]);
+      // Is the difference between the actual and interpolated joystick input greater
+      // than the acceptable margin?
+      boolean isOutsideMargin = Math.abs(joystickLerp[axis] - joystickInput[axis]) > Constants.DRIVE_RAMP_INTERVAL;
+      if (!RobotContainer.getManualMode() && isIncreasing && isOutsideMargin) {
+        // If we're not there yet
+        joystickLerp[axis] = (joystickLerp[axis]
+            + Constants.DRIVE_RAMP_INTERVAL * Math.signum(joystickInput[axis] - joystickLerp[axis]));
+      } else {
+        // If our patience has paid off
+        joystickLerp[axis] = joystickInput[axis];
+      }
+    }
+
+    actuallyDrive(joystickInput[1], -joystickInput[0], joystickInput[2]);
+
+    if (!stick.getRawButton(Constants.velocityRetentionButton)) {
+      lastJoystickInput[0] = joystickInput[1];
+      lastJoystickInput[1] = -joystickInput[0];
+    }
   }
 
   public void setCoast(NeutralMode neutralSetting) {
@@ -146,16 +186,37 @@ public class DriveTrain extends SubsystemBase {
    *                      1.0.
    * @param z             The joystick's vertical "twist". Any value from -1.0 to
    *                      1.0.
-   * @param headingAdjust when true, yaw control is set to heading hold and the z
-   *                      (steering) axis instead adjusts the yaw target
    */
-  public void singleJoystickDrive(double x, double y, double z, double deltaTime, boolean headingAdjust) {
+  public void singleJoystickDrive(double x, double y, double z) {
+    if (stick.getRawButton(Constants.velocityRetentionButton) == true) {
+      x = lastJoystickInput[0];
+      y = lastJoystickInput[1];
+      z = 0;
+    }
+    if (stick.getRawButton(Constants.driveStraightButton) == true) {
+      z = 0;
+    }
+    x = Deadzone.deadZone(x, Constants.deadzone);
+    y = Deadzone.deadZone(y, Constants.deadzone);
+    z = Deadzone.deadZone(z, Constants.deadzone);
+    joystickInput[0] = x;
+    joystickInput[1] = y;
+    joystickInput[2] = z;
+  }
+
+  public void actuallyDrive(double x, double y, double z) {
+    // TODO : Test deadzone
     // mecanumDrive.driveCartesian(y, -x, -z);
+
     // TODO: Double check the accelerometer orientation on the robot
     // TEST: X and Y axis velocity PIDs and independent deadzones
 
     // PID control for robot forward/backward/strafing control
     // TODO: Double check strafe speed calculation
+
+    double deltaTime = Timer.getFPGATimestamp() - lastExecuted;
+    lastExecuted = Timer.getFPGATimestamp();
+
     double yPIDCalc, xPIDCalc, yTarget, xTarget;
     if (Math.abs(y) < 0.1 && Math.abs(x) < 0.1) {
       // If we're not intentionally strafing or driving forwards/backwards, engage
