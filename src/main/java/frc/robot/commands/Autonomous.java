@@ -35,9 +35,9 @@ public class Autonomous extends CommandBase {
     AHRS ahrs = new AHRS();
     ahrs.reset();
     SequentialCommandGroup autoVroomVroom = new SequentialCommandGroup(
-      new InstantCommand(() -> intake.setIntakeMotorSpeed(1, 0.85)),
+      // new InstantCommand(() -> intake.setIntakeMotorSpeed(1, 0.85)),
       new WaitCommand(3),
-      new InstantCommand(() -> intake.setIntakeMotorSpeed(1, 0)),
+      // new InstantCommand(() -> intake.setIntakeMotorSpeed(1, 0)),
       new AutonomousDrive(driveTrain, 3, 1) 
     );
     System.out.println("Starting Autonomous Commands...");
