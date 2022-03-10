@@ -17,11 +17,11 @@ import edu.wpi.first.wpilibj.DriverStation;
  * This is Team 2530's Shooter class.
  */
 public class Shooter extends SubsystemBase {
-  WPI_TalonFX shooterMotor = new WPI_TalonFX(Constants.SHOOTER_MOTOR_PORT);
+  private static WPI_TalonFX shooterMotor = new WPI_TalonFX(Constants.SHOOTER_MOTOR_PORT);
 
   /** Creates a new {@link Intake}. */
   public Shooter() {
-
+      
   }
 
   @Override
@@ -36,6 +36,6 @@ public class Shooter extends SubsystemBase {
    * @param speed Any value from -1.0 to 1.0.
    */
   public void setShooterSpeed(double speed) {
-      shooterMotor.set(speed);
+    shooterMotor.set(speed);
   }
 }
