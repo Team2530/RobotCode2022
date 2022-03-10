@@ -31,7 +31,8 @@ public class Intake extends SubsystemBase {
 
   /** Creates a new {@link Intake}. */
   public Intake() {
-
+    intakeMotorSpeeds[0] = 0;
+    intakeMotorSpeeds[1] = 0;
   }
 
   @Override
