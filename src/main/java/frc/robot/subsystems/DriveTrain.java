@@ -40,7 +40,7 @@ public class DriveTrain extends SubsystemBase {
   WPI_TalonFX motorBL = new WPI_TalonFX(Constants.MOTOR_BL_DRIVE_PORT);
   WPI_TalonFX motorBR = new WPI_TalonFX(Constants.MOTOR_BR_DRIVE_PORT);
   Joystick stick = new Joystick(Constants.stickport1);
-  AHRS ahrs = new AHRS();
+  AHRS ahrs;
 
   /** The actual joystick input on each axis. */
   private static double[] joystickInput = { 0, 0, 0 };
@@ -73,7 +73,7 @@ public class DriveTrain extends SubsystemBase {
   /**
    * Creates a new {@link DriveTrain}.
    */
-  public DriveTrain() {
+  public DriveTrain(AHRS ahrs) {
     // motorFL.configFactoryDefault();
     // motorFR.configFactoryDefault();
     // motorBL.configFactoryDefault();
@@ -94,6 +94,8 @@ public class DriveTrain extends SubsystemBase {
 
     mecanumDrive = new MecanumDrive(motorFL, motorBL, motorFR, motorBR);
     mecanumDrive.setSafetyEnabled(false);
+
+    this.ahrs = ahrs;
   }
 
   @Override

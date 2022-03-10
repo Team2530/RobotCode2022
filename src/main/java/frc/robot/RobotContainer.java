@@ -10,6 +10,9 @@ package frc.robot;
 import edu.wpi.first.wpilibj.GenericHID;
 import edu.wpi.first.wpilibj.Joystick;
 import edu.wpi.first.wpilibj.XboxController;
+
+import com.kauailabs.navx.frc.AHRS;
+
 import edu.wpi.first.math.trajectory.Trajectory;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.ParallelCommandGroup;
@@ -30,7 +33,9 @@ public class RobotContainer {
 
   // -------------------- Subsystems -------------------- \\
 
-  private final DriveTrain m_driveTrain = new DriveTrain();
+  private final AHRS m_ahrs = new AHRS();
+  private final Battery m_battery = new Battery(m_ahrs);
+  private final DriveTrain m_driveTrain = new DriveTrain(m_ahrs);
   private final Climber m_climber = new Climber();
   private final USBCamera usbCamera = new USBCamera();
   private final Intake intake = new Intake();
