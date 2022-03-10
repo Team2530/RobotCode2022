@@ -208,7 +208,9 @@ public class DriveTrain extends SubsystemBase {
     // TODO : Test deadzone
     // mecanumDrive.driveCartesian(y, -x, -z);
 
-    // TODO: Double check the accelerometer orientation on the robot
+    // navX coordinates:
+    // +X = drive forward, -X = drive backward
+    // +Y = strafe left, -Y = strafe right
     // TEST: X and Y axis velocity PIDs and independent deadzones
 
     // PID control for robot forward/backward/strafing control
@@ -230,9 +232,9 @@ public class DriveTrain extends SubsystemBase {
     } else {
       // If we *are* intentionally strafing, use regular velocity control
       ahrs.resetDisplacement();
-      yPIDCalc = strafePID.calculate(ahrs.getVelocityX(),
+      yPIDCalc = strafePID.calculate(ahrs.getVelocityY(),
           Deadzone.deadZone(y, 0.1) * Constants.maxMetersPerSecondStrafe);
-      xPIDCalc = drivePID.calculate(ahrs.getVelocityY(),
+      xPIDCalc = drivePID.calculate(ahrs.getVelocityX(),
           Deadzone.deadZone(x, 0.1) * Constants.maxMetersPerSecondForwards);
     }
 
@@ -250,8 +252,6 @@ public class DriveTrain extends SubsystemBase {
     }
 
     mecanumDrive.driveCartesian(yPIDCalc, xPIDCalc, zPIDCalc);
-    SmartDashboard.putNumber("twist", Deadzone.deadZone(-z,
-        Constants.deadzoneZ));
   }
 
   public void stop() {
