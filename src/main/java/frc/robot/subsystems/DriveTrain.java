@@ -135,31 +135,6 @@ public class DriveTrain extends SubsystemBase {
   @Override
   public void periodic() {
     putNavXInfo();
-
-    // Do for each joystick axis
-    for (int axis = 0; axis < 3; ++axis) {
-      // Is the magnitude of the actual joystick input greater than the magnitude of
-      // the current joystick interpolation?
-      boolean isIncreasing = Math.abs(joystickInput[axis]) > Math.abs(joystickLerp[axis]);
-      // Is the difference between the actual and interpolated joystick input greater
-      // than the acceptable margin?
-      boolean isOutsideMargin = Math.abs(joystickLerp[axis] - joystickInput[axis]) > Constants.DRIVE_RAMP_INTERVAL;
-      if (!RobotContainer.getManualMode() && isIncreasing && isOutsideMargin) {
-        // If we're not there yet
-        joystickLerp[axis] = (joystickLerp[axis]
-            + Constants.DRIVE_RAMP_INTERVAL * Math.signum(joystickInput[axis] - joystickLerp[axis]));
-      } else {
-        // If our patience has paid off
-        joystickLerp[axis] = joystickInput[axis];
-      }
-    }
-
-    actuallyDrive(joystickLerp[1], -joystickLerp[0], joystickLerp[2]);
-
-    if (!stick.getRawButton(Constants.velocityRetentionButton)) {
-      lastJoystickInput[0] = joystickInput[1];
-      lastJoystickInput[1] = -joystickInput[0];
-    }
   }
 
   public void setCoast(NeutralMode neutralSetting) {
@@ -203,6 +178,29 @@ public class DriveTrain extends SubsystemBase {
     joystickInput[0] = x;
     joystickInput[1] = y;
     joystickInput[2] = z;
+    // Do for each joystick axis
+    for (int axis = 0; axis < 3; ++axis) {
+      // Is the magnitude of the actual joystick input greater than the magnitude of
+      // the current joystick interpolation?
+      boolean isIncreasing = Math.abs(joystickInput[axis]) > Math.abs(joystickLerp[axis]);
+      // Is the difference between the actual and interpolated joystick input greater
+      // than the acceptable margin?
+      boolean isOutsideMargin = Math.abs(joystickLerp[axis] - joystickInput[axis]) > Constants.DRIVE_RAMP_INTERVAL;
+      if (!RobotContainer.getManualMode() && isIncreasing && isOutsideMargin) {
+        // If we're not there yet
+        joystickLerp[axis] = (joystickLerp[axis]
+            + Constants.DRIVE_RAMP_INTERVAL * Math.signum(joystickInput[axis] - joystickLerp[axis]));
+      } else {
+        // If our patience has paid off
+        joystickLerp[axis] = joystickInput[axis];
+      }
+      if (!stick.getRawButton(Constants.velocityRetentionButton)) {
+        lastJoystickInput[0] = joystickInput[1];
+        lastJoystickInput[1] = -joystickInput[0];
+      }
+    }
+
+    actuallyDrive(joystickLerp[1], -joystickLerp[0], joystickLerp[2]);
   }
 
   public void actuallyDrive(double x, double y, double z) {
