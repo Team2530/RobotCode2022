@@ -78,7 +78,7 @@ public class DriveTrain extends SubsystemBase {
   PIDController resistDrivePID = resistDrivePIDGains.getPID();
 
   // ------------------------ States ------------------------- \\
-  private static double[] position = { 0, 0, 0 };
+  private static double yawTarget = 0;
   /** The actual joystick input on each axis. */
   private static double[] joystickInput = { 0, 0, 0 };
   /** The current joystick interpolation on each axis. */
@@ -157,12 +157,12 @@ public class DriveTrain extends SubsystemBase {
   /**
    * Initializes a drive mode where only one joystick controls the drive motors.
    * 
-   * @param x             The joystick's forward/backward tilt. Any value from
-   *                      -1.0 to 1.0.
-   * @param y             The joystick's sideways tilt. Any value from -1.0 to
-   *                      1.0.
-   * @param z             The joystick's vertical "twist". Any value from -1.0 to
-   *                      1.0.
+   * @param x The joystick's forward/backward tilt. Any value from
+   *          -1.0 to 1.0.
+   * @param y The joystick's sideways tilt. Any value from -1.0 to
+   *          1.0.
+   * @param z The joystick's vertical "twist". Any value from -1.0 to
+   *          1.0.
    */
   public void singleJoystickDrive(double x, double y, double z) {
     if (stick.getRawButton(Constants.velocityRetentionButton) == true) {
@@ -219,37 +219,46 @@ public class DriveTrain extends SubsystemBase {
     double deltaTime = Timer.getFPGATimestamp() - lastExecuted;
     lastExecuted = Timer.getFPGATimestamp();
 
-    double yPIDCalc, xPIDCalc, yTarget, xTarget;
-    if (Math.abs(y) < 0.1 && Math.abs(x) < 0.1) {
+    double yPIDCalc, xPIDCalc;
+    if (Math.abs(y) == 0 && Math.abs(x) == 0) {
       // If we're not intentionally strafing or driving forwards/backwards, engage
       // teenage resistance (positional lock)
-      yTarget = ahrs.getDisplacementY() + y * Constants.maxMetersPerSecondStrafe * deltaTime;
-      yPIDCalc = Deadzone.cutOff(-resistStrafePID.calculate(ahrs.getDisplacementY() / 360.0, yTarget / 360) * 0.25,
+      yPIDCalc = Deadzone.cutOff(
+          -resistStrafePID.calculate(ahrs.getDisplacementY() / (Constants.maxMetersPerSecondStrafe * deltaTime), 0),
           0.01);
-      xTarget = ahrs.getDisplacementX() + x * Constants.maxMetersPerSecondForwards * deltaTime;
-      xPIDCalc = Deadzone.cutOff(-resistStrafePID.calculate(ahrs.getDisplacementX() / 360.0, xTarget / 360) * 0.25,
+      xPIDCalc = Deadzone.cutOff(
+          -resistStrafePID.calculate(ahrs.getDisplacementX() / (Constants.maxMetersPerSecondForwards * deltaTime), 0),
           0.01);
     } else {
-      // If we *are* intentionally strafing, use regular velocity control
+      // If we *are* intentionally strafing or driving, keep track of the current
+      // position
       ahrs.resetDisplacement();
-      yPIDCalc = strafePID.calculate(ahrs.getVelocityY(),
-          Deadzone.deadZone(y, 0.1) * Constants.maxMetersPerSecondStrafe * deltaTime);
-      xPIDCalc = drivePID.calculate(ahrs.getVelocityX(),
-          Deadzone.deadZone(x, 0.1) * Constants.maxMetersPerSecondForwards * deltaTime);
+      yPIDCalc = y;
+      xPIDCalc = x;
+      // TODO: Transition back to velocity PIDs
+      // yPIDCalc = strafePID.calculate(ahrs.getVelocityY(),
+      // Deadzone.deadZone(y, 0.1) * Constants.maxMetersPerSecondStrafe * deltaTime);
+      // xPIDCalc = drivePID.calculate(ahrs.getVelocityX(),
+      // Deadzone.deadZone(x, 0.1) * Constants.maxMetersPerSecondForwards *
+      // deltaTime);
     }
 
     // PID control for robot rotation
-    double zPIDCalc, zTarget;
-    if (Math.abs(z) < 0.1) {
+    double zPIDCalc;
+    if (Math.abs(z) == 0) {
       // If we're not intentionally turning, engage teenage resistance (directional
       // lock)
-      zPIDCalc = Deadzone.cutOff(-rotPID.calculate(ahrs.getAngle() / 360.0, position[2] / 360), 0.01);
+      zPIDCalc = Deadzone.cutOff(
+          -rotPID.calculate(ahrs.getAngle() / (Constants.maxDegreesPerSecondRotate * deltaTime), yawTarget / 360),
+          0.01);
     } else {
-      // If we *are* intentionally turning, use regular velocity control
-      // zPIDCalc = turnRatePID.calculate(ahrs.getRate(),
-      //     Deadzone.deadZone(-z, 0.1) * Constants.maxDegreesPerSecondRotate * deltaTime);
-      position[2] = ahrs.getAngle();
+      // If we *are* intentionally turning, keep track of the current angle
+      yawTarget = ahrs.getAngle();
       zPIDCalc = z;
+      // TODO: Transition back to velocity PIDs
+      // zPIDCalc = turnRatePID.calculate(ahrs.getRate(),
+      // Deadzone.deadZone(-z, 0.1) * Constants.maxDegreesPerSecondRotate *
+      // deltaTime);
     }
 
     mecanumDrive.driveCartesian(yPIDCalc, xPIDCalc, zPIDCalc);

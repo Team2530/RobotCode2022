@@ -22,7 +22,6 @@ import frc.robot.libraries.Gains;
  */
 
 public final class Constants {
-    // ! NEED TO BE ACTUALLY SET
     // --------------------Motor Ports--------------------\\
     // Drivetrain motors
     // ports set up for the competition robot currently
@@ -36,7 +35,6 @@ public final class Constants {
     }
 
     // Intake motors
-    // TODO: Add real intake port
     public static final int LOWER_INTAKE_PORT = 10;
     public static final int UPPER_INTAKE_PORT = 30;
 
@@ -59,17 +57,23 @@ public final class Constants {
     public static final double DISTANCE_PER_PULSE = Constants.ENCODER_TICKS_PER_REVOLUTION * Math.PI
             * Math.pow(Constants.WHEEL_RADIUS, 2);
     // Rotation teenage resistance
+    // TODO: Tune
     public static final double rotPIDGainsP = 18.7, rotPIDGainsI = 1.7, rotPIDGainsD = 1.4;
     // Rotation velocity control
-    public static final double ratePIDGainsP = 1.0, ratePIDGainsI = 0.0, ratePIDGainsD = 0.0; // TODO: Tune
+    // TODO: Tune
+    public static final double ratePIDGainsP = 1.0, ratePIDGainsI = 0.0, ratePIDGainsD = 0.0;
     // Left and right teenage resistance
+    // TODO: Tune
     public static final double resistStrafePIDGainsP = 18.7, resistStrafePIDGainsI = 1.7, resistStrafePIDGainsD = 1.4;
     // Left and right velocity control
-    public static final double strafePIDGainsP = 1.0, strafePIDGainsI = 0.0, strafePIDGainsD = 0.0; // TODO: Tune
+    // TODO: Tune
+    public static final double strafePIDGainsP = 1.0, strafePIDGainsI = 0.0, strafePIDGainsD = 0.0;
     // Forward and backward teenage resistance
+    // TODO: Tune
     public static final double resistDrivePIDGainsP = 18.7, resistDrivePIDGainsI = 1.7, resistDrivePIDGainsD = 1.4;
     // Forward and backward velocity control
-    public static final double drivePIDGainsP = 1.0, drivePIDGainsI = 0.0, drivePIDGainsD = 0.0; // TODO: Tune
+    // TODO: Tune
+    public static final double drivePIDGainsP = 1.0, drivePIDGainsI = 0.0, drivePIDGainsD = 0.0;
     public static final double kRamseteB = 2.0;
     public static final double kRamseteZeta = 0.7;
     public static final double kMaxSpeed = 2.7;
