@@ -201,10 +201,9 @@ public class DriveTrain extends SubsystemBase {
     if((a > .1) || (b > .1) || (q > .1) || (e > .1) || xbox.getRawButton(3) || xbox.getRawButton(1) 
     || xbox.getRawButton(2) ){
       timer.start();
-      System.out.println("Sam is cool!");
+      SmartDashboard.putNumber("Battery Runtime", timer.get());
     } else {
       timer.stop();
-      SmartDashboard.putNumber("Battery Runtime", timer.get());
     }
   }
 }
