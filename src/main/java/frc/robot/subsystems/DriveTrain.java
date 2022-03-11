@@ -78,6 +78,7 @@ public class DriveTrain extends SubsystemBase {
   PIDController resistDrivePID = resistDrivePIDGains.getPID();
 
   // ------------------------ States ------------------------- \\
+  /** The angle the robot is aiming for. */
   private static double yawTarget = 0;
   /** The actual joystick input on each axis. */
   private static double[] joystickInput = { 0, 0, 0 };
@@ -152,6 +153,7 @@ public class DriveTrain extends SubsystemBase {
   public void reset() {
     ahrs.zeroYaw();
     ahrs.resetDisplacement();
+    yawTarget = 0;
   }
 
   /**
