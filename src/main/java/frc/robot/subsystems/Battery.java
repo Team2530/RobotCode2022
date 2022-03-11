@@ -21,14 +21,14 @@ public class Battery extends SubsystemBase {
    }
 
    double minVoltage = getVoltage();
-   double batteryPercentage = calculateBatteryPercentage();
+   int batteryPercentage = calculateBatteryPercentage();
 
    public double getVoltage() {
       return RobotController.getBatteryVoltage();
    }
 
-   public double calculateBatteryPercentage() {
-      return (getVoltage() - 12) / 0.75 * 100;
+   public int calculateBatteryPercentage() {
+      return (int) Math.round((getVoltage() - 12) / 0.75 * 100);
    }
 
    public void updateMinBatteryVoltage() {
