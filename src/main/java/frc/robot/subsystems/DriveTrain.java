@@ -78,6 +78,7 @@ public class DriveTrain extends SubsystemBase {
   PIDController resistDrivePID = resistDrivePIDGains.getPID();
 
   // ------------------------ States ------------------------- \\
+  private static double[] position = { 0, 0, 0 };
   /** The actual joystick input on each axis. */
   private static double[] joystickInput = { 0, 0, 0 };
   /** The current joystick interpolation on each axis. */
@@ -232,9 +233,9 @@ public class DriveTrain extends SubsystemBase {
       // If we *are* intentionally strafing, use regular velocity control
       ahrs.resetDisplacement();
       yPIDCalc = strafePID.calculate(ahrs.getVelocityY(),
-          Deadzone.deadZone(y, 0.1) * Constants.maxMetersPerSecondStrafe);
+          Deadzone.deadZone(y, 0.1) * Constants.maxMetersPerSecondStrafe * deltaTime);
       xPIDCalc = drivePID.calculate(ahrs.getVelocityX(),
-          Deadzone.deadZone(x, 0.1) * Constants.maxMetersPerSecondForwards);
+          Deadzone.deadZone(x, 0.1) * Constants.maxMetersPerSecondForwards * deltaTime);
     }
 
     // PID control for robot rotation
@@ -242,12 +243,13 @@ public class DriveTrain extends SubsystemBase {
     if (Math.abs(z) < 0.1) {
       // If we're not intentionally turning, engage teenage resistance (directional
       // lock)
-      zTarget = ahrs.getAngle() + z * Constants.maxMetersPerSecondRotate * deltaTime;
-      zPIDCalc = Deadzone.cutOff(-rotPID.calculate(ahrs.getAngle() / 360.0, zTarget / 360) * 0.25, 0.01);
+      zPIDCalc = Deadzone.cutOff(-rotPID.calculate(ahrs.getAngle() / 360.0, position[2] / 360), 0.01);
     } else {
       // If we *are* intentionally turning, use regular velocity control
-      zPIDCalc = turnRatePID.calculate(ahrs.getRate(),
-          Deadzone.deadZone(-z, 0.1) * Constants.maxMetersPerSecondRotate);
+      // zPIDCalc = turnRatePID.calculate(ahrs.getRate(),
+      //     Deadzone.deadZone(-z, 0.1) * Constants.maxDegreesPerSecondRotate * deltaTime);
+      position[2] = ahrs.getAngle();
+      zPIDCalc = z;
     }
 
     mecanumDrive.driveCartesian(yPIDCalc, xPIDCalc, zPIDCalc);

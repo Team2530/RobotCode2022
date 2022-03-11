@@ -96,12 +96,9 @@ public final class Constants {
     public static final double tol = 5;
     public static final int setPoint = 1;
 
-    // ! TODO: This needs to be set
-    public static final double maxMetersPerSecondForwards = 1.0;
-    // TODO: Actually test
+    public static final double maxMetersPerSecondForwards = 2.0;
     public static final double maxMetersPerSecondStrafe = maxMetersPerSecondForwards / Math.sqrt(2);
-    // ! TODO: This needs to be set
-    public static final double maxMetersPerSecondRotate = 310.0;
+    public static final double maxDegreesPerSecondRotate = 480.0;
     // ! TODO: This needs to be set
     public static final double maxAccelerationMetersPerSecondSq = 6.47;
     public static final double autoVoltageConstraint = 9.5;
