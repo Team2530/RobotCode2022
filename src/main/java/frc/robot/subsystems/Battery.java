@@ -2,6 +2,7 @@ package frc.robot.subsystems;
 
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 
+import com.ctre.phoenix.motion.MotionProfileStatus;
 import com.kauailabs.navx.frc.AHRS;
 
 import edu.wpi.first.hal.simulation.PowerDistributionDataJNI;
@@ -11,6 +12,7 @@ import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import frc.robot.Constants;
 import edu.wpi.first.wpilibj.DriverStation;
+import frc.robot.subsystems.DriveTrain;
 
 public class Battery extends SubsystemBase {
 
@@ -40,6 +42,7 @@ public class Battery extends SubsystemBase {
       batteryPercentage = calculateBatteryPercentage();
       SmartDashboard.putString("Battery", batteryPercentage + "%");
    }
+
 
    @Override
    public void periodic() {
