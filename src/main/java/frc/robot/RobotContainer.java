@@ -46,11 +46,8 @@ public class RobotContainer {
   private final Battery m_battery = new Battery(m_ahrs, xbox);
   private final DriveTrain m_driveTrain = new DriveTrain(m_ahrs);
   private final Climber m_climber = new Climber();
-  private final USBCamera usbCamera = new USBCamera();
   private final Intake intake = new Intake();
   private final Chambers ballDetection = new Chambers(3);
-
- 
 
   // -------------------- Autonomous Commands -------------------- \\
   // insert autonomous commands here
