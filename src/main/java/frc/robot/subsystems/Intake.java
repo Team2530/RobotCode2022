@@ -48,10 +48,10 @@ public class Intake extends SubsystemBase {
    * @param speed Any value from -1.0 to 1.0.
    */
   public void setIntakeMotorSpeed(int idx, double speed) {
-    if ((Chambers.states[2] == BallState.Red) && (Chambers.states[3] == BallState.Red)) {
+    if ((Chambers.states[1] == BallState.Red) || (Chambers.states[2] == BallState.Red)) {
       intakeMotorSpeeds[0] = speed;
       intakeMotorSpeeds[1] = speed;
-    } else if ((Chambers.states[2] == BallState.Blue) && (Chambers.states[3] == BallState.Blue)) {
+    } else if ((Chambers.states[1] == BallState.Blue) || (Chambers.states[2] == BallState.Blue)) {
       intakeMotorSpeeds[0] = speed;
       intakeMotorSpeeds[1] = speed;
     } else {
