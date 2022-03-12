@@ -108,7 +108,7 @@ public final class Constants {
     public static final double maxDegreesPerSecondRotate = 480.0;
     // ! TODO: This needs to be set
     public static final double maxAccelerationMetersPerSecondSq = 6.47;
-    public static final double autoVoltageConstraint = 9.5;
+    public static final double brownOutVoltage = 8.00;
 
     // ----------Field Constants----------\\
     // The gravity on Earth (should be changed if we compete on the Moon)

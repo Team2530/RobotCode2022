@@ -17,6 +17,8 @@ import frc.robot.Constants;
 import frc.robot.RobotContainer;
 import frc.robot.libraries.Deadzone;
 import frc.robot.libraries.Gains;
+import edu.wpi.first.wpilibj.Timer;
+import edu.wpi.first.wpilibj.XboxController;
 
 import com.ctre.phoenix.motorcontrol.NeutralMode;
 import com.ctre.phoenix.motorcontrol.can.WPI_TalonFX;
@@ -42,6 +44,7 @@ public class DriveTrain extends SubsystemBase {
   WPI_TalonFX motorBL = new WPI_TalonFX(Constants.MOTOR_BL_DRIVE_PORT);
   WPI_TalonFX motorBR = new WPI_TalonFX(Constants.MOTOR_BR_DRIVE_PORT);
   Joystick stick = new Joystick(Constants.stickport1);
+  XboxController xbox = new XboxController(Constants.xboxport);
   AHRS ahrs;
 
   // ------------------------ PID gains ------------------------- \\
@@ -80,6 +83,7 @@ public class DriveTrain extends SubsystemBase {
   // ------------------------ States ------------------------- \\
   /** The angle the robot is aiming for. */
   private static double yawTarget = 0;
+  Timer timer = new Timer();
   /** The actual joystick input on each axis. */
   private static double[] joystickInput = { 0, 0, 0 };
   /** The current joystick interpolation on each axis. */
@@ -136,7 +140,8 @@ public class DriveTrain extends SubsystemBase {
 
   @Override
   public void periodic() {
-    putNavXInfo();
+    // putNavXInfo();
+    getBatteryRuntime();
   }
 
   public void setCoast(NeutralMode neutralSetting) {
@@ -270,14 +275,29 @@ public class DriveTrain extends SubsystemBase {
     mecanumDrive.stopMotor();
   }
 
-  public void putNavXInfo() {
-    // SmartDashboard.putNumber("RawAccel_X", ahrs.getRawAccelX());
-    // SmartDashboard.putNumber("RawAccel_Y", ahrs.getRawAccelY());
-    // SmartDashboard.putNumber("RawAccel_Z", ahrs.getRawAccelZ());
-    // SmartDashboard.putNumber("Velocity_X", ahrs.getVelocityX());
-    // SmartDashboard.putNumber("Velocity_Y", ahrs.getVelocityY());
-    // SmartDashboard.putNumber("Velocity_Z", ahrs.getVelocityZ());
-    // SmartDashboard.putNumber("Accumulated yaw ", ahrs.getAngle());
-    // SmartDashboard.putNumber("Rotational velocity (raw)", ahrs.getRawGyroZ());
+  // public void putNavXInfo() {
+  // SmartDashboard.putNumber("RawAccel_X", ahrs.getRawAccelX());
+  // SmartDashboard.putNumber("RawAccel_Y", ahrs.getRawAccelY());
+  // SmartDashboard.putNumber("RawAccel_Z", ahrs.getRawAccelZ());
+  // SmartDashboard.putNumber("Velocity_X", ahrs.getVelocityX());
+  // SmartDashboard.putNumber("Velocity_Y", ahrs.getVelocityY());
+  // SmartDashboard.putNumber("Velocity_Z", ahrs.getVelocityZ());
+  // SmartDashboard.putNumber("Accumulated yaw ", ahrs.getAngle());
+  // SmartDashboard.putNumber("Rotational velocity (raw)", ahrs.getRawGyroZ());
+  // }
+
+  public void getBatteryRuntime() {
+    double a = Math.abs(motorBL.getMotorOutputVoltage());
+    double b = Math.abs(motorBR.getMotorOutputVoltage());
+    double q = Math.abs(motorFL.getMotorOutputVoltage());
+    double e = Math.abs(motorFR.getMotorOutputVoltage());
+
+    if ((a > .1) || (b > .1) || (q > .1) || (e > .1) || xbox.getRawButton(3) || xbox.getRawButton(1)
+        || xbox.getRawButton(2)) {
+      timer.start();
+      SmartDashboard.putNumber("Battery Runtime", timer.get());
+    } else {
+      timer.stop();
+    }
   }
 }
