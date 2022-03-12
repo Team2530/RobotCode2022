@@ -48,7 +48,6 @@ public class DriveTrain extends SubsystemBase {
   XboxController xbox = new XboxController(Constants.xboxport);
   AHRS ahrs;
   Timer timer = new Timer();
-  AHRS ahrs = new AHRS();
 
   // --------------------Field2d Stuff------------------------\\
   Field2d m_field = new Field2d();
@@ -123,6 +122,7 @@ public class DriveTrain extends SubsystemBase {
   public void periodic() {
     // putNavXInfo();
     getBatteryRuntime();
+    field2d();
   }
 
   public void setCoast(NeutralMode neutralSetting) {
@@ -229,10 +229,11 @@ public class DriveTrain extends SubsystemBase {
   public void field2d() {
     m_field.setRobotPose(fieldXPos, fieldYPos, m_rotation);
     SmartDashboard.putData(m_field);
-    // Calculations for Movement, Physics, etc...
-    fieldXPos = fieldXPos + ahrs.getVelocityX();
-    fieldYPos = fieldYPos + ahrs.getVelocityY();
+    // NavX Rotated 90
+    fieldXPos = fieldXPos + ahrs.getVelocityY();
+    fieldYPos = fieldYPos + ahrs.getVelocityX();
     fieldRotation = fieldRotation + ahrs.getVelocityZ();
+     // Calculations for Movement, Physics, etc...
     // field2dSimuationMode();
     
   }
