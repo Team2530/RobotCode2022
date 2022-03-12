@@ -154,7 +154,7 @@ public class RobotContainer {
   }
 
   public Command getTestCommand() {
-    return getTelopCommand();
+    return new SingleJoystickDrive(m_driveTrain, stick1);
   }
 
 }
