@@ -5,6 +5,7 @@
 package frc.robot.commands;
 
 import edu.wpi.first.wpilibj2.command.CommandBase;
+import frc.robot.Constants;
 import frc.robot.subsystems.DriveTrain;
 import com.kauailabs.navx.frc.AHRS;
 import edu.wpi.first.wpilibj.Timer;
@@ -61,13 +62,10 @@ public class AutonomousDrive extends CommandBase {
   // Called every time the scheduler runs while the command is scheduled.
   @Override
   public void execute() {
-    currentVelocity = navxData[4];
-    navxGhostNumbers(navxData);
-    // only for testing!
-    for(int i = 0; i < 5; i++){
-    System.out.print(navxData[i] + " ");
+    if (robotVelocity() < Constants.maxVelocityMetersPerSecond){
+      currentVelocity = robotVelocity();
+     distanceMaths();
     }
-    distanceMaths();
   }
 
   // Called once the command ends or is interrupted.
@@ -84,14 +82,13 @@ public class AutonomousDrive extends CommandBase {
   }
 
   public double robotVelocity() {
-    // if (direction == 1 || direction == 2) {
-    //   return ahrs.getVelocityX();
-    // } else if (direction == 3 || direction == 4) {
-    //   return ahrs.getVelocityY();
-    // } else {
-    //   return 0.0;
-    // }
-    return Math.random();
+    if (direction == 1 || direction == 2) {
+      return ahrs.getVelocityX();
+    } else if (direction == 3 || direction == 4) {
+      return ahrs.getVelocityY();
+    } else {
+      return 0.0;
+    }
   }
 
   public void distanceMaths() {
@@ -107,27 +104,4 @@ public class AutonomousDrive extends CommandBase {
   /**
    * fixes the numbers that are saying the robot is going the speed of light^2
    */
-  public void navxGhostNumbers(double[] navxData) {
-    this.navxData = navxData;
-    double averageNavxSpeed = 0;
-    for(int e = 0; e < 5; e++) {
-      averageNavxSpeed = averageNavxSpeed + navxData[e];
-    }
-    // calculates the average navx speed to eliminate speeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeed
-    // yeeeettoooo the speeeeeeeeeeeeeeeeeeeeeeeed
-    averageNavxSpeed = averageNavxSpeed / 4;
-    if (Math.abs(robotVelocity() - .3) < averageNavxSpeed || 
-    Math.abs(robotVelocity() + .3) > averageNavxSpeed) {
-      for(int i = 0; i < 5; i++) {
-        if(i < 4) {
-          navxData[i] = navxData[i+1];
-        } else {
-          navxData[i] = robotVelocity();
-        }
-      }
-    } else {
-      System.out.println("It did the thing");
-      navxData[4] = navxData[3];
-    }
-  } 
 }
