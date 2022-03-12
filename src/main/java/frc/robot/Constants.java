@@ -59,7 +59,7 @@ public final class Constants {
 
     // Rotation teenage resistance
     // TODO: Tune
-    public static final double rotPIDGainsP = 0.1, rotPIDGainsI = 0, rotPIDGainsD = 0;
+    public static final double rotPIDGainsP = 0, rotPIDGainsI = 0, rotPIDGainsD = 0;
     // Left and right teenage resistance
     // TODO: Tune
     public static final double resistStrafePIDGainsP = 0, resistStrafePIDGainsI = 0, resistStrafePIDGainsD = 0;

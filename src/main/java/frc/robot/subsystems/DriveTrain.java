@@ -74,11 +74,11 @@ public class DriveTrain extends SubsystemBase {
       Constants.drivePIDGainsD);
 
   PIDController rotPID = rotPIDGains.getPID();
+  PIDController resistStrafePID = resistStrafePIDGains.getPID();
+  PIDController resistDrivePID = resistDrivePIDGains.getPID();
   PIDController turnRatePID = ratePIDGains.getPID();
   PIDController strafePID = drivePIDGains.getPID();
   PIDController drivePID = strafePIDGains.getPID();
-  PIDController resistStrafePID = resistStrafePIDGains.getPID();
-  PIDController resistDrivePID = resistDrivePIDGains.getPID();
 
   // ------------------------ States ------------------------- \\
   /** The angle the robot is aiming for. */

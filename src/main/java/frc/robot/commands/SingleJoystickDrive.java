@@ -40,6 +40,8 @@ public class SingleJoystickDrive extends CommandBase {
   // Called every time the scheduler runs while the command is scheduled.
   @Override
   public void execute() {
+    System.out.println("Eashfsdgf");
+
     // if' (stick.getMagnitude() < 0.2) return;
     double m = RobotContainer.getBoostMode() ? 1.0 : 0.5;
     double s = RobotContainer.getSlowMode() ? 0.5 : 1;

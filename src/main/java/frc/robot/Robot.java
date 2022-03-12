@@ -101,7 +101,7 @@ public class Robot extends TimedRobot {
     }
     m_teleopCommand = m_robotContainer.getTelopCommand();
     if (m_teleopCommand != null) {
-      m_teleopCommand.schedule();
+      m_teleopCommand.schedule(false);
     }
   }
 
@@ -115,8 +115,12 @@ public class Robot extends TimedRobot {
 
   @Override
   public void testInit() {
-    // Cancels all running commands at the start of test mode.
-    CommandScheduler.getInstance().cancelAll();
+    teleopInit();
+    // // Cancels all running commands at the start of test mode.
+    // // CommandScheduler.getInstance().cancelAll();
+    // m_teleopCommand = m_robotContainer.getTestCommand();
+    // if (m_teleopCommand != null) {
+    // m_teleopCommand.schedule();
   }
 
   /**
