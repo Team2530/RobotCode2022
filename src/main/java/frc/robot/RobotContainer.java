@@ -153,9 +153,5 @@ public class RobotContainer {
     // Toggles dual joystick, should be replaced with an actual check in the future
     return new SingleJoystickDrive(m_driveTrain, stick1);
   }
-  public Command getTestCommand() {
-    // Toggles dual joystick, should be replaced with an actual check in the future
-    return new SingleJoystickDrive(m_driveTrain, stick1);
-  }
 
 }

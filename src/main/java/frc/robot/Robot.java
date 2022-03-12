@@ -8,10 +8,8 @@
 package frc.robot;
 
 import edu.wpi.first.wpilibj.TimedRobot;
-import edu.wpi.first.wpilibj.livewindow.LiveWindow;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.CommandScheduler;
-import frc.robot.subsystems.DriveTrain;
 
 /**
  * The VM is configured to automatically run this class, and to call the
@@ -23,7 +21,6 @@ import frc.robot.subsystems.DriveTrain;
 public class Robot extends TimedRobot {
   private Command m_autonomousCommand;
   private Command m_teleopCommand;
-  private Command m_testCommand;
   private RobotContainer m_robotContainer;
 
   /**
@@ -112,24 +109,20 @@ public class Robot extends TimedRobot {
    * This function is called periodically during operator control.
    */
   @Override
-  public void teleopPeriodic() {}
+  public void teleopPeriodic() {
+
+  }
 
   @Override
   public void testInit() {
-  // Cancels all running commands at the start of test mode.
-  CommandScheduler.getInstance().cancelAll();
-  // Alows Commands to be run during Test Mode
-  LiveWindow.setEnabled(false);
-  m_testCommand = m_robotContainer.getTestCommand();
-  System.out.println("Test Time!");
-  if (m_testCommand != null) {
-    m_testCommand.schedule();
-    }
+    // Cancels all running commands at the start of test mode.
+    CommandScheduler.getInstance().cancelAll();
   }
 
   /**
    * This function is called periodically during test mode.
    */
   @Override
-  public void testPeriodic() {}
+  public void testPeriodic() {
+  }
 }
