@@ -227,10 +227,10 @@ public class DriveTrain extends SubsystemBase {
       // teenage resistance (positional lock)
       yPIDCalc = Deadzone.cutOff(
           -resistStrafePID.calculate(ahrs.getDisplacementY() / (Constants.maxMetersPerSecondStrafe * deltaTime), 0),
-          0.01);
+          0.05);
       xPIDCalc = Deadzone.cutOff(
           -resistStrafePID.calculate(ahrs.getDisplacementX() / (Constants.maxMetersPerSecondForwards * deltaTime), 0),
-          0.01);
+          0.05);
     } else {
       // If we *are* intentionally strafing or driving, keep track of the current
       // position
@@ -252,7 +252,7 @@ public class DriveTrain extends SubsystemBase {
       // lock)
       zPIDCalc = Deadzone.cutOff(
           -rotPID.calculate(ahrs.getAngle() / (Constants.maxDegreesPerSecondRotate * deltaTime), yawTarget / 360),
-          0.01);
+          0.05);
     } else {
       // If we *are* intentionally turning, keep track of the current angle
       yawTarget = ahrs.getAngle();
