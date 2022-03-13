@@ -49,6 +49,7 @@ public class RobotContainer {
   private final PhotonVision vision = new PhotonVision();
   private final Intake intake = new Intake();
   private final Chambers ballDetection = new Chambers(3);
+  private final Slider slider = new Slider();
 
   // -------------------- Autonomous Commands -------------------- \\
   // insert autonomous commands here
