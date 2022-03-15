@@ -51,7 +51,10 @@ public class DriveTrain extends SubsystemBase {
 
   // "Teenage resistance" for rotation
   // private final double hkP = 0.05, hkI = 0.0015, hkD = 0.00175;
-  private final Gains rotPIDGains = new Gains(Constants.rotPIDGainsP, Constants.rotPIDGainsI, Constants.rotPIDGainsD);
+  private final Gains rotPIDGains = new Gains(
+      Constants.rotPIDGainsP == 0 ? Slider.ROT_PID_P : Constants.rotPIDGainsP,
+      Constants.rotPIDGainsI == 0 ? Slider.ROT_PID_I : Constants.rotPIDGainsI,
+      Constants.rotPIDGainsD == 0 ? Slider.ROT_PID_D : Constants.rotPIDGainsD);
 
   // Rotation velocity control (Z angular velocity control)
   private final Gains ratePIDGains = new Gains(Constants.ratePIDGainsP, Constants.ratePIDGainsI,
@@ -81,8 +84,6 @@ public class DriveTrain extends SubsystemBase {
   PIDController drivePID = strafePIDGains.getPID();
 
   // ------------------------ States ------------------------- \\
-  /** The angle the robot is aiming for. */
-  private static double yawTarget = 0;
   Timer timer = new Timer();
   /** The actual joystick input on each axis. */
   private static double[] joystickInput = { 0, 0, 0 };
@@ -142,6 +143,10 @@ public class DriveTrain extends SubsystemBase {
   public void periodic() {
     // putNavXInfo();
     getBatteryRuntime();
+    rotPID.setPID(
+      Constants.rotPIDGainsP == 0 ? Slider.ROT_PID_P : Constants.rotPIDGainsP,
+      Constants.rotPIDGainsI == 0 ? Slider.ROT_PID_I : Constants.rotPIDGainsI,
+      Constants.rotPIDGainsD == 0 ? Slider.ROT_PID_D : Constants.rotPIDGainsD);
   }
 
   public void setCoast(NeutralMode neutralSetting) {
@@ -156,9 +161,10 @@ public class DriveTrain extends SubsystemBase {
    * re-center the stabilization
    */
   public void reset() {
+    ahrs.enableBoardlevelYawReset(true);
+    ahrs.reset();
     ahrs.zeroYaw();
     ahrs.resetDisplacement();
-    yawTarget = 0;
   }
 
   /**
@@ -232,10 +238,10 @@ public class DriveTrain extends SubsystemBase {
       // teenage resistance (positional lock)
       yPIDCalc = Deadzone.cutOff(
           -resistStrafePID.calculate(ahrs.getDisplacementY() / (Constants.maxMetersPerSecondStrafe * deltaTime), 0),
-          0.05);
+          Constants.cutOffMotorSpeed);
       xPIDCalc = Deadzone.cutOff(
           -resistStrafePID.calculate(ahrs.getDisplacementX() / (Constants.maxMetersPerSecondForwards * deltaTime), 0),
-          0.05);
+          Constants.cutOffMotorSpeed);
     } else {
       // If we *are* intentionally strafing or driving, keep track of the current
       // position
@@ -256,11 +262,11 @@ public class DriveTrain extends SubsystemBase {
       // If we're not intentionally turning, engage teenage resistance (directional
       // lock)
       zPIDCalc = Deadzone.cutOff(
-          -rotPID.calculate(ahrs.getAngle() / (Constants.maxDegreesPerSecondRotate * deltaTime), yawTarget / 360),
-          0.05);
+          -rotPID.calculate(ahrs.getAngle() / (Constants.maxDegreesPerSecondRotate * deltaTime), 0),
+          Constants.cutOffMotorSpeed);
     } else {
       // If we *are* intentionally turning, keep track of the current angle
-      yawTarget = ahrs.getAngle();
+      ahrs.zeroYaw();
       zPIDCalc = z;
       // TODO: Transition back to velocity PIDs
       // zPIDCalc = turnRatePID.calculate(ahrs.getRate(),
@@ -268,7 +274,7 @@ public class DriveTrain extends SubsystemBase {
       // deltaTime);
     }
 
-    mecanumDrive.driveCartesian(yPIDCalc, xPIDCalc, zPIDCalc);
+    mecanumDrive.driveCartesian(yPIDCalc, xPIDCalc, zPIDCalc, ahrs.getYaw() - ahrs.getAngleAdjustment());
   }
 
   public void stop() {

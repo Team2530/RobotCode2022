@@ -119,6 +119,7 @@ public final class Constants {
     // ----------Control (Joystick) Constants----------\\
     public static final double deadzone = 0.1;
     public static final double deadzoneZ = 0.4;
+    public static final double cutOffMotorSpeed = 0.1;
     public static final double DRIVE_RAMP_INTERVAL = 0.05; // Lower is slower
     public static final double INTAKE_RAMP_INTERVAL = 0.1; // Lower is slower
     public static final int stickport1 = 1; // stick port for joystick 1

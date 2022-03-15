@@ -26,17 +26,17 @@ public class Slider extends SubsystemBase {
 
 
   // Slider Values
-  double ROT_PID_P = 0;
-  double ROT_PID_I = 0;
-  double ROT_PID_D = 0;
+  static double ROT_PID_P = 0;
+  static double ROT_PID_I = 0;
+  static double ROT_PID_D = 0;
   /** Creates a new Slider. */
   public Slider() {
     rotPidP = Shuffleboard.getTab("PID Constants").add("Rot P", 0).withWidget(BuiltInWidgets.kNumberSlider)
-    .withProperties(Map.of("min", 0, "max", 20)).getEntry();
+    .withProperties(Map.of("min", 0, "max", 1)).getEntry();
     rotPidI = Shuffleboard.getTab("PID Constants").add("Rot I", 0).withWidget(BuiltInWidgets.kNumberSlider)
-    .withProperties(Map.of("min", 0, "max", 20)).getEntry();
+    .withProperties(Map.of("min", 0, "max", 1)).getEntry();
     rotPidD = Shuffleboard.getTab("PID Constants").add("Rot D", 0).withWidget(BuiltInWidgets.kNumberSlider)
-    .withProperties(Map.of("min", 0, "max", 20)).getEntry();
+    .withProperties(Map.of("min", 0, "max", 1)).getEntry();
   }
   @Override
   public void periodic() {
