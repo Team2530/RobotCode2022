@@ -40,7 +40,6 @@ public class Intake extends SubsystemBase {
   public void periodic() {
     // This method will be called once per scheduler run
     // stallDetection();
-    // removeBall();
     intakeSpeedGradient();
     // ballRejection();
   }
@@ -81,6 +80,7 @@ public class Intake extends SubsystemBase {
     }
   }
 
+  /*
   public void stallDetection() {
     for (int i = 0; i < 2; ++i) {
       if ((intakeMotors[i].getMotorOutputPercent()) < (Math.abs(intakeMotorSpeeds[i] * 60))) {
@@ -89,31 +89,22 @@ public class Intake extends SubsystemBase {
       }
     }
   }
+  */
 
-  public void ballRejection() {
+  // Might cause issues if trying to drive intake motors as this is running
+  // Don't want to put balls out the bottom yet
+  public void ballControl() {
     for (int i = 0; i < Chambers.states.length; i++) {
       if ((DriverStation.getAlliance()) == (DriverStation.Alliance.Red)) {
         if ((Chambers.states[i] == BallState.Blue)) {
           setIntakeMotorSpeed(0, 0.75);
-        } else if ((DriverStation.getAlliance()) == (DriverStation.Alliance.Blue)) {
+        }
+      } else if ((DriverStation.getAlliance()) == (DriverStation.Alliance.Blue)) {
           if ((Chambers.states[i] == BallState.Red)) {
             setIntakeMotorSpeed(0, 0.75);
           }
-        }
       }
-
-      // Might cause issues if trying to drive intake motors as this is running
-      // Don't want to put balls out the bottom yet
-
-      // public void removeBall() {
-      // for (int i = 0; i < 2; ++i) {
-      // if (((DriverStation.getAlliance() == Alliance.Red) ? BallState.Blue :
-      // BallState.Red) == Chambers.states[i]) {
-      // setIntakeMotorSpeed(i, 1.0);
-      // }
-      // }
-      // }
-
     }
   }
+
 }
