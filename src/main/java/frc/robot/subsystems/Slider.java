@@ -44,9 +44,5 @@ public class Slider extends SubsystemBase {
     ROT_PID_P = rotPidP.getDouble(ROT_PID_P);
     ROT_PID_I = rotPidI.getDouble(ROT_PID_I);
     ROT_PID_D = rotPidD.getDouble(ROT_PID_D);
-    System.out.println(ROT_PID_P);
-    System.out.println(ROT_PID_I);
-    System.out.println(ROT_PID_D);
-    
   }
 }

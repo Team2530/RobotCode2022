@@ -143,6 +143,7 @@ public class DriveTrain extends SubsystemBase {
   public void periodic() {
     // putNavXInfo();
     getBatteryRuntime();
+    SmartDashboard.putNumber("rotPIDGraph", rotPID.getPositionError());
     rotPID.setPID(
       Constants.rotPIDGainsP == 0 ? Slider.ROT_PID_P : Constants.rotPIDGainsP,
       Constants.rotPIDGainsI == 0 ? Slider.ROT_PID_I : Constants.rotPIDGainsI,
