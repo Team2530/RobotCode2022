@@ -12,6 +12,7 @@ import com.ctre.phoenix.motorcontrol.can.WPI_TalonSRX;
 
 import frc.robot.Constants;
 import frc.robot.subsystems.Chambers.BallState;
+import frc.robot.subsystems.Chambers;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj.DriverStation;
 import edu.wpi.first.wpilibj.DriverStation.Alliance;
@@ -80,15 +81,30 @@ public class Intake extends SubsystemBase {
     }
   }
 
-  // Might cause issues if trying to drive intake motors as this is running
-  // Don't want to put balls out the bottom yet
-  
-  // public void removeBall() {
-  //   for (int i = 0; i < 2; ++i) {
-  //     if (((DriverStation.getAlliance() == Alliance.Red) ? BallState.Blue : BallState.Red) == Chambers.states[i]) {
-  //       setIntakeMotorSpeed(i, 1.0);
-  //     }
-  //   }
-  // }
-  
+  public void ballRejection() {
+    for (int i = 0; i < Chambers.states.length; i++) {
+      if ((DriverStation.getAlliance()) == (DriverStation.Alliance.Red)) {
+        if ((Chambers.states[i] == BallState.Blue)) {
+          setIntakeMotorSpeed(0, 0.75);
+        } else if ((DriverStation.getAlliance()) == (DriverStation.Alliance.Blue)) {
+          if ((Chambers.states[i] == BallState.Red)) {
+            setIntakeMotorSpeed(0, 0.75);
+          }
+        }
+      }
+
+      // Might cause issues if trying to drive intake motors as this is running
+      // Don't want to put balls out the bottom yet
+
+      // public void removeBall() {
+      // for (int i = 0; i < 2; ++i) {
+      // if (((DriverStation.getAlliance() == Alliance.Red) ? BallState.Blue :
+      // BallState.Red) == Chambers.states[i]) {
+      // setIntakeMotorSpeed(i, 1.0);
+      // }
+      // }
+      // }
+
+    }
+  }
 }

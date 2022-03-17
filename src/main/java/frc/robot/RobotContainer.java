@@ -36,7 +36,7 @@ public class RobotContainer {
   // -------------------- Joysticks and Buttons -------------------- \\
   // Joysticks
   final Joystick stick1 = new Joystick(Constants.stickport1); // Creates a joystick on port 1
-
+  
   // Xbox Controller
   final XboxController xbox = new XboxController(Constants.xboxport);
 
