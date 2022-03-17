@@ -42,6 +42,7 @@ public class Intake extends SubsystemBase {
     // stallDetection();
     // removeBall();
     intakeSpeedGradient();
+    // ballRejection();
   }
 
   /**
@@ -50,7 +51,15 @@ public class Intake extends SubsystemBase {
    * @param speed Any value from -1.0 to 1.0.
    */
   public void setIntakeMotorSpeed(int idx, double speed) {
-    intakeMotorSpeeds[idx] = speed;
+    if ((Chambers.states[1] == BallState.Red) || (Chambers.states[2] == BallState.Red)) {
+      intakeMotorSpeeds[0] = speed;
+      intakeMotorSpeeds[1] = speed;
+    } else if ((Chambers.states[1] == BallState.Blue) || (Chambers.states[2] == BallState.Blue)) {
+      intakeMotorSpeeds[0] = speed;
+      intakeMotorSpeeds[1] = speed;
+    } else {
+      intakeMotorSpeeds[idx] = speed;
+    }
   }
 
   public void intakeSpeedGradient() {
