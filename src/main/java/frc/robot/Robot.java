@@ -27,7 +27,7 @@ import frc.robot.subsystems.Intake;
  */
 public class Robot extends TimedRobot {
   AHRS ahrs = new AHRS();
-  DriveTrain driveTrain = new DriveTrain(ahrs);
+  DriveTrain driveTrain = new DriveTrain();
   Intake intake = new Intake();
   private Command m_autonomousCommand;
   private Command m_teleopCommand;
