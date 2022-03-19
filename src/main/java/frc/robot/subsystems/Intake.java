@@ -12,6 +12,7 @@ import com.ctre.phoenix.motorcontrol.can.WPI_TalonSRX;
 
 import frc.robot.Constants;
 import frc.robot.subsystems.Chambers.BallState;
+import frc.robot.subsystems.Chambers;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj.DriverStation;
 import edu.wpi.first.wpilibj.DriverStation.Alliance;
@@ -39,8 +40,8 @@ public class Intake extends SubsystemBase {
   public void periodic() {
     // This method will be called once per scheduler run
     // stallDetection();
-    // removeBall();
     intakeSpeedGradient();
+    // ballRejection();
   }
 
   /**
@@ -49,7 +50,15 @@ public class Intake extends SubsystemBase {
    * @param speed Any value from -1.0 to 1.0.
    */
   public void setIntakeMotorSpeed(int idx, double speed) {
-    intakeMotorSpeeds[idx] = speed;
+    if ((Chambers.states[1] == BallState.Red) || (Chambers.states[2] == BallState.Red)) {
+      intakeMotorSpeeds[0] = speed;
+      intakeMotorSpeeds[1] = speed;
+    } else if ((Chambers.states[1] == BallState.Blue) || (Chambers.states[2] == BallState.Blue)) {
+      intakeMotorSpeeds[0] = speed;
+      intakeMotorSpeeds[1] = speed;
+    } else {
+      intakeMotorSpeeds[idx] = speed;
+    }
   }
 
   public void intakeSpeedGradient() {
@@ -71,6 +80,7 @@ public class Intake extends SubsystemBase {
     }
   }
 
+  /*
   public void stallDetection() {
     for (int i = 0; i < 2; ++i) {
       if ((intakeMotors[i].getMotorOutputPercent()) < (Math.abs(intakeMotorSpeeds[i] * 60))) {
@@ -79,16 +89,22 @@ public class Intake extends SubsystemBase {
       }
     }
   }
+  */
 
   // Might cause issues if trying to drive intake motors as this is running
   // Don't want to put balls out the bottom yet
-  
-  // public void removeBall() {
-  //   for (int i = 0; i < 2; ++i) {
-  //     if (((DriverStation.getAlliance() == Alliance.Red) ? BallState.Blue : BallState.Red) == Chambers.states[i]) {
-  //       setIntakeMotorSpeed(i, 1.0);
-  //     }
-  //   }
-  // }
-  
+  public void ballControl() {
+    for (int i = 0; i < Chambers.states.length; i++) {
+      if ((DriverStation.getAlliance()) == (DriverStation.Alliance.Red)) {
+        if ((Chambers.states[i] == BallState.Blue)) {
+          setIntakeMotorSpeed(0, 0.75);
+        }
+      } else if ((DriverStation.getAlliance()) == (DriverStation.Alliance.Blue)) {
+          if ((Chambers.states[i] == BallState.Red)) {
+            setIntakeMotorSpeed(0, 0.75);
+          }
+      }
+    }
+  }
+
 }
