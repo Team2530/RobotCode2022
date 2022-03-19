@@ -113,7 +113,7 @@ public class RobotContainer {
     // Climber control (RB for full power and LB for low power)
     new JoystickButton(xbox, 6).whenPressed(() -> m_climber.setClimberSpeed(1.0))
         .whenReleased(() -> m_climber.setClimberSpeed(0));
-    new JoystickButton(xbox, 5).whenPressed(() -> m_climber.setClimberSpeed(0.1))
+    new JoystickButton(xbox, 5).whenPressed(() -> m_climber.setClimberSpeed(0.3))
         .whenReleased(() -> m_climber.setClimberSpeed(0));
 
     // Lower intake up (A button)
