@@ -15,6 +15,7 @@ import com.ctre.phoenix.motorcontrol.can.WPI_TalonSRX;
 
 import frc.robot.Constants;
 import frc.robot.subsystems.Chambers.BallState;
+import frc.robot.subsystems.Chambers;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj.DriverStation;
 import edu.wpi.first.wpilibj.DriverStation.Alliance;
@@ -26,25 +27,25 @@ import edu.wpi.first.wpilibj.Timer;
  * This is Team 2530's Intake class.
  */
 public class Intake extends SubsystemBase {
-  private static WPI_TalonSRX[] intakeMotors = {
-      new WPI_TalonSRX(Constants.LOWER_INTAKE_PORT),
-      new WPI_TalonSRX(Constants.UPPER_INTAKE_PORT)
+  private static WPI_TalonFX[] intakeMotors = {
+      new WPI_TalonFX(Constants.LOWER_INTAKE_PORT),
+      new WPI_TalonFX(Constants.UPPER_INTAKE_PORT)
   };
   /** The target expected motor speeds. */
   private static double[] intakeMotorSpeeds = { 0, 0 };
 
   /** Creates a new {@link Intake}. */
   public Intake() {
-
+    intakeMotorSpeeds[0] = 0;
+    intakeMotorSpeeds[1] = 0;
   }
 
   @Override
   public void periodic() {
     // This method will be called once per scheduler run
-    // lowerStallDetection();
     // stallDetection();
-    removeBall();
     intakeSpeedGradient();
+    // ballRejection();
   }
 
   /**
@@ -53,7 +54,15 @@ public class Intake extends SubsystemBase {
    * @param speed Any value from -1.0 to 1.0.
    */
   public void setIntakeMotorSpeed(int idx, double speed) {
-    intakeMotorSpeeds[idx] = speed;
+    if ((Chambers.states[1] == BallState.Red) || (Chambers.states[2] == BallState.Red)) {
+      intakeMotorSpeeds[0] = speed;
+      intakeMotorSpeeds[1] = speed;
+    } else if ((Chambers.states[1] == BallState.Blue) || (Chambers.states[2] == BallState.Blue)) {
+      intakeMotorSpeeds[0] = speed;
+      intakeMotorSpeeds[1] = speed;
+    } else {
+      intakeMotorSpeeds[idx] = speed;
+    }
   }
 
   public void intakeSpeedGradient() {
@@ -63,11 +72,11 @@ public class Intake extends SubsystemBase {
        * Calculate difference between target expected motor speed and current expected
        * motor speed
        */
-      if (Math.abs(intakeMotorSpeeds[motor] - intakeMotors[motor].get()) > 0.1) {
+      if (Math.abs(intakeMotorSpeeds[motor] - intakeMotors[motor].get()) > Constants.INTAKE_RAMP_INTERVAL) {
         // If we're not there yet
         intakeMotors[motor].set(
             intakeMotors[motor].get()
-                + 0.1 * Math.signum(intakeMotorSpeeds[motor] - intakeMotors[motor].get()));
+                + Constants.INTAKE_RAMP_INTERVAL * Math.signum(intakeMotorSpeeds[motor] - intakeMotors[motor].get()));
       } else {
         // If our patience has paid off
         intakeMotors[motor].set(intakeMotorSpeeds[motor]);
@@ -75,63 +84,30 @@ public class Intake extends SubsystemBase {
     }
   }
 
-
-
-  public void ImIndecisiveDumperGoBrrr() {
-    System.out.println("Get Decisive"); 
-  }
-
-  public void DumperTopGoBrrr(int speed) {
-    intakeMotors[1].set(speed);
-  }
-  public void DumperBothGoBrrr(int speed) {
-    intakeMotors[0].set(speed);
-    intakeMotors[1].set(speed);
-  }
-
-  public void BothDumberGoBrrrr(double speed) {
-    SequentialCommandGroup commands = new SequentialCommandGroup(
-      new InstantCommand(() -> DumperBothGoBrrr(1)),
-      new WaitCommand(3));
-    commands.schedule();
-  }
-
-  public void TopDumberGoBrrrr(double speed) {
-    SequentialCommandGroup commands = new SequentialCommandGroup(
-      new InstantCommand(() -> DumperTopGoBrrr(1)),
-      new WaitCommand(3), 
-      new InstantCommand(() -> DumperTopGoBrrr(0)));
-    commands.schedule();
-  }
-
-  // These might need a sign change/absolute value to account for motors moving
-  // opposite directions
-  // public void stallDetection() {
-  // for (int i = 0; i < 2; ++i) {
-  // if (intakeMotors[i].getMotorOutputPercent() < (intakeMotorSpeeds[i] * 60)) {
-  // setIntakeMotorSpeed(i, 0);
-  // System.out.println("The lower intake has stopped due to a stalling issue.");
-  // }
-  // }
-  // }
-
-  // Needs a stop condition
-  // Also possibly gradient speed from current to backwards?
-  // Might cause issues if trying to drive intake motors as this is running
-  public void removeBall() {
+  /*
+  public void stallDetection() {
     for (int i = 0; i < 2; ++i) {
-      if (((DriverStation.getAlliance() == Alliance.Red) ? BallState.Blue : BallState.Red) == Chambers.states[i]) {
-        setIntakeMotorSpeed(i, 1.0);
+      if ((intakeMotors[i].getMotorOutputPercent()) < (Math.abs(intakeMotorSpeeds[i] * 60))) {
+        setIntakeMotorSpeed(i, 0);
+        System.out.println("The lower intake has stopped due to a stalling issue.");
       }
     }
   }
+  */
 
-  public void MoveItMoveIt() {
-    if (Chambers.states[1] == BallState.None && Chambers.states[1] != BallState.None) {
-        SequentialCommandGroup commands = new SequentialCommandGroup(
-          new InstantCommand(() -> intakeMotors[0].set(3)),
-          new WaitCommand(3));
-        commands.schedule();
+  // Might cause issues if trying to drive intake motors as this is running
+  // Don't want to put balls out the bottom yet
+  public void ballControl() {
+    for (int i = 0; i < Chambers.states.length; i++) {
+      if ((DriverStation.getAlliance()) == (DriverStation.Alliance.Red)) {
+        if ((Chambers.states[i] == BallState.Blue)) {
+          setIntakeMotorSpeed(0, 0.75);
+        }
+      } else if ((DriverStation.getAlliance()) == (DriverStation.Alliance.Blue)) {
+          if ((Chambers.states[i] == BallState.Red)) {
+            setIntakeMotorSpeed(0, 0.75);
+          }
+      }
     }
   }
 
