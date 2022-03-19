@@ -12,6 +12,7 @@ import edu.wpi.first.wpilibj.Joystick;
 import edu.wpi.first.wpilibj.XboxController;
 import edu.wpi.first.math.trajectory.Trajectory;
 import edu.wpi.first.wpilibj2.command.Command;
+import edu.wpi.first.wpilibj2.command.InstantCommand;
 import edu.wpi.first.wpilibj2.command.ParallelCommandGroup;
 import edu.wpi.first.wpilibj2.command.RamseteCommand;
 import edu.wpi.first.wpilibj2.command.button.JoystickButton;
@@ -35,7 +36,7 @@ public class RobotContainer {
   private final USBCamera usbCamera = new USBCamera();
   private final Intake intake = new Intake();
   private final Chambers ballDetection = new Chambers(3);
-  private final LimeLight m_limeLight = new LimeLight();
+  private final Shooter shooter = new Shooter();
 
 
   // -------------------- Joysticks and Buttons -------------------- \\
@@ -80,8 +81,27 @@ public class RobotContainer {
     new JoystickButton(stick1, 11).whenPressed(() -> intake.setIntakeMotorSpeed(0, 0.85))
         .whenReleased(() -> intake.setIntakeMotorSpeed(0, 0));
 
-    new JoystickButton(stick1, 12).whenPressed(() -> intake.setIntakeMotorSpeed(1, 0.85))
-        .whenReleased(() -> intake.setIntakeMotorSpeed(1, 0));
+    // Upper intake up and also shooter (X button)
+    new JoystickButton(xbox, 3).whenPressed(
+      new ParallelCommandGroup(
+        new InstantCommand(() -> {
+          intake.setIntakeMotorSpeed(1, -0.75);
+        }),
+        new InstantCommand(() -> {
+          shooter.setShooterSpeed(1);
+        })
+      )
+    )
+      .whenReleased(
+        new ParallelCommandGroup(
+          new InstantCommand(() -> {
+            intake.setIntakeMotorSpeed(1, 0);
+          }),
+          new InstantCommand(() -> {
+            shooter.setShooterSpeed(0);
+          })
+        )
+      );
 
     // new JoystickButton(stick1, 1).whenPressed(() ->
     // m_driveTrain.driveStraight(0.5))
