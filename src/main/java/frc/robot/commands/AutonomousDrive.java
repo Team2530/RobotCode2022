@@ -14,7 +14,7 @@ import frc.robot.subsystems.Intake;
 public class AutonomousDrive extends CommandBase {
   /** Creates a new AutonomousDrive. */
   AHRS ahrs = new AHRS();
-  DriveTrain driveTrain = new DriveTrain(ahrs);
+  DriveTrain driveTrain = new DriveTrain();
   Timer timer = new Timer();
   int direction = 0;
   double distance = 0;
