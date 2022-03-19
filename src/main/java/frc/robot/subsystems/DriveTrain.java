@@ -190,14 +190,39 @@ public class DriveTrain extends SubsystemBase {
     if (stick.getRawButton(Constants.driveStraightButton) == true) {
       z = 0;
     }
-    SmartDashboard.putNumber("twist", Deadzone.deadZone(-z,
-        Constants.deadzoneZ));
-    mecanumDrive.driveCartesian(
-        -y, -x, -z, ahrs.getYaw()); // -rot_pid.calculate(ahrs.getAngle() / 360.0, yawTarget / 360) * 0.25);
-  }
-
+    if (stick.getPOV() != -1) {
+      double[] driveStraight = actuallyDriveStraighter(x, y);
+      x = driveStraight[0];
+      y = driveStraight[1];
+      z = 0;
+    }
+      SmartDashboard.putNumber("twist", Deadzone.deadZone(-z,
+          Constants.deadzoneZ));
+      mecanumDrive.driveCartesian(
+          -y, -x, -z, ahrs.getYaw()); // -rot_pid.calculate(ahrs.getAngle() / 360.0, yawTarget / 360) * 0.25);
+    }
+  
   public void stop() {
     mecanumDrive.stopMotor();
+  }
+
+  public double[] actuallyDriveStraighter(double x, double y) {
+    double[] result = {x, y};
+    int POV = stick.getPOV();
+    if (POV == 0) {
+      result[0] = 0;
+      result[1] = 0.2;
+    } else if (POV == 90) {
+      result[0] = 0.2;
+      result[1] = 0;
+    } else if (POV == 180) {
+      result[0] = 0;
+      result[1] = -0.2;
+    } else if (POV == 270) {
+      result[0] = -0.2;
+      result[1] = 0;
+    }
+    return result;
   }
 
   // public void putNavXInfo() {
