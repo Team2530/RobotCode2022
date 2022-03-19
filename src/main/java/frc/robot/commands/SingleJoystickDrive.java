@@ -7,6 +7,13 @@
 
 package frc.robot.commands;
 
+import edu.wpi.first.math.controller.PIDController;
+import edu.wpi.first.math.util.Units;
+import edu.wpi.first.wpilibj.XboxController;
+import edu.wpi.first.wpilibj2.command.SubsystemBase;
+
+import org.photonvision.PhotonCamera;
+
 import edu.wpi.first.wpilibj.Joystick;
 import edu.wpi.first.wpilibj.Timer;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
@@ -22,6 +29,7 @@ public class SingleJoystickDrive extends CommandBase {
    */
   DriveTrain m_drivetrain;
   Joystick stick;
+  XboxController xboxController = new XboxController(0);
   private double yawTarget = 0.0;
 
   private final double yawRate = 310.0;
@@ -43,7 +51,27 @@ public class SingleJoystickDrive extends CommandBase {
   // Called every time the scheduler runs while the command is scheduled.
   @Override
   public void execute() {
-    // if' (stick.getMagnitude() < 0.2) return;
+    if (xboxController.getYButton()) {
+      double forwardSpeed;
+      double rotationSpeed;
+      PhotonCamera BSideCamera = new PhotonCamera("Breaker");
+
+      //TODO: Make this the other PiD
+      PIDController forwardController = new PIDController(0, 0, 0);
+      PIDController turnController = new PIDController(0, 0, 0);
+
+      var result = BSideCamera.getLatestResult();
+
+      if (result.hasTargets()) {
+
+          rotationSpeed = -turnController.calculate(result.getBestTarget().getYaw(), 0);
+      } else {
+          rotationSpeed = 0;
+      }
+
+      m_drivetrain.mecanumDrive.driveCartesian(0, 0, rotationSpeed);
+    }
+    else  {// if' (stick.getMagnitude() < 0.2) return;
     double m = RobotContainer.getBoostMode() ? 1.0 : 0.5;
     double s = RobotContainer.getSlowMode() ? 0.5 : 1;
     // m *= (stick.getRawAxis(3) + 1.0) / 2.0;
@@ -57,6 +85,7 @@ public class SingleJoystickDrive extends CommandBase {
         Deadzone.deadZone(stick.getRawAxis(0), Constants.deadzone) * m * s,
         Deadzone.deadZone(stick.getRawAxis(2), Constants.deadzoneZ) * m * s);
     // m_drivetrain.singleJoystickDrive(stick.getX() * m, 0, 0);
+  }
   }
 
   // Called once the command ends or is interrupted.
