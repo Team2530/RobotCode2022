@@ -45,7 +45,7 @@ public final class Constants {
     public static final int CLIMBER_MOTOR_PORT_R = 20;
 
     // Shooter motor
-    public static final int SHOOTER_MOTOR_PORT = 60;
+    public static final int SHOOTER_MOTOR_PORT = 40;
 
     // ----------Sensor Constants-----------\\
     public static final int ENCODER_TICKS_PER_REVOLUTION = 2048;
