@@ -31,7 +31,7 @@ public final class Constants {
     public static final int MOTOR_BL_DRIVE_PORT = 3;
     public static final int MOTOR_BR_DRIVE_PORT = 4;
 
-    public enum DriveMotors {
+     public enum DriveMotors {
         FL, FR, BL, BR;
     }
 
@@ -95,7 +95,7 @@ public final class Constants {
     public static final double maxVelocityMetersPerSecond = 2.7;
     // ! TODO: This needs to be set
     public static final double maxAccelerationMetersPerSecondSq = 6.47;
-    public static final double brownOutVoltage = 8.00;
+    public static final double autoVoltageConstraint = 9.5;
 
     // ----------Field Constants----------\\
     // The gravity on Earth (should be changed if we compete on the Moon)
@@ -105,11 +105,7 @@ public final class Constants {
 
     // ----------Control (Joystick) Constants----------\\
     public static final double deadzone = 0.1;
-    public static final double deadzoneZ = 0.4;
-    public static final double DRIVE_RAMP_INTERVAL = 0.05; // Lower is slower
-    public static final double INTAKE_RAMP_INTERVAL = 0.1; // Lower is slower
-    public static final int stickport1 = 1; // stick port for joystick 1
+    public static final int stickport1 = 0; // stick port for joystick 1
+    public static final int stickport2 = 1; // stick port for joystick 2 (tankdrive and things like that)
     public static final int xboxport = 0; // xbox controller port
-    public static final int velocityRetentionButton = 3; // velocity retention button
-    public static final int driveStraightButton = 5; // button to disable rotation
-    }
+}

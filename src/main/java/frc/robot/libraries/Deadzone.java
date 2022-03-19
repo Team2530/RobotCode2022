@@ -12,7 +12,6 @@ public class Deadzone {
     }
 
     // Fixed, previous version didnt work with negative values, stupid me
-    // there is literally nothing wrong with this code, it's a you problem
     public static double deadZone(double value, double deadzone) {
         if (Math.abs(value) > deadzone)
             return Math.signum(value) * invlerp(deadzone, 1.0, Math.abs(value));

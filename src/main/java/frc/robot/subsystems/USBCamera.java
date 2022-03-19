@@ -10,7 +10,7 @@ public class USBCamera extends CommandBase {
   /** Creates a new USBCamera. */
   public USBCamera() {
     // Use addRequirements() here to declare subsystem dependencies.
-   CameraServer.startAutomaticCapture(0);
+   CameraServer.startAutomaticCapture();
 
   }
 
