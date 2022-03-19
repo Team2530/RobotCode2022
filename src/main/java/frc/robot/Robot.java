@@ -7,6 +7,8 @@
 
 package frc.robot;
 
+import com.kauailabs.navx.frc.AHRS;
+
 import edu.wpi.first.wpilibj.TimedRobot;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.CommandScheduler;
@@ -24,7 +26,8 @@ import frc.robot.subsystems.Intake;
  * project.
  */
 public class Robot extends TimedRobot {
-  DriveTrain driveTrain = new DriveTrain();
+  AHRS ahrs = new AHRS();
+  DriveTrain driveTrain = new DriveTrain(ahrs);
   Intake intake = new Intake();
   private Command m_autonomousCommand;
   private Command m_teleopCommand;

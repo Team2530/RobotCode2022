@@ -16,7 +16,8 @@ import com.kauailabs.navx.frc.AHRS;
 public class Autonomous extends CommandBase {
   
   /** Creates a new Autonomous. */
-  DriveTrain driveTrain = new DriveTrain();
+  AHRS ahrs = new AHRS();
+  DriveTrain driveTrain = new DriveTrain(ahrs);
   Intake intake = new Intake();
   Timer timer = new Timer();
 
@@ -38,7 +39,7 @@ public class Autonomous extends CommandBase {
       // new InstantCommand(() -> intake.setIntakeMotorSpeed(1, 0.85)),
       new WaitCommand(3),
       // new InstantCommand(() -> intake.setIntakeMotorSpeed(1, 0)),
-      new AutonomousDrive(driveTrain, 3, 1) 
+      new AutonomousDrive(driveTrain, 3, 1, ahrs) 
     );
     System.out.println("Starting Autonomous Commands...");
     System.out.println("Please don't run into something!");

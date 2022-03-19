@@ -13,8 +13,8 @@ import frc.robot.subsystems.Intake;
 
 public class AutonomousDrive extends CommandBase {
   /** Creates a new AutonomousDrive. */
-  DriveTrain driveTrain = new DriveTrain();
   AHRS ahrs = new AHRS();
+  DriveTrain driveTrain = new DriveTrain(ahrs);
   Timer timer = new Timer();
   int direction = 0;
   double distance = 0;
@@ -28,10 +28,11 @@ public class AutonomousDrive extends CommandBase {
   /**
    * 1 is forward, 2 is back, 3 is right, 4 is left
    */
-  public AutonomousDrive(DriveTrain driveTrain, double distance, int direction) {
+  public AutonomousDrive(DriveTrain driveTrain, double distance, int direction, AHRS ahrs) {
     this.driveTrain = driveTrain;
     this.direction = direction;
     this.distance = distance;
+    this.ahrs = ahrs;
     currentVelocity = 0.0;
     distanceTraveled = 0.0;
   }

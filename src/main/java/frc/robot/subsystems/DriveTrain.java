@@ -120,11 +120,11 @@ public class DriveTrain extends SubsystemBase {
     // mecanumDrive.driveCartesian(y, -x, -z);
     mecanumDrive.driveCartesian(
         Deadzone.deadZone(y,
-            deadzone),
-        Deadzone.deadZone(x,
-            deadzone),
-        Deadzone.deadZone(-z,
-            deadzone)); // -rot_pid.calculate(ahrs.getAngle() / 360.0, yawTarget / 360) * 0.25);
+            Constants.deadzone),
+        Deadzone.deadZone(-x,
+            Constants.deadzone),
+        Deadzone.deadZone(z,
+            Constants.deadzone)); // -rot_pid.calculate(ahrs.getAngle() / 360.0, yawTarget / 360) * 0.25);
   }
 
   public void stop() {
