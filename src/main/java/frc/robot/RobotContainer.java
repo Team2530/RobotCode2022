@@ -127,7 +127,7 @@ public class RobotContainer {
           intake.setIntakeMotorSpeed(1, -0.75);
         }),
         new InstantCommand(() -> {
-          shooter.setShooterSpeed(1);
+          shooter.setShooterSpeed(0.5);
         })
       )
     )
