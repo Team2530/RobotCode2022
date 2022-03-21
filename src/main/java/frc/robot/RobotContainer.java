@@ -70,6 +70,8 @@ public class RobotContainer {
     // Climber control
     new JoystickButton(stick1, 4).whenPressed(() -> m_climber.setClimberSpeed(0.5))
         .whenReleased(() -> m_climber.setClimberSpeed(0));
+    new JoystickButton(xbox, 5).whenPressed(() -> m_climber.setClimberSpeed(0.3))
+        .whenReleased(() -> m_climber.setClimberSpeed(0));
 
     /* Toggles the LimeLight camera mode (aiming to drive cam)
     new JoystickButton(stick1, 5).whenPressed(() -> m_limeLight.toggleCamMode());
