@@ -55,37 +55,37 @@ public class SingleJoystickDrive extends CommandBase {
       double forwardSpeed;
       double rotationSpeed;
       PhotonCamera BSideCamera = new PhotonCamera("Breaker");
+      BSideCamera.setPipelineIndex(2);
 
-      //TODO: Make this the other PiD
+      // TODO: Make this the other PiD
       PIDController forwardController = new PIDController(0, 0, 0);
-      PIDController turnController = new PIDController(0, 0, 0);
 
       var result = BSideCamera.getLatestResult();
 
       if (result.hasTargets()) {
-
-          rotationSpeed = -turnController.calculate(result.getBestTarget().getYaw(), 0);
+        System.out.print("Has Ball(s)");
+        rotationSpeed = -result.getBestTarget().getYaw() / 50;
       } else {
-          rotationSpeed = 0;
+        System.out.print("No Ball(s)");
+        rotationSpeed = 0;
       }
 
       m_drivetrain.mecanumDrive.driveCartesian(0, 0, rotationSpeed);
+    } else {// if' (stick.getMagnitude() < 0.2) return;
+      double m = RobotContainer.getBoostMode() ? 1.0 : 0.5;
+      double s = RobotContainer.getSlowMode() ? 0.5 : 1;
+      // m *= (stick.getRawAxis(3) + 1.0) / 2.0;
+
+      double deltaTime = Timer.getFPGATimestamp() - lastExecuted;
+      lastExecuted = Timer.getFPGATimestamp();
+
+      // double turn = stick.getRawAxis(3) - stick.getRawAxis(2);
+      yawTarget += stick.getZ() * yawRate * deltaTime;
+      m_drivetrain.singleJoystickDrive(Deadzone.deadZone(stick.getRawAxis(1), Constants.deadzone) * m * s,
+          Deadzone.deadZone(stick.getRawAxis(0), Constants.deadzone) * m * s,
+          Deadzone.deadZone(stick.getRawAxis(2), Constants.deadzoneZ) * m * s);
+      // m_drivetrain.singleJoystickDrive(stick.getX() * m, 0, 0);
     }
-    else  {// if' (stick.getMagnitude() < 0.2) return;
-    double m = RobotContainer.getBoostMode() ? 1.0 : 0.5;
-    double s = RobotContainer.getSlowMode() ? 0.5 : 1;
-    // m *= (stick.getRawAxis(3) + 1.0) / 2.0;
-
-    double deltaTime = Timer.getFPGATimestamp() - lastExecuted;
-    lastExecuted = Timer.getFPGATimestamp();
-
-    // double turn = stick.getRawAxis(3) - stick.getRawAxis(2);
-    yawTarget += stick.getZ() * yawRate * deltaTime;
-    m_drivetrain.singleJoystickDrive(Deadzone.deadZone(stick.getRawAxis(1), Constants.deadzone) * m * s,
-        Deadzone.deadZone(stick.getRawAxis(0), Constants.deadzone) * m * s,
-        Deadzone.deadZone(stick.getRawAxis(2), Constants.deadzoneZ) * m * s);
-    // m_drivetrain.singleJoystickDrive(stick.getX() * m, 0, 0);
-  }
   }
 
   // Called once the command ends or is interrupted.
