@@ -11,6 +11,7 @@ import com.ctre.phoenix.motorcontrol.can.WPI_TalonFX;
 import com.ctre.phoenix.motorcontrol.can.WPI_TalonSRX;
 
 import frc.robot.Constants;
+import frc.robot.RobotContainer;
 import frc.robot.subsystems.Chambers.BallState;
 import frc.robot.subsystems.Chambers;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
@@ -94,17 +95,18 @@ public class Intake extends SubsystemBase {
   // Might cause issues if trying to drive intake motors as this is running
   // Don't want to put balls out the bottom yet
   public void ballControl() {
-    for (int i = 0; i < Chambers.states.length; i++) {
-      if ((DriverStation.getAlliance()) == (DriverStation.Alliance.Red)) {
-        if ((Chambers.states[i] == BallState.Blue)) {
-          setIntakeMotorSpeed(0, 0.75);
-        }
-      } else if ((DriverStation.getAlliance()) == (DriverStation.Alliance.Blue)) {
-          if ((Chambers.states[i] == BallState.Red)) {
+    if (!RobotContainer.getManualModeOp()) {
+      for (int i = 0; i < Chambers.states.length; i++) {
+        if ((DriverStation.getAlliance()) == (DriverStation.Alliance.Red)) {
+          if ((Chambers.states[i] == BallState.Blue)) {
             setIntakeMotorSpeed(0, 0.75);
           }
+        } else if ((DriverStation.getAlliance()) == (DriverStation.Alliance.Blue)) {
+            if ((Chambers.states[i] == BallState.Red)) {
+              setIntakeMotorSpeed(0, 0.75);
+            }
+        }
       }
     }
   }
-
 }
