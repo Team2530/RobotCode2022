@@ -17,7 +17,7 @@ public class Autonomous extends CommandBase {
   
   /** Creates a new Autonomous. */
   AHRS ahrs = new AHRS();
-  DriveTrain driveTrain = new DriveTrain(ahrs);
+  DriveTrain driveTrain;
   Intake intake = new Intake();
   Timer timer = new Timer();
   public Autonomous(DriveTrain driveTrain, Intake intake) {

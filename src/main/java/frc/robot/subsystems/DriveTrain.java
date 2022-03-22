@@ -44,7 +44,7 @@ public class DriveTrain extends SubsystemBase {
   WPI_TalonFX motorFR = new WPI_TalonFX(Constants.MOTOR_FR_DRIVE_PORT);
   WPI_TalonFX motorBL = new WPI_TalonFX(Constants.MOTOR_BL_DRIVE_PORT);
   WPI_TalonFX motorBR = new WPI_TalonFX(Constants.MOTOR_BR_DRIVE_PORT);
-  Joystick stick = new Joystick(Constants.stickport1);
+  Joystick stick;
   XboxController xbox = new XboxController(Constants.xboxport);
   AHRS ahrs;
   Timer timer = new Timer();
@@ -93,7 +93,7 @@ public class DriveTrain extends SubsystemBase {
   /**
    * Creates a new {@link DriveTrain}.
    */
-  public DriveTrain(AHRS ahrs) {
+  public DriveTrain(AHRS ahrs, Joystick stick) {
     // motorFL.configFactoryDefault();
     // motorFR.configFactoryDefault();
     // motorBL.configFactoryDefault();
@@ -116,6 +116,7 @@ public class DriveTrain extends SubsystemBase {
     mecanumDrive.setSafetyEnabled(false);
 
     this.ahrs = ahrs;
+    this.stick = stick;
   }
 
   @Override

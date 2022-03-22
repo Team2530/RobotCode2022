@@ -14,8 +14,8 @@ import frc.robot.subsystems.Intake;
 public class AutonomousDrive extends CommandBase {
   /** Creates a new AutonomousDrive. */
   AHRS ahrs = new AHRS();
-  DriveTrain driveTrain = new DriveTrain(ahrs);
   Timer timer = new Timer();
+  DriveTrain driveTrain;
   int direction = 0;
   double distance = 0;
   double currentVelocity = 0.0;
@@ -45,16 +45,16 @@ public class AutonomousDrive extends CommandBase {
     ahrs.reset();
     distanceTraveled = 0;
     if (direction == 1) {
-      driveTrain.singleJoystickDrive(0.0, 0.2, 0.0);
+      driveTrain.actuallyDrive(0.0, 0.2, 0.0);
     }
     if (direction == 2) {
-      driveTrain.singleJoystickDrive(0.0, -0.2, 0.0);
+      driveTrain.actuallyDrive(0.0, -0.2, 0.0);
     }
     if (direction == 3) {
-      driveTrain.singleJoystickDrive(0.2, 0.0, 0.0);
+      driveTrain.actuallyDrive(0.2, 0.0, 0.0);
     }
     if (direction == 4) {
-      driveTrain.singleJoystickDrive(-0.2, 0.0, 0.0);
+      driveTrain.actuallyDrive(-0.2, 0.0, 0.0);
     }
     timer.reset();
     timer.start();

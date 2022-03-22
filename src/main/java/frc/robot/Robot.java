@@ -28,7 +28,6 @@ import frc.robot.subsystems.Intake;
  */
 public class Robot extends TimedRobot {
   AHRS ahrs = new AHRS();
-  DriveTrain driveTrain = new DriveTrain(ahrs);
   Intake intake = new Intake();
   private Command m_autonomousCommand;
   private Command m_teleopCommand;
@@ -45,7 +44,6 @@ public class Robot extends TimedRobot {
     // and put our
     // autonomous chooser on the dashboard.
     m_robotContainer = new RobotContainer();
-    m_autonomousCommand = new Autonomous(driveTrain, intake);
   }
 
   /**
@@ -89,7 +87,7 @@ public class Robot extends TimedRobot {
   @Override
   public void autonomousInit() {
     // m_autonomousCommand = m_robotContainer.getAutonomousCommand(trajectory);
-    m_autonomousCommand = m_robotContainer.getAutonomousCommand(driveTrain);
+    m_autonomousCommand = m_robotContainer.getAutonomousCommand();
     // schedule the autonomous command (example)
     if (m_autonomousCommand != null) m_autonomousCommand.schedule();
    System.out.println("Autonomous Time!");
