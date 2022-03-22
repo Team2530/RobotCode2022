@@ -79,8 +79,30 @@ public class RobotContainer {
     new JoystickButton(stick1, 3).whenPressed(() -> m_limeLight.toggleLight());
     */
 
-    // Intake control
-    new JoystickButton(stick1, 11).whenPressed(() -> intake.setIntakeMotorSpeed(0, 0.85))
+    // Upper intake up and also shooter (X button)
+    new JoystickButton(xbox, 3).whenPressed(
+      new ParallelCommandGroup(
+        new InstantCommand(() -> {
+          intake.setIntakeMotorSpeed(1, -0.75);
+        }),
+        new InstantCommand(() -> {
+          shooter.setShooterSpeed(0.5);
+        })
+      )
+    )
+      .whenReleased(
+        new ParallelCommandGroup(
+          new InstantCommand(() -> {
+            intake.setIntakeMotorSpeed(1, 0);
+          }),
+          new InstantCommand(() -> {
+            shooter.setShooterSpeed(0);
+          })
+        )
+      );
+
+    // Lower intake down (B button)
+    new JoystickButton(xbox, 2).whenPressed(() -> intake.setIntakeMotorSpeed(0, 0.75))
         .whenReleased(() -> intake.setIntakeMotorSpeed(0, 0));
 
     new JoystickButton(stick1, 12).whenPressed(() -> intake.setIntakeMotorSpeed(1, 0.85))
