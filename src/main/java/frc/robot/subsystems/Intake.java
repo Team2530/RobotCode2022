@@ -80,16 +80,33 @@ public class Intake extends SubsystemBase {
     }
   }
 
-  /*
-  public void stallDetection() {
-    for (int i = 0; i < 2; ++i) {
-      if ((intakeMotors[i].getMotorOutputPercent()) < (Math.abs(intakeMotorSpeeds[i] * 60))) {
-        setIntakeMotorSpeed(i, 0);
-        System.out.println("The lower intake has stopped due to a stalling issue.");
+  public void AutoChamboTransporto() {
+    if ((DriverStation.getAlliance()) == (DriverStation.Alliance.Red)) {
+      if ((Chambers.states[0] == BallState.Red) && (Chambers.states[2 - 3] == BallState.None)) {
+        setIntakeMotorSpeed(0, -0.75);
+        setIntakeMotorSpeed(0, -0.75);
       }
     }
+    if ((DriverStation.getAlliance()) == (DriverStation.Alliance.Blue)) {
+      if ((Chambers.states[0] == BallState.Blue) && (Chambers.states[2 - 3] == BallState.None)) {
+        setIntakeMotorSpeed(0, -0.75);
+        setIntakeMotorSpeed(0, -0.75);
+      }
+    }
+
   }
-  */
+
+  /*
+   * public void stallDetection() {
+   * for (int i = 0; i < 2; ++i) {
+   * if ((intakeMotors[i].getMotorOutputPercent()) <
+   * (Math.abs(intakeMotorSpeeds[i] * 60))) {
+   * setIntakeMotorSpeed(i, 0);
+   * System.out.println("The lower intake has stopped due to a stalling issue.");
+   * }
+   * }
+   * }
+   */
 
   // Might cause issues if trying to drive intake motors as this is running
   // Don't want to put balls out the bottom yet
@@ -100,9 +117,9 @@ public class Intake extends SubsystemBase {
           setIntakeMotorSpeed(0, 0.75);
         }
       } else if ((DriverStation.getAlliance()) == (DriverStation.Alliance.Blue)) {
-          if ((Chambers.states[i] == BallState.Red)) {
-            setIntakeMotorSpeed(0, 0.75);
-          }
+        if ((Chambers.states[i] == BallState.Red)) {
+          setIntakeMotorSpeed(0, 0.75);
+        }
       }
     }
   }
