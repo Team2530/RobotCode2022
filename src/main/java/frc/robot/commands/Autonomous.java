@@ -20,7 +20,6 @@ public class Autonomous extends CommandBase {
   DriveTrain driveTrain = new DriveTrain();
   Intake intake = new Intake();
   Timer timer = new Timer();
-
   public Autonomous(DriveTrain driveTrain, Intake intake) {
     // Use addRequirements() here to declare subsystem dependencies.
     this.driveTrain = driveTrain;
@@ -39,7 +38,10 @@ public class Autonomous extends CommandBase {
       // new InstantCommand(() -> intake.setIntakeMotorSpeed(1, 0.85)),
       new WaitCommand(3),
       // new InstantCommand(() -> intake.setIntakeMotorSpeed(1, 0)),
-      new AutonomousDrive(driveTrain, 3, 1, ahrs) 
+      new AutonomousDrive(driveTrain, 2, 1, ahrs),
+      new WaitCommand(.5),
+      new AutonomousDrive(driveTrain, 2, 3, ahrs)
+
     );
     System.out.println("Starting Autonomous Commands...");
     System.out.println("Please don't run into something!");
