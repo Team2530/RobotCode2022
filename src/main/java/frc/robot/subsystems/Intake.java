@@ -41,7 +41,6 @@ public class Intake extends SubsystemBase {
     // This method will be called once per scheduler run
     // stallDetection();
     intakeSpeedGradient();
-    // ballRejection();
   }
 
   /**
@@ -50,13 +49,17 @@ public class Intake extends SubsystemBase {
    * @param speed Any value from -1.0 to 1.0.
    */
   public void setIntakeMotorSpeed(int idx, double speed) {
-    if ((Chambers.states[1] == BallState.Red) || (Chambers.states[2] == BallState.Red)) {
+    if (((Chambers.states[1] == BallState.Red) || (Chambers.states[2] == BallState.Red))
+        || (Chambers.states[1] == BallState.Blue) || (Chambers.states[2] == BallState.Blue)) {
+      // Chamber transfer
       intakeMotorSpeeds[0] = speed;
       intakeMotorSpeeds[1] = speed;
-    } else if ((Chambers.states[1] == BallState.Blue) || (Chambers.states[2] == BallState.Blue)) {
+    } else if (((DriverStation.getAlliance()) == (DriverStation.Alliance.Red) && Chambers.states[0] == BallState.Blue)
+        || (DriverStation.getAlliance()) == (DriverStation.Alliance.Blue) && Chambers.states[0] == BallState.Red) {
+      // Ball rejection
       intakeMotorSpeeds[0] = speed;
-      intakeMotorSpeeds[1] = speed;
     } else {
+      // Standard intake behavior
       intakeMotorSpeeds[idx] = speed;
     }
   }
@@ -81,30 +84,15 @@ public class Intake extends SubsystemBase {
   }
 
   /*
-  public void stallDetection() {
-    for (int i = 0; i < 2; ++i) {
-      if ((intakeMotors[i].getMotorOutputPercent()) < (Math.abs(intakeMotorSpeeds[i] * 60))) {
-        setIntakeMotorSpeed(i, 0);
-        System.out.println("The lower intake has stopped due to a stalling issue.");
-      }
-    }
-  }
-  */
-
-  // Might cause issues if trying to drive intake motors as this is running
-  // Don't want to put balls out the bottom yet
-  public void ballControl() {
-    for (int i = 0; i < Chambers.states.length; i++) {
-      if ((DriverStation.getAlliance()) == (DriverStation.Alliance.Red)) {
-        if ((Chambers.states[i] == BallState.Blue)) {
-          setIntakeMotorSpeed(0, 0.75);
-        }
-      } else if ((DriverStation.getAlliance()) == (DriverStation.Alliance.Blue)) {
-          if ((Chambers.states[i] == BallState.Red)) {
-            setIntakeMotorSpeed(0, 0.75);
-          }
-      }
-    }
-  }
+   * public void stallDetection() {
+   * for (int i = 0; i < 2; ++i) {
+   * if ((intakeMotors[i].getMotorOutputPercent()) <
+   * (Math.abs(intakeMotorSpeeds[i] * 60))) {
+   * setIntakeMotorSpeed(i, 0);
+   * System.out.println("The lower intake has stopped due to a stalling issue.");
+   * }
+   * }
+   * }
+   */
 
 }
