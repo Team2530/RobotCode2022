@@ -13,6 +13,8 @@ import edu.wpi.first.wpilibj.XboxController;
 
 import com.kauailabs.navx.frc.AHRS;
 
+import org.ejml.data.ZMatrix;
+
 import edu.wpi.first.cscore.MjpegServer;
 import edu.wpi.first.math.geometry.Pose2d;
 import edu.wpi.first.math.trajectory.Trajectory;
@@ -75,6 +77,16 @@ public class RobotContainer {
     configureButtonBindings();
   }
 
+  public double getXboxTrigger(int axisValue){
+    if (axisValue == 2){
+      return xbox.getRawAxis(2);
+    } else if (axisValue == 3) {
+      return xbox.getRawAxis(3);
+    } else {
+      return 0;
+    }
+  }
+
   /**
    * Use this method to define your button->command mappings. Buttons can be
    * created by instantiating a {@link GenericHID} or one of its subclasses
@@ -111,13 +123,13 @@ public class RobotContainer {
     });
 
     // Climber control (RB for full power and LB for low power)
-    new JoystickButton(xbox, 6).whenPressed(() -> m_climber.setClimberSpeed(1.0))
+    new JoystickButton(xbox, 4).whenPressed(() -> m_climber.setClimberSpeed(1.0))
         .whenReleased(() -> m_climber.setClimberSpeed(0));
     new JoystickButton(xbox, 5).whenPressed(() -> m_climber.setClimberSpeed(0.3))
         .whenReleased(() -> m_climber.setClimberSpeed(0));
 
     // Lower intake up (A button)
-    new JoystickButton(xbox, 1).whenPressed(() -> intake.setIntakeMotorSpeed(0, -0.75))
+     new Joystick(xbox, 1). -> intake.setIntakeMotorSpeed(0, -0.75)
         .whenReleased(() -> intake.setIntakeMotorSpeed(0, 0));
 
     // Upper intake up and also shooter (X button)
@@ -139,7 +151,7 @@ public class RobotContainer {
                 })));
 
     // Lower intake down (B button)
-    new JoystickButton(xbox, 2).whenPressed(() -> intake.setIntakeMotorSpeed(0, 0.75))
+    new JoystickButton(xbox, 5).whenPressed(() -> intake.setIntakeMotorSpeed(0, 0.75))
         .whenReleased(() -> intake.setIntakeMotorSpeed(0, 0));
   }
 
