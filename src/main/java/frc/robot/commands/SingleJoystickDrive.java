@@ -30,10 +30,18 @@ public class SingleJoystickDrive extends CommandBase {
   DriveTrain m_drivetrain;
   Joystick stick;
   XboxController xboxController = new XboxController(0);
+  private int camera = 1;
   private double yawTarget = 0.0;
-
+  PhotonCamera BSideCamera = new PhotonCamera("Breaker");
+  PhotonCamera ESideCamera = new PhotonCamera("Ethernet");
+  PhotonCamera curCamera = BSideCamera;
   private final double yawRate = 310.0;
+  double forwardSpeed;
+  double rotationSpeed;
+  double kP = 18.7, kI = 1.7, kD = 1.4;
   private double lastExecuted = Timer.getFPGATimestamp();
+  PIDController forwardController = new PIDController(kP, kI, kD);
+  PIDController turnController = new PIDController(kP, kI, kD);
 
   public SingleJoystickDrive(DriveTrain m_drivetrain, Joystick stick) {
     this.m_drivetrain = m_drivetrain;
@@ -51,22 +59,29 @@ public class SingleJoystickDrive extends CommandBase {
   // Called every time the scheduler runs while the command is scheduled.
   @Override
   public void execute() {
+
+    if (xboxController.getAButtonPressed()) {
+      camera = camera * -1;
+    }
+
     if (xboxController.getYButton()) {
-      double forwardSpeed;
-      double rotationSpeed;
-      PhotonCamera BSideCamera = new PhotonCamera("Breaker");
+      if (camera == 1) {
+        curCamera = BSideCamera;
+        }
+      else {
+        curCamera = ESideCamera;;
+      }
       BSideCamera.setPipelineIndex(2);
 
       // TODO: Make this the other PiD
-      PIDController forwardController = new PIDController(0, 0, 0);
 
-      var result = BSideCamera.getLatestResult();
+      var result = curCamera.getLatestResult();
 
       if (result.hasTargets()) {
-        System.out.print("Has Ball(s)");
-        rotationSpeed = -result.getBestTarget().getYaw() / 50;
+        System.out.println();
+        rotationSpeed = turnController.calculate(result.getBestTarget().getYaw());
       } else {
-        System.out.print("No Ball(s)");
+        System.out.println("No Ball(s)");
         rotationSpeed = 0;
       }
 
