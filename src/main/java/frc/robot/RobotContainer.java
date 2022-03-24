@@ -37,7 +37,7 @@ public class RobotContainer {
   // -------------------- Joysticks and Buttons -------------------- \\
   // Joysticks
   final Joystick stick1 = new Joystick(Constants.stickport1); // Creates a joystick on port 1
-  
+
   // Xbox Controller
   final XboxController xbox = new XboxController(Constants.xboxport);
 
@@ -122,25 +122,21 @@ public class RobotContainer {
 
     // Upper intake up and also shooter (X button)
     new JoystickButton(xbox, 3).whenPressed(
-      new ParallelCommandGroup(
-        new InstantCommand(() -> {
-          intake.setIntakeMotorSpeed(1, -0.75);
-        }),
-        new InstantCommand(() -> {
-          shooter.setShooterSpeed(0.5);
-        })
-      )
-    )
-      .whenReleased(
         new ParallelCommandGroup(
-          new InstantCommand(() -> {
-            intake.setIntakeMotorSpeed(1, 0);
-          }),
-          new InstantCommand(() -> {
-            shooter.setShooterSpeed(0);
-          })
-        )
-      );
+            new InstantCommand(() -> {
+              intake.setIntakeMotorSpeed(1, -0.75);
+            }),
+            new InstantCommand(() -> {
+              shooter.setShooterSpeed(1.0);
+            })))
+        .whenReleased(
+            new ParallelCommandGroup(
+                new InstantCommand(() -> {
+                  intake.setIntakeMotorSpeed(1, 0);
+                }),
+                new InstantCommand(() -> {
+                  shooter.setShooterSpeed(0);
+                })));
 
     // Lower intake down (B button)
     new JoystickButton(xbox, 2).whenPressed(() -> intake.setIntakeMotorSpeed(0, 0.75))
