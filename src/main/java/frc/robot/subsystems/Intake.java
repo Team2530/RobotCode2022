@@ -57,7 +57,18 @@ public class Intake extends SubsystemBase {
     } else if (((DriverStation.getAlliance()) == (DriverStation.Alliance.Red) && Chambers.states[0] == BallState.Blue)
         || (DriverStation.getAlliance()) == (DriverStation.Alliance.Blue) && Chambers.states[0] == BallState.Red) {
       // Ball rejection
-      intakeMotorSpeeds[0] = speed;
+      intakeMotorSpeeds[0] = -Math.abs(speed);
+      if (idx == 1) intakeMotorSpeeds[1] = speed;
+    } else if ((DriverStation.getAlliance()) == (DriverStation.Alliance.Red) && (Chambers.states[0] == BallState.Red)
+        && (Chambers.states[2] == BallState.None) && (Chambers.states[3] == BallState.None)) {
+      // Automatic chamber transport for red alliance
+      setIntakeMotorSpeed(0, -0.75);
+      setIntakeMotorSpeed(1, -0.75);
+    } else if ((DriverStation.getAlliance()) == (DriverStation.Alliance.Blue) && (Chambers.states[0] == BallState.Blue)
+        && (Chambers.states[2] == BallState.None) && (Chambers.states[3] == BallState.None))  {
+      // Automatic chamber transport for blue alliance
+      setIntakeMotorSpeed(0, -0.75);
+      setIntakeMotorSpeed(1, -0.75);
     } else {
       // Standard intake behavior
       intakeMotorSpeeds[idx] = speed;
@@ -81,6 +92,24 @@ public class Intake extends SubsystemBase {
         intakeMotors[motor].set(intakeMotorSpeeds[motor]);
       }
     }
+  }
+
+  public void autoChamberTransport() {
+
+    if ((DriverStation.getAlliance()) == (DriverStation.Alliance.Red)) {
+      if ((Chambers.states[0] == BallState.Red) && (Chambers.states[2 - 3] == BallState.None))
+        setIntakeMotorSpeed(0, -0.75);
+      setIntakeMotorSpeed(1, -0.75);
+    }
+    if ((DriverStation.getAlliance()) == (DriverStation.Alliance.Blue)) {
+      if ((Chambers.states[0] == BallState.Blue) && (Chambers.states[2 - 3] == BallState.None)) {
+
+        setIntakeMotorSpeed(0, -0.75);
+        setIntakeMotorSpeed(1, -0.75);
+
+      }
+    }
+
   }
 
   /*
