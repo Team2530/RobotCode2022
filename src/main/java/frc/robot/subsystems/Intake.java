@@ -9,6 +9,7 @@ import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import com.ctre.phoenix.motorcontrol.can.WPI_TalonFX;
 
 import frc.robot.Constants;
+import frc.robot.RobotContainer;
 import frc.robot.subsystems.Chambers.BallState;
 import edu.wpi.first.wpilibj.DriverStation;
 // import frc.robot.subsystems.Rev3ColorSensor;
@@ -50,21 +51,26 @@ public class Intake extends SubsystemBase {
     BallState opposingBallState = matchingBallState == BallState.Red
         ? BallState.Blue
         : BallState.Red;
-    if (Chambers.ballDetected[1] || Chambers.ballDetected[2]) {
-      // Chamber transfer
-      intakeMotorSpeeds[0] = speed;
-      intakeMotorSpeeds[1] = speed;
-    } else if (Chambers.states[0] == opposingBallState || Chambers.states[1] == opposingBallState) {
-      // Ball rejection
-      intakeMotorSpeeds[0] = Math.abs(speed);
-      if (idx == 1) {
+    if (!RobotContainer.getManualModeOp()) {
+      if (Chambers.ballDetected[1] || Chambers.ballDetected[2]) {
+        // Chamber transfer
+        intakeMotorSpeeds[0] = speed;
         intakeMotorSpeeds[1] = speed;
+      } else if (Chambers.states[0] == opposingBallState || Chambers.states[1] == opposingBallState) {
+        // Ball rejection
+        intakeMotorSpeeds[0] = Math.abs(speed);
+        if (idx == 1) {
+          intakeMotorSpeeds[1] = speed;
+        }
+      } else if ((Chambers.states[0] == matchingBallState || Chambers.states[1] == matchingBallState)
+          && Chambers.ballNotDetected[2] && Chambers.ballNotDetected[3]) {
+        // Automatic chamber transport
+        intakeMotorSpeeds[0] = -Math.abs(speed);
+        intakeMotorSpeeds[1] = -Math.abs(speed);
+      } else {
+        // Standard intake behavior
+        intakeMotorSpeeds[idx] = speed;
       }
-    } else if ((Chambers.states[0] == matchingBallState || Chambers.states[1] == matchingBallState)
-        && Chambers.ballNotDetected[2] && Chambers.ballNotDetected[3]) {
-      // Automatic chamber transport
-      intakeMotorSpeeds[0] = -Math.abs(speed);
-      intakeMotorSpeeds[1] = -Math.abs(speed);
     } else {
       // Standard intake behavior
       intakeMotorSpeeds[idx] = speed;
