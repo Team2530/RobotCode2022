@@ -196,10 +196,14 @@ public class DriveTrain extends SubsystemBase {
       y = driveStraight[1];
       z = 0;
     }
-      SmartDashboard.putNumber("twist", Deadzone.deadZone(-z,
-          Constants.deadzoneZ));
+    if (stick.getPOV() == -1) {
       mecanumDrive.driveCartesian(
           -y, -x, -z, ahrs.getYaw()); // -rot_pid.calculate(ahrs.getAngle() / 360.0, yawTarget / 360) * 0.25);
+    } else {
+      mecanumDrive.driveCartesian(-y, -x, -z);
+    }
+      SmartDashboard.putNumber("twist", Deadzone.deadZone(-z,
+          Constants.deadzoneZ));
     }
   
   public void stop() {
