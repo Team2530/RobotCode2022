@@ -73,15 +73,17 @@ public class SingleJoystickDrive extends CommandBase {
         gain = Math.min(0.75, Math.sqrt(result.getBestTarget().getArea()) / 2);
         rotationSpeed = turnController.calculate(result.getBestTarget().getYaw()
             / 30, -0.1);
-        if (result.getBestTarget().getArea() > 40.0)
+        if (result.getBestTarget().getArea() > 7.5)
           rotationSpeed = 0.0;
-        forwardSpeed = forwardController.calculate(xboxController.getLeftX() / 2);
+        forwardSpeed = xboxController.getLeftX() / 2;
       } else {
         System.out.println("No Ball(s)");
         rotationSpeed = 0;
       }
 
-      m_drivetrain.mecanumDrive.driveCartesian(0 , forwardSpeed,
+      m_drivetrain.mecanumDrive.driveCartesian(
+          0, 
+          forwardSpeed,
           rotationSpeed);
     } else {// if' (stick.getMagnitude() < 0.2) return;
       double m = RobotContainer.getBoostMode() ? 1.0 : 0.5;
