@@ -216,15 +216,27 @@ public class DriveTrain extends SubsystemBase {
     if (POV == 0) {
       result[0] = 0;
       result[1] = 0.2;
+    } else if (POV == 45) {
+      result[0] = 0.1;
+      result[1] = 0.1;
     } else if (POV == 90) {
       result[0] = 0.2;
       result[1] = 0;
+    } else if (POV == 135) {
+      result[0] = 0.1;
+      result[1] = -0.1;
     } else if (POV == 180) {
       result[0] = 0;
       result[1] = -0.2;
+    } else if (POV == 225) {
+      result[0] = -0.1;
+      result[1] = -0.1;
     } else if (POV == 270) {
       result[0] = -0.2;
       result[1] = 0;
+    } else if (POV == 315) {
+      result[0] = -0.1;
+      result[1] = 0.1;
     }
     return result;
   }
