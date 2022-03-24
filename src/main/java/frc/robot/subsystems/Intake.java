@@ -6,16 +6,11 @@ package frc.robot.subsystems;
 
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 
-import com.ctre.phoenix.motorcontrol.can.TalonSRX;
 import com.ctre.phoenix.motorcontrol.can.WPI_TalonFX;
-import com.ctre.phoenix.motorcontrol.can.WPI_TalonSRX;
 
 import frc.robot.Constants;
 import frc.robot.subsystems.Chambers.BallState;
-import frc.robot.subsystems.Chambers;
-import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj.DriverStation;
-import edu.wpi.first.wpilibj.DriverStation.Alliance;
 // import frc.robot.subsystems.Rev3ColorSensor;
 
 /**
@@ -46,29 +41,30 @@ public class Intake extends SubsystemBase {
   /**
    * Sets the speed and direction of the intake motor.
    * 
-   * @param speed Any value from -1.0 to 1.0.
+   * @param speed Any value from -1.0 to 1.0, with negative moving the balls up.
    */
   public void setIntakeMotorSpeed(int idx, double speed) {
-    if (((Chambers.states[1] == BallState.Red) || (Chambers.states[2] == BallState.Red))
-        || (Chambers.states[1] == BallState.Blue) || (Chambers.states[2] == BallState.Blue)) {
+    BallState matchingBallState = DriverStation.getAlliance() == DriverStation.Alliance.Red
+        ? BallState.Red
+        : BallState.Blue;
+    BallState opposingBallState = matchingBallState == BallState.Red
+        ? BallState.Blue
+        : BallState.Red;
+    if (Chambers.ballDetected[1] || Chambers.ballDetected[2]) {
       // Chamber transfer
       intakeMotorSpeeds[0] = speed;
       intakeMotorSpeeds[1] = speed;
-    } else if (((DriverStation.getAlliance()) == (DriverStation.Alliance.Red) && Chambers.states[0] == BallState.Blue)
-        || (DriverStation.getAlliance()) == (DriverStation.Alliance.Blue) && Chambers.states[0] == BallState.Red) {
+    } else if (Chambers.states[0] == opposingBallState || Chambers.states[1] == opposingBallState) {
       // Ball rejection
+      intakeMotorSpeeds[0] = Math.abs(speed);
+      if (idx == 1) {
+        intakeMotorSpeeds[1] = speed;
+      }
+    } else if ((Chambers.states[0] == matchingBallState || Chambers.states[1] == matchingBallState)
+        && Chambers.ballNotDetected[2] && Chambers.ballNotDetected[3]) {
+      // Automatic chamber transport
       intakeMotorSpeeds[0] = -Math.abs(speed);
-      if (idx == 1) intakeMotorSpeeds[1] = speed;
-    } else if ((DriverStation.getAlliance()) == (DriverStation.Alliance.Red) && (Chambers.states[0] == BallState.Red)
-        && (Chambers.states[2] == BallState.None) && (Chambers.states[3] == BallState.None)) {
-      // Automatic chamber transport for red alliance
-      setIntakeMotorSpeed(0, -0.75);
-      setIntakeMotorSpeed(1, -0.75);
-    } else if ((DriverStation.getAlliance()) == (DriverStation.Alliance.Blue) && (Chambers.states[0] == BallState.Blue)
-        && (Chambers.states[2] == BallState.None) && (Chambers.states[3] == BallState.None))  {
-      // Automatic chamber transport for blue alliance
-      setIntakeMotorSpeed(0, -0.75);
-      setIntakeMotorSpeed(1, -0.75);
+      intakeMotorSpeeds[1] = -Math.abs(speed);
     } else {
       // Standard intake behavior
       intakeMotorSpeeds[idx] = speed;
@@ -92,24 +88,6 @@ public class Intake extends SubsystemBase {
         intakeMotors[motor].set(intakeMotorSpeeds[motor]);
       }
     }
-  }
-
-  public void autoChamberTransport() {
-
-    if ((DriverStation.getAlliance()) == (DriverStation.Alliance.Red)) {
-      if ((Chambers.states[0] == BallState.Red) && (Chambers.states[2 - 3] == BallState.None))
-        setIntakeMotorSpeed(0, -0.75);
-      setIntakeMotorSpeed(1, -0.75);
-    }
-    if ((DriverStation.getAlliance()) == (DriverStation.Alliance.Blue)) {
-      if ((Chambers.states[0] == BallState.Blue) && (Chambers.states[2 - 3] == BallState.None)) {
-
-        setIntakeMotorSpeed(0, -0.75);
-        setIntakeMotorSpeed(1, -0.75);
-
-      }
-    }
-
   }
 
   /*
