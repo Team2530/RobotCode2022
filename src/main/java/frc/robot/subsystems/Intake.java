@@ -42,7 +42,7 @@ public class Intake extends SubsystemBase {
     // stallDetection();
     intakeSpeedGradient();
     // ballRejection();
-    //autoChamboTransporto();
+    // autoChamboTransporto();
 
   }
 
@@ -82,17 +82,19 @@ public class Intake extends SubsystemBase {
     }
   }
 
-  public void autoChamboTransporto() {
+  public void autoChamberTransport() {
+
     if ((DriverStation.getAlliance()) == (DriverStation.Alliance.Red)) {
-      if ((Chambers.states[0] == BallState.Red) && (Chambers.states[2 - 3] == BallState.None)) {
-        setIntakeMotorSpeed(0, -0.75);
-        setIntakeMotorSpeed(0, -0.75);
-      }
+      if ((Chambers.states[0] == BallState.Red) && (Chambers.states[2 - 3] == BallState.None))
+          setIntakeMotorSpeed(0, -0.75);
+          setIntakeMotorSpeed(1, -0.75);
     }
     if ((DriverStation.getAlliance()) == (DriverStation.Alliance.Blue)) {
       if ((Chambers.states[0] == BallState.Blue) && (Chambers.states[2 - 3] == BallState.None)) {
-        setIntakeMotorSpeed(0, -0.75);
-        setIntakeMotorSpeed(0, -0.75);
+       
+          setIntakeMotorSpeed(0, -0.75);
+          setIntakeMotorSpeed(1, -0.75);
+        
       }
     }
 
