@@ -13,6 +13,7 @@ import edu.wpi.first.wpilibj.XboxController;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 
 import org.photonvision.PhotonCamera;
+import org.photonvision.targeting.PhotonPipelineResult;
 
 import edu.wpi.first.wpilibj.Joystick;
 import edu.wpi.first.wpilibj.Timer;
@@ -59,37 +60,28 @@ public class SingleJoystickDrive extends CommandBase {
   // Called every time the scheduler runs while the command is scheduled.
   @Override
   public void execute() {
-
-    if (xboxController.getAButtonPressed()) {
-      camera = camera * -1;
-    }
-
     if (xboxController.getYButton()) {
-      if (camera == 1) {
-        curCamera = BSideCamera;
-      } else {
-        curCamera = BSideCamera;
-        ;
-      }
       BSideCamera.setPipelineIndex(2);
 
       // TODO: Make this the other PiD
 
-      var result = curCamera.getLatestResult();
+      PhotonPipelineResult result = BSideCamera.getLatestResult();
       double gain = 1.0;
+      System.out.println(result.hasTargets());
       if (result.hasTargets()) {
         System.out.println();
         gain = Math.min(0.75, Math.sqrt(result.getBestTarget().getArea()) / 2);
-        rotationSpeed = turnController.calculate(result.getBestTarget().getYaw() / 30, -0.1);
+        rotationSpeed = turnController.calculate(result.getBestTarget().getYaw()
+            / 30, -0.1);
         if (result.getBestTarget().getArea() > 40.0)
           rotationSpeed = 0.0;
-        forwardSpeed = xboxController.getLeftX();
+        forwardSpeed = forwardController.calculate(xboxController.getLeftX() / 2);
       } else {
         System.out.println("No Ball(s)");
         rotationSpeed = 0;
       }
 
-      m_drivetrain.mecanumDrive.driveCartesian(xboxController.getLeftY() / 2, xboxController.getLeftX() / 2,
+      m_drivetrain.mecanumDrive.driveCartesian(0 , forwardSpeed,
           rotationSpeed);
     } else {// if' (stick.getMagnitude() < 0.2) return;
       double m = RobotContainer.getBoostMode() ? 1.0 : 0.5;
