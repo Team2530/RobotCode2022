@@ -33,12 +33,12 @@ public class SingleJoystickDrive extends CommandBase {
   private int camera = 1;
   private double yawTarget = 0.0;
   PhotonCamera BSideCamera = new PhotonCamera("Breaker");
-  PhotonCamera ESideCamera = new PhotonCamera("Ethernet");
+  // PhotonCamera ESideCamera = new PhotonCamera("Ethernet");
   PhotonCamera curCamera = BSideCamera;
   private final double yawRate = 310.0;
   double forwardSpeed;
   double rotationSpeed;
-  double kP = 18.7, kI = 1.7, kD = 1.4;
+  double kP = 0.5, kI = 0, kD = 0;
   private double lastExecuted = Timer.getFPGATimestamp();
   PIDController forwardController = new PIDController(kP, kI, kD);
   PIDController turnController = new PIDController(kP, kI, kD);
@@ -67,25 +67,30 @@ public class SingleJoystickDrive extends CommandBase {
     if (xboxController.getYButton()) {
       if (camera == 1) {
         curCamera = BSideCamera;
-        }
-      else {
-        curCamera = ESideCamera;;
+      } else {
+        curCamera = BSideCamera;
+        ;
       }
       BSideCamera.setPipelineIndex(2);
 
       // TODO: Make this the other PiD
 
       var result = curCamera.getLatestResult();
-
+      double gain = 1.0;
       if (result.hasTargets()) {
         System.out.println();
-        rotationSpeed = turnController.calculate(result.getBestTarget().getYaw());
+        gain = Math.min(0.75, Math.sqrt(result.getBestTarget().getArea()) / 2);
+        rotationSpeed = turnController.calculate(result.getBestTarget().getYaw() / 30, -0.1);
+        if (result.getBestTarget().getArea() > 40.0)
+          rotationSpeed = 0.0;
+        forwardSpeed = xboxController.getLeftX();
       } else {
         System.out.println("No Ball(s)");
         rotationSpeed = 0;
       }
 
-      m_drivetrain.mecanumDrive.driveCartesian(0, 0, rotationSpeed);
+      m_drivetrain.mecanumDrive.driveCartesian(xboxController.getLeftY() / 2, xboxController.getLeftX() / 2,
+          rotationSpeed);
     } else {// if' (stick.getMagnitude() < 0.2) return;
       double m = RobotContainer.getBoostMode() ? 1.0 : 0.5;
       double s = RobotContainer.getSlowMode() ? 0.5 : 1;
