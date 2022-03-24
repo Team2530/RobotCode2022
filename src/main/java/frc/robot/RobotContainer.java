@@ -17,6 +17,7 @@ import edu.wpi.first.cscore.MjpegServer;
 import edu.wpi.first.math.geometry.Pose2d;
 import edu.wpi.first.math.trajectory.Trajectory;
 import edu.wpi.first.wpilibj2.command.Command;
+import edu.wpi.first.wpilibj2.command.InstantCommand;
 import edu.wpi.first.wpilibj2.command.ParallelCommandGroup;
 import edu.wpi.first.wpilibj2.command.RamseteCommand;
 import edu.wpi.first.wpilibj2.command.button.JoystickButton;
@@ -52,6 +53,7 @@ public class RobotContainer {
   private final PhotonVision vision = new PhotonVision();
   private final Intake intake = new Intake();
   private final Chambers ballDetection = new Chambers(3);
+  private final Shooter shooter = new Shooter();
 
   // -------------------- Autonomous Commands -------------------- \\
   // insert autonomous commands here
@@ -111,16 +113,30 @@ public class RobotContainer {
     // Climber control (RB for full power and LB for low power)
     new JoystickButton(xbox, 6).whenPressed(() -> m_climber.setClimberSpeed(1.0))
         .whenReleased(() -> m_climber.setClimberSpeed(0));
-    new JoystickButton(xbox, 5).whenPressed(() -> m_climber.setClimberSpeed(0.1))
+    new JoystickButton(xbox, 5).whenPressed(() -> m_climber.setClimberSpeed(0.3))
         .whenReleased(() -> m_climber.setClimberSpeed(0));
 
     // Lower intake up (A button)
     new JoystickButton(xbox, 1).whenPressed(() -> intake.setIntakeMotorSpeed(0, -0.75))
         .whenReleased(() -> intake.setIntakeMotorSpeed(0, 0));
 
-    // Upper intake up (X button)
-    new JoystickButton(xbox, 3).whenPressed(() -> intake.setIntakeMotorSpeed(1, -0.75))
-        .whenReleased(() -> intake.setIntakeMotorSpeed(1, 0));
+    // Upper intake up and also shooter (X button)
+    new JoystickButton(xbox, 3).whenPressed(
+        new ParallelCommandGroup(
+            new InstantCommand(() -> {
+              intake.setIntakeMotorSpeed(1, -0.75);
+            }),
+            new InstantCommand(() -> {
+              shooter.setShooterSpeed(1.0);
+            })))
+        .whenReleased(
+            new ParallelCommandGroup(
+                new InstantCommand(() -> {
+                  intake.setIntakeMotorSpeed(1, 0);
+                }),
+                new InstantCommand(() -> {
+                  shooter.setShooterSpeed(0);
+                })));
 
     // Lower intake down (B button)
     new JoystickButton(xbox, 2).whenPressed(() -> intake.setIntakeMotorSpeed(0, 0.75))
