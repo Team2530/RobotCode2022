@@ -49,7 +49,6 @@ public class SingleJoystickDrive extends CommandBase {
     // if' (stick.getMagnitude() < 0.2) return;
     double m = RobotContainer.getBoostMode() ? 1.0 : 0.5;
     double s = RobotContainer.getSlowMode() ? 0.5 : 1;
-    double m = stick.getRawButton(1) ? 1.0 : 0.5;
     int e = ultrasonic.runIntoSomething;
     // m *= (stick.getRawAxis(3) + 1.0) / 2.0;
 
@@ -58,10 +57,9 @@ public class SingleJoystickDrive extends CommandBase {
     
     // double turn = stick.getRawAxis(3) - stick.getRawAxis(2);
     yawTarget += stick.getZ() * yawRate * deltaTime;
-    m_drivetrain.singleJoystickDrive(stick.getRawAxis(1) * m * e, stick.getRawAxis(0) * m * e, stick.getRawAxis(2) * e);
-    m_drivetrain.singleJoystickDrive(Deadzone.deadZone(stick.getRawAxis(1), Constants.deadzone) * m * s,
-        Deadzone.deadZone(stick.getRawAxis(0), Constants.deadzone) * m * s,
-        Deadzone.deadZone(stick.getRawAxis(2), Constants.deadzoneZ) * m * s);
+    m_drivetrain.singleJoystickDrive(Deadzone.deadZone(stick.getRawAxis(1), Constants.deadzone) * m * s * e,
+        Deadzone.deadZone(stick.getRawAxis(0), Constants.deadzone) * m * s * e,
+        Deadzone.deadZone(stick.getRawAxis(2), Constants.deadzoneZ) * m * s * e);
     // m_drivetrain.singleJoystickDrive(stick.getX() * m, 0, 0);
   }
 

@@ -109,6 +109,6 @@ public final class Constants {
     public static final double INTAKE_RAMP_INTERVAL = 0.1; // Lower is slower
     public static final int stickport1 = 1; // stick port for joystick 1
     public static final int xboxport = 0; // xbox controller port
-    public static final int velocityRetentionButton = 3; // velocity retention button
+    public static final int velocityRetentionButton = 11; // velocity retention button
     public static final int driveStraightButton = 5; // button to disable rotation
     }

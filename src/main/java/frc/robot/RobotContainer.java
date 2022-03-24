@@ -54,7 +54,6 @@ public class RobotContainer {
   private final Intake intake = new Intake();
   private final Chambers ballDetection = new Chambers(3);
   private final Shooter shooter = new Shooter();
-  private final LimeLight m_limeLight = new LimeLight();
   private final UltraSonic ultrasonic = new UltraSonic();
 
   // -------------------- Autonomous Commands -------------------- \\
@@ -143,16 +142,11 @@ public class RobotContainer {
     // Lower intake down (B button)
     new JoystickButton(xbox, 2).whenPressed(() -> intake.setIntakeMotorSpeed(0, 0.75))
         .whenReleased(() -> intake.setIntakeMotorSpeed(0, 0));
-  }
 
-    new JoystickButton(stick1, 12).whenPressed(() -> intake.setIntakeMotorSpeed(1, 0.85))
-        .whenReleased(() -> intake.setIntakeMotorSpeed(1, 0));
-    
-    new JoystickButton(stick1, 5).whileHeld(() -> ultrasonic.ultraSonicBoom())
+    new JoystickButton(stick1, 3).whileHeld(() -> ultrasonic.ultraSonicBoom())
         .whenReleased(() -> ultrasonic.runIntoSomething = 1);
-    // new JoystickButton(stick1, 1).whenPressed(() ->
-    // m_driveTrain.driveStraight(0.5))
-    // .whenReleased(() -> m_driveTrain.driveStraight(0));
+    
+  }
   /** Returns whether or not the robot is driving at full speed. */
   public static boolean getBoostMode() {
     return boostMode;
