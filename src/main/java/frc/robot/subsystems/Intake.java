@@ -13,6 +13,7 @@ import frc.robot.RobotContainer;
 import frc.robot.subsystems.Chambers.BallState;
 import edu.wpi.first.wpilibj.DriverStation;
 // import frc.robot.subsystems.Rev3ColorSensor;
+import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 
 /**
  * This is Team 2530's Intake class.
@@ -23,11 +24,15 @@ public class Intake extends SubsystemBase {
       new WPI_TalonFX(Constants.UPPER_INTAKE_PORT)
   };
 
+  /** The inputted motor speeds. */
+  private static double[] inputSpeeds = { 0, 0 };
   /** The target expected motor speeds. */
   private static double[] intakeMotorSpeeds = { 0, 0 };
 
   /** Creates a new {@link Intake}. */
   public Intake() {
+    inputSpeeds[0] = 0;
+    inputSpeeds[1] = 0;
     intakeMotorSpeeds[0] = 0;
     intakeMotorSpeeds[1] = 0;
   }
@@ -35,16 +40,6 @@ public class Intake extends SubsystemBase {
   @Override
   public void periodic() {
     // This method will be called once per scheduler run
-    // stallDetection();
-    intakeSpeedGradient();
-  }
-
-  /**
-   * Sets the speed and direction of the intake motor.
-   * 
-   * @param speed Any value from -1.0 to 1.0, with negative moving the balls up.
-   */
-  public void setIntakeMotorSpeed(int idx, double speed) {
     BallState matchingBallState = DriverStation.getAlliance() == DriverStation.Alliance.Red
         ? BallState.Red
         : BallState.Blue;
@@ -52,29 +47,51 @@ public class Intake extends SubsystemBase {
         ? BallState.Blue
         : BallState.Red;
     if (!RobotContainer.getManualModeOp()) {
-      if (Chambers.ballDetected[1] || Chambers.ballDetected[2]) {
-        // Chamber transfer
-        intakeMotorSpeeds[0] = speed;
-        intakeMotorSpeeds[1] = speed;
-      } else if (Chambers.states[0] == opposingBallState || Chambers.states[1] == opposingBallState) {
-        // Ball rejection
-        intakeMotorSpeeds[0] = Math.abs(speed);
-        if (idx == 1) {
-          intakeMotorSpeeds[1] = speed;
-        }
-      } else if ((Chambers.states[0] == matchingBallState || Chambers.states[1] == matchingBallState)
-          && Chambers.ballNotDetected[2] && Chambers.ballNotDetected[3]) {
-        // Automatic chamber transport
-        intakeMotorSpeeds[0] = -Math.abs(speed);
-        intakeMotorSpeeds[1] = -Math.abs(speed);
+      if (Chambers.states[0] == opposingBallState || Chambers.states[1] == opposingBallState) {
+        // Ball rejection - run bottom intake down, run top intake as usual
+        intakeMotorSpeeds[0] = Constants.intakeSpeed;
+        intakeMotorSpeeds[1] = inputSpeeds[1];
+        SmartDashboard.putString("Current intake auto", "ball rejection");
+      } else if ((Chambers.states[0] == matchingBallState || Chambers.states[1] == matchingBallState
+          || Chambers.states[2] == matchingBallState)
+          && Chambers.ballNotDetected[3]) {
+        // Move lower chamber contents up if upper chamber is empty
+        intakeMotorSpeeds[0] = -Constants.intakeSpeed;
+        intakeMotorSpeeds[1] = -Constants.intakeSpeed;
+        SmartDashboard.putString("Current intake auto", "upper chamber empty");
+      } else if (Chambers.ballDetected[1]) {
+        // Chamber transfer - run both intake motors in the direction of the lower
+        // intake
+        intakeMotorSpeeds[0] = inputSpeeds[0];
+        intakeMotorSpeeds[1] = inputSpeeds[0];
+        SmartDashboard.putString("Current intake auto", "chamber transfer");
       } else {
         // Standard intake behavior
-        intakeMotorSpeeds[idx] = speed;
+        intakeMotorSpeeds[0] = inputSpeeds[0];
+        intakeMotorSpeeds[1] = inputSpeeds[1];
+        SmartDashboard.putString("Current intake auto", "normal");
+
       }
     } else {
       // Standard intake behavior
-      intakeMotorSpeeds[idx] = speed;
+      intakeMotorSpeeds[0] = inputSpeeds[0];
+      intakeMotorSpeeds[1] = inputSpeeds[1];
+      SmartDashboard.putString("Current intake auto", "normal");
+
     }
+    SmartDashboard.putString("inputSpeeds", inputSpeeds[0] + " " + inputSpeeds[1]);
+    SmartDashboard.putString("actualSpeeds", intakeMotorSpeeds[0] + " " + intakeMotorSpeeds[1]);
+    intakeSpeedGradient();
+  }
+
+  /**
+   * Sets the speed and direction of the input for an intake motor.
+   * 
+   * @param idx   0 for bottom chamber, 1 for top chamber
+   * @param speed Any value from -1.0 to 1.0, with negative moving the balls up.
+   */
+  public void setIntakeMotorSpeed(int idx, double speed) {
+    inputSpeeds[idx] = speed;
   }
 
   public void intakeSpeedGradient() {

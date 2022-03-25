@@ -119,14 +119,14 @@ public class RobotContainer {
         .whenReleased(() -> m_climber.setClimberSpeed(0));
 
     // Lower intake up (A button)
-    new JoystickButton(xbox, 1).whenPressed(() -> intake.setIntakeMotorSpeed(0, -0.75))
+    new JoystickButton(xbox, 1).whenPressed(() -> intake.setIntakeMotorSpeed(0, -Constants.intakeSpeed))
         .whenReleased(() -> intake.setIntakeMotorSpeed(0, 0));
 
     // Upper intake up and also shooter (X button)
     new JoystickButton(xbox, 3).whenPressed(
         new ParallelCommandGroup(
             new InstantCommand(() -> {
-              intake.setIntakeMotorSpeed(1, -0.75);
+              intake.setIntakeMotorSpeed(1, -Constants.intakeSpeed);
             }),
             new InstantCommand(() -> {
               shooter.setShooterSpeed(1.0);
@@ -141,7 +141,8 @@ public class RobotContainer {
                 })));
 
     // Lower intake down (B button)
-    new JoystickButton(xbox, 2).whenPressed(() -> intake.setIntakeMotorSpeed(0, 0.75))
+    new JoystickButton(xbox, 2).whenPressed(() -> intake.setIntakeMotorSpeed(0,
+        Constants.intakeSpeed))
         .whenReleased(() -> intake.setIntakeMotorSpeed(0, 0));
 
     // Button for disabling automatic operation
