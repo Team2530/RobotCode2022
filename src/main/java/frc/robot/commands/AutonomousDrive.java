@@ -23,7 +23,7 @@ public class AutonomousDrive extends CommandBase {
   double deltaTime = 0.0;
   double distanceTraveled = 0.0;
   double Dtime = 0.0;
-  double[] navxData = {0, 0, 0, 0, 0};
+  double[] navxData = { 0, 0, 0, 0, 0 };
 
   /**
    * 1 is forward, 2 is back, 3 is right, 4 is left
@@ -63,9 +63,9 @@ public class AutonomousDrive extends CommandBase {
   // Called every time the scheduler runs while the command is scheduled.
   @Override
   public void execute() {
-    if (robotVelocity() < Constants.maxVelocityMetersPerSecond){
+    if (robotVelocity() < Constants.maxMetersPerSecondForwards) {
       currentVelocity = robotVelocity();
-     distanceMaths();
+      distanceMaths();
     }
   }
 
@@ -73,7 +73,7 @@ public class AutonomousDrive extends CommandBase {
   @Override
   public void end(boolean interrupted) {
     driveTrain.actuallyDrive(0.0, 0.0, 0.0);
-    //throw new Error("You're done");
+    // throw new Error("You're done");
   }
 
   // Returns true when the command should end.
@@ -96,7 +96,7 @@ public class AutonomousDrive extends CommandBase {
     deltaTime = timer.get() - timeSinceChecked;
     timeSinceChecked = timer.get();
     distanceTraveled = distanceTraveled + Math.abs((currentVelocity * deltaTime));
-    System.out.println("distance to go : " + (distance - distanceTraveled)+ " Dtime :    " + deltaTime);
+    System.out.println("distance to go : " + (distance - distanceTraveled) + " Dtime :    " + deltaTime);
   }
 
   public boolean endCondition() {

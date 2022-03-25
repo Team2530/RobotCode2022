@@ -9,17 +9,24 @@ package frc.robot.subsystems;
 
 import edu.wpi.first.math.controller.PIDController;
 import edu.wpi.first.wpilibj.Joystick;
+import edu.wpi.first.wpilibj.Timer;
 import edu.wpi.first.wpilibj.drive.MecanumDrive;
+import edu.wpi.first.wpilibj.shuffleboard.BuiltInWidgets;
+import edu.wpi.first.wpilibj.shuffleboard.Shuffleboard;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import edu.wpi.first.wpilibj.smartdashboard.Field2d;
 import edu.wpi.first.math.geometry.Pose2d;
 import edu.wpi.first.math.geometry.Rotation2d;
+import edu.wpi.first.networktables.NetworkTableEntry;
 import frc.robot.Constants;
 import frc.robot.RobotContainer;
 import frc.robot.libraries.Deadzone;
+import frc.robot.libraries.Gains;
 import edu.wpi.first.wpilibj.Timer;
 import edu.wpi.first.wpilibj.XboxController;
+
+import java.util.Map;
 
 import com.ctre.phoenix.motorcontrol.NeutralMode;
 import com.ctre.phoenix.motorcontrol.can.WPI_TalonFX;
@@ -47,6 +54,61 @@ public class DriveTrain extends SubsystemBase {
   Joystick stick;
   XboxController xbox = new XboxController(Constants.xboxport);
   AHRS ahrs;
+
+  // ------------------------ PID gains ------------------------- \\
+
+  /* How to create a Slider: */
+  // NetworkTableEntry example = Shuffleboard.getTab("My Tab")
+  // .add("My Number", 0)
+  // .withWidget(BuiltInWidgets.kNumberSlider)
+  // .withProperties(Map.of("min", 0, "max", 1))
+  // .getEntry();
+
+  // Slider Instances
+  NetworkTableEntry rotPidP;
+  NetworkTableEntry rotPidI;
+  NetworkTableEntry rotPidD;
+
+  // Slider Values
+  static double ROT_PID_P = 0;
+  static double ROT_PID_I = 0;
+  static double ROT_PID_D = 0;
+
+  // "Teenage resistance" for rotation
+  // private final double hkP = 0.05, hkI = 0.0015, hkD = 0.00175;
+  private final Gains rotPIDGains = new Gains(
+      Constants.rotPIDGainsP == 0 ? ROT_PID_P : Constants.rotPIDGainsP,
+      Constants.rotPIDGainsI == 0 ? ROT_PID_I : Constants.rotPIDGainsI,
+      Constants.rotPIDGainsD == 0 ? ROT_PID_D : Constants.rotPIDGainsD);
+
+  // Rotation velocity control (Z angular velocity control)
+  private final Gains ratePIDGains = new Gains(Constants.ratePIDGainsP, Constants.ratePIDGainsI,
+      Constants.ratePIDGainsD);
+
+  // "Teenage resistance" for strafing
+  private final Gains resistStrafePIDGains = new Gains(Constants.resistStrafePIDGainsP, Constants.resistStrafePIDGainsI,
+      Constants.resistStrafePIDGainsD);
+
+  // Left and right velocity control
+  private final Gains strafePIDGains = new Gains(Constants.strafePIDGainsP, Constants.strafePIDGainsI,
+      Constants.strafePIDGainsD);
+
+  // "Teenage resistance" for forward/backward
+  private final Gains resistDrivePIDGains = new Gains(Constants.resistDrivePIDGainsP, Constants.resistDrivePIDGainsI,
+      Constants.resistDrivePIDGainsD);
+
+  // Forward and backward velocity control
+  private final Gains drivePIDGains = new Gains(Constants.drivePIDGainsP, Constants.drivePIDGainsI,
+      Constants.drivePIDGainsD);
+
+  PIDController rotPID = rotPIDGains.getPID();
+  PIDController resistStrafePID = resistStrafePIDGains.getPID();
+  PIDController resistDrivePID = resistDrivePIDGains.getPID();
+  PIDController turnRatePID = ratePIDGains.getPID();
+  PIDController strafePID = drivePIDGains.getPID();
+  PIDController drivePID = strafePIDGains.getPID();
+
+  // ------------------------ States ------------------------- \\
   Timer timer = new Timer();
 
   // --------------------Field2d Stuff------------------------\\
@@ -69,26 +131,9 @@ public class DriveTrain extends SubsystemBase {
   /** Last joystick input when button 3 is pressed */
   private static double[] lastJoystickInput = { 0, 0, 0 };
 
-  // NOTE: Yaw is in degrees, need small pid constants
-  // private final double kP = 0.05, kI = 0.0015, kD = 0.00175;
-  private final double kP = 18.7, kI = 1.7, kD = 1.4;
-  PIDController rot_pid = new PIDController(kP, kI, kD);
+  private double lastExecuted = Timer.getFPGATimestamp();
 
   public MecanumDrive mecanumDrive;
-
-  // public final SimpleMotorFeedforward m_feedforward = new
-  // SimpleMotorFeedforward(Constants.kS, Constants.kV,
-  // Constants.kA);
-
-  // public final PIDController m_leftPIDController = new
-  // PIDController(Constants.PIDleftDrive.kP,
-  // Constants.PIDleftDrive.kI, Constants.PIDleftDrive.kD);
-  // public final PIDController m_rightPIDController = new
-  // PIDController(Constants.PIDrigthDrive.kP,
-  // Constants.PIDrigthDrive.kI, Constants.PIDrigthDrive.kD);
-
-  // private final SlewRateLimiter m_speedLimiter = new SlewRateLimiter(0.125);
-  // private final SlewRateLimiter m_rotLimiter = new SlewRateLimiter(2);
 
   /**
    * Creates a new {@link DriveTrain}.
@@ -115,8 +160,16 @@ public class DriveTrain extends SubsystemBase {
     mecanumDrive = new MecanumDrive(motorFL, motorBL, motorFR, motorBR);
     mecanumDrive.setSafetyEnabled(false);
 
+    lastExecuted = Timer.getFPGATimestamp();
     this.ahrs = ahrs;
     this.stick = stick;
+
+    rotPidP = Shuffleboard.getTab("PID Constants").add("Rot P", 0).withWidget(BuiltInWidgets.kNumberSlider)
+        .withProperties(Map.of("min", 0, "max", 1)).getEntry();
+    rotPidI = Shuffleboard.getTab("PID Constants").add("Rot I", 0).withWidget(BuiltInWidgets.kNumberSlider)
+        .withProperties(Map.of("min", 0, "max", 1)).getEntry();
+    rotPidD = Shuffleboard.getTab("PID Constants").add("Rot D", 0).withWidget(BuiltInWidgets.kNumberSlider)
+        .withProperties(Map.of("min", 0, "max", 1)).getEntry();
   }
 
   @Override
@@ -124,6 +177,15 @@ public class DriveTrain extends SubsystemBase {
     // putNavXInfo();
     getBatteryRuntime();
     field2d();
+    SmartDashboard.putNumber("rotPIDGraph", rotPID.getPositionError());
+    ROT_PID_P = rotPidP.getDouble(ROT_PID_P);
+    ROT_PID_I = rotPidI.getDouble(ROT_PID_I);
+    ROT_PID_D = rotPidD.getDouble(ROT_PID_D);
+    rotPID.setPID(
+        Constants.rotPIDGainsP == 0 ? ROT_PID_P : Constants.rotPIDGainsP,
+        Constants.rotPIDGainsI == 0 ? ROT_PID_I : Constants.rotPIDGainsI,
+        Constants.rotPIDGainsD == 0 ? ROT_PID_D : Constants.rotPIDGainsD);
+
   }
 
   public void setCoast(NeutralMode neutralSetting) {
@@ -138,7 +200,10 @@ public class DriveTrain extends SubsystemBase {
    * re-center the stabilization
    */
   public void reset() {
+    ahrs.enableBoardlevelYawReset(true);
+    ahrs.reset();
     ahrs.zeroYaw();
+    ahrs.resetDisplacement();
   }
 
   /**
@@ -152,6 +217,14 @@ public class DriveTrain extends SubsystemBase {
    *          1.0.
    */
   public void singleJoystickDrive(double x, double y, double z) {
+    if (stick.getRawButton(Constants.velocityRetentionButton) == true) {
+      x = lastJoystickInput[0];
+      y = lastJoystickInput[1];
+      z = 0;
+    }
+    if (stick.getRawButton(Constants.driveStraightButton) == true) {
+      z = 0;
+    }
     joystickInput[0] = x;
     joystickInput[1] = y;
     joystickInput[2] = z;
@@ -183,18 +256,61 @@ public class DriveTrain extends SubsystemBase {
   public void actuallyDrive(double x, double y, double z) {
     // TODO : Test deadzone
     // mecanumDrive.driveCartesian(y, -x, -z);
-    if (stick.getRawButton(Constants.velocityRetentionButton) == true) {
-      x = lastJoystickInput[0];
-      y = lastJoystickInput[1];
-      z = 0;
+
+    // navX coordinates:
+    // +X = drive forward, -X = drive backward
+    // +Y = strafe left, -Y = strafe right
+    // TEST: X and Y axis velocity PIDs and independent deadzones
+
+    // PID control for robot forward/backward/strafing control
+    // TODO: Double check strafe speed calculation
+
+    double deltaTime = Timer.getFPGATimestamp() - lastExecuted;
+    lastExecuted = Timer.getFPGATimestamp();
+
+    double yPIDCalc, xPIDCalc;
+    if (Math.abs(y) == 0 && Math.abs(x) == 0) {
+      // If we're not intentionally strafing or driving forwards/backwards, engage
+      // teenage resistance (positional lock)
+      yPIDCalc = Deadzone.cutOff(
+          -resistStrafePID.calculate(ahrs.getDisplacementY() / (Constants.maxMetersPerSecondStrafe * deltaTime), 0),
+          Constants.cutOffMotorSpeed);
+      xPIDCalc = Deadzone.cutOff(
+          -resistStrafePID.calculate(ahrs.getDisplacementX() / (Constants.maxMetersPerSecondForwards * deltaTime), 0),
+          Constants.cutOffMotorSpeed);
+    } else {
+      // If we *are* intentionally strafing or driving, keep track of the current
+      // position
+      ahrs.resetDisplacement();
+      yPIDCalc = y;
+      xPIDCalc = x;
+      // TODO: Transition back to velocity PIDs
+      // yPIDCalc = strafePID.calculate(ahrs.getVelocityY(),
+      // Deadzone.deadZone(y, 0.1) * Constants.maxMetersPerSecondStrafe * deltaTime);
+      // xPIDCalc = drivePID.calculate(ahrs.getVelocityX(),
+      // Deadzone.deadZone(x, 0.1) * Constants.maxMetersPerSecondForwards *
+      // deltaTime);
     }
-    if (stick.getRawButton(Constants.driveStraightButton) == true) {
-      z = 0;
+
+    // PID control for robot rotation
+    double zPIDCalc;
+    if (Math.abs(z) == 0) {
+      // If we're not intentionally turning, engage teenage resistance (directional
+      // lock)
+      zPIDCalc = Deadzone.cutOff(
+          -rotPID.calculate(ahrs.getAngle() / (Constants.maxDegreesPerSecondRotate * deltaTime), 0),
+          Constants.cutOffMotorSpeed);
+    } else {
+      // If we *are* intentionally turning, keep track of the current angle
+      ahrs.zeroYaw();
+      zPIDCalc = z;
+      // TODO: Transition back to velocity PIDs
+      // zPIDCalc = turnRatePID.calculate(ahrs.getRate(),
+      // Deadzone.deadZone(-z, 0.1) * Constants.maxDegreesPerSecondRotate *
+      // deltaTime);
     }
-    SmartDashboard.putNumber("twist", Deadzone.deadZone(-z,
-        Constants.deadzoneZ));
-    mecanumDrive.driveCartesian(
-        -y, -x, -z, ahrs.getYaw()); // -rot_pid.calculate(ahrs.getAngle() / 360.0, yawTarget / 360) * 0.25);
+
+    mecanumDrive.driveCartesian(-yPIDCalc, -xPIDCalc, -zPIDCalc, ahrs.getYaw() - ahrs.getAngleAdjustment());
   }
 
   public void stop() {

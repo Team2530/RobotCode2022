@@ -9,7 +9,6 @@ package frc.robot.commands;
 
 import edu.wpi.first.wpilibj.Joystick;
 import edu.wpi.first.wpilibj.Timer;
-import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.CommandBase;
 import frc.robot.Constants;
 import frc.robot.RobotContainer;
@@ -22,9 +21,7 @@ public class SingleJoystickDrive extends CommandBase {
    */
   DriveTrain m_drivetrain;
   Joystick stick;
-  private double yawTarget = 0.0;
 
-  private final double yawRate = 310.0;
   private double lastExecuted = Timer.getFPGATimestamp();
 
   public SingleJoystickDrive(DriveTrain m_drivetrain, Joystick stick) {
@@ -43,16 +40,13 @@ public class SingleJoystickDrive extends CommandBase {
   // Called every time the scheduler runs while the command is scheduled.
   @Override
   public void execute() {
+
     // if' (stick.getMagnitude() < 0.2) return;
     double m = RobotContainer.getBoostMode() ? 1.0 : 0.5;
     double s = RobotContainer.getSlowMode() ? 0.5 : 1;
     // m *= (stick.getRawAxis(3) + 1.0) / 2.0;
 
-    double deltaTime = Timer.getFPGATimestamp() - lastExecuted;
-    lastExecuted = Timer.getFPGATimestamp();
-
     // double turn = stick.getRawAxis(3) - stick.getRawAxis(2);
-    yawTarget += stick.getZ() * yawRate * deltaTime;
     m_drivetrain.singleJoystickDrive(Deadzone.deadZone(stick.getRawAxis(1), Constants.deadzone) * m * s,
         Deadzone.deadZone(stick.getRawAxis(0), Constants.deadzone) * m * s,
         Deadzone.deadZone(stick.getRawAxis(2), Constants.deadzoneZ) * m * s);

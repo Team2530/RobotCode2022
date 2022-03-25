@@ -33,7 +33,7 @@ public class Battery extends SubsystemBase {
    }
 
    public int calculateBatteryPercentage() {
-      return (int) Math.round((getVoltage() - 12) / 0.75 * 100);
+      return (int) Math.round((getVoltage() - 12.4) / 0.35 * 100);
    }
 
    public void updateMinBatteryVoltage() {
@@ -47,13 +47,15 @@ public class Battery extends SubsystemBase {
 
    public void updateBatteryPercentage() {
       batteryPercentage = calculateBatteryPercentage();
-      SmartDashboard.putString("Battery", batteryPercentage + "%");
+      String output = minVoltage > 12.4 ? batteryPercentage + "%"
+            : minVoltage > 12 ? "Avoid high-power functions" : "Replace battery now";
+      SmartDashboard.putString("Battery", output);
    }
-
 
    @Override
    public void periodic() {
       updateMinBatteryVoltage();
-      if (!ahrs.isMoving() && !ahrs.isRotating()) updateBatteryPercentage();
+      if (!ahrs.isMoving() && !ahrs.isRotating())
+         updateBatteryPercentage();
    }
 }
