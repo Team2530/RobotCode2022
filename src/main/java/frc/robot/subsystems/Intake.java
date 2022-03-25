@@ -59,6 +59,11 @@ public class Intake extends SubsystemBase {
         intakeMotorSpeeds[0] = -Constants.intakeSpeed;
         intakeMotorSpeeds[1] = -Constants.intakeSpeed;
         SmartDashboard.putString("Current intake auto", "upper chamber empty");
+      } else if ((Chambers.ballDetected[0] || Chambers.ballDetected[1])
+          && Chambers.ballDetected[3]) {
+        // Do not allow running bottom intake up if both chambers are full
+        intakeMotorSpeeds[0] = 0;
+        intakeMotorSpeeds[1] = inputSpeeds[1];
       } else if (Chambers.ballDetected[1]) {
         // Chamber transfer - run both intake motors in the direction of the lower
         // intake
