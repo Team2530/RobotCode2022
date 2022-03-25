@@ -41,7 +41,7 @@ public class DriveTrain extends SubsystemBase {
   AHRS ahrs = new AHRS();
 
   /** The actual joystick input on each axis. */
-  private static double[] joystickInput = { 0, 0, 0 , 0};
+  private static double[] joystickInput = { 0, 0, 0, 0 };
   /** The current joystick interpolation on each axis. */
   private static double[] joystickLerp = { 0, 0, 0 };
 
@@ -96,17 +96,7 @@ public class DriveTrain extends SubsystemBase {
   @Override
   public void periodic() {
     putNavXInfo();
-
-    double xo = Math.sin(Math.toRadians(ahrs.getAngle()));
-    double yo = Math.cos(Math.toRadians(ahrs.getAngle()));
-
-    double fwd = (yo * joystickInput[0] +
-        xo * joystickInput[1]);
-
-    double side = (xo * joystickInput[0] +
-        yo * joystickInput[1]);
-
-    actuallyDrive(side, -fwd, joystickInput[2] - joystickInput[3]);
+    actuallyDrive(joystickInput[1], -joystickInput[0], joystickInput[2]);
   }
 
   public void setCoast(NeutralMode neutralSetting) {
@@ -144,12 +134,13 @@ public class DriveTrain extends SubsystemBase {
     // TODO : Test deadzone
     // mecanumDrive.driveCartesian(y, -x, -z);
     mecanumDrive.driveCartesian(
-        Deadzone.deadZone(y,
+        Deadzone.deadZone(-y,
             deadzone),
         Deadzone.deadZone(-x,
             deadzone),
         Deadzone.deadZone(-z,
-            deadzone)); // -rot_pid.calculate(ahrs.getAngle() / 360.0, yawTarget / 360) * 0.25);
+            deadzone),
+        ahrs.getYaw()); // -rot_pid.calculate(ahrs.getAngle() / 360.0, yawTarget / 360) * 0.25);
   }
 
   public void stop() {
