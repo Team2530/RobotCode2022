@@ -6,16 +6,12 @@ package frc.robot.subsystems;
 
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 
-import com.ctre.phoenix.motorcontrol.can.TalonSRX;
 import com.ctre.phoenix.motorcontrol.can.WPI_TalonFX;
-import com.ctre.phoenix.motorcontrol.can.WPI_TalonSRX;
 
 import frc.robot.Constants;
+import frc.robot.RobotContainer;
 import frc.robot.subsystems.Chambers.BallState;
-import frc.robot.subsystems.Chambers;
-import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj.DriverStation;
-import edu.wpi.first.wpilibj.DriverStation.Alliance;
 // import frc.robot.subsystems.Rev3ColorSensor;
 
 /**
@@ -41,22 +37,42 @@ public class Intake extends SubsystemBase {
     // This method will be called once per scheduler run
     // stallDetection();
     intakeSpeedGradient();
-    // ballRejection();
   }
 
   /**
    * Sets the speed and direction of the intake motor.
    * 
-   * @param speed Any value from -1.0 to 1.0.
+   * @param speed Any value from -1.0 to 1.0, with negative moving the balls up.
    */
   public void setIntakeMotorSpeed(int idx, double speed) {
-    if ((Chambers.states[1] == BallState.Red) || (Chambers.states[2] == BallState.Red)) {
-      intakeMotorSpeeds[0] = speed;
-      intakeMotorSpeeds[1] = speed;
-    } else if ((Chambers.states[1] == BallState.Blue) || (Chambers.states[2] == BallState.Blue)) {
-      intakeMotorSpeeds[0] = speed;
-      intakeMotorSpeeds[1] = speed;
+    BallState matchingBallState = DriverStation.getAlliance() == DriverStation.Alliance.Red
+        ? BallState.Red
+        : BallState.Blue;
+    BallState opposingBallState = matchingBallState == BallState.Red
+        ? BallState.Blue
+        : BallState.Red;
+    if (!RobotContainer.getManualModeOp()) {
+      if (Chambers.ballDetected[1] || Chambers.ballDetected[2]) {
+        // Chamber transfer
+        intakeMotorSpeeds[0] = speed;
+        intakeMotorSpeeds[1] = speed;
+      } else if (Chambers.states[0] == opposingBallState || Chambers.states[1] == opposingBallState) {
+        // Ball rejection
+        intakeMotorSpeeds[0] = Math.abs(speed);
+        if (idx == 1) {
+          intakeMotorSpeeds[1] = speed;
+        }
+      } else if ((Chambers.states[0] == matchingBallState || Chambers.states[1] == matchingBallState)
+          && Chambers.ballNotDetected[2] && Chambers.ballNotDetected[3]) {
+        // Automatic chamber transport
+        intakeMotorSpeeds[0] = -Math.abs(speed);
+        intakeMotorSpeeds[1] = -Math.abs(speed);
+      } else {
+        // Standard intake behavior
+        intakeMotorSpeeds[idx] = speed;
+      }
     } else {
+      // Standard intake behavior
       intakeMotorSpeeds[idx] = speed;
     }
   }
@@ -81,30 +97,15 @@ public class Intake extends SubsystemBase {
   }
 
   /*
-  public void stallDetection() {
-    for (int i = 0; i < 2; ++i) {
-      if ((intakeMotors[i].getMotorOutputPercent()) < (Math.abs(intakeMotorSpeeds[i] * 60))) {
-        setIntakeMotorSpeed(i, 0);
-        System.out.println("The lower intake has stopped due to a stalling issue.");
-      }
-    }
-  }
-  */
-
-  // Might cause issues if trying to drive intake motors as this is running
-  // Don't want to put balls out the bottom yet
-  public void ballControl() {
-    for (int i = 0; i < Chambers.states.length; i++) {
-      if ((DriverStation.getAlliance()) == (DriverStation.Alliance.Red)) {
-        if ((Chambers.states[i] == BallState.Blue)) {
-          setIntakeMotorSpeed(0, 0.75);
-        }
-      } else if ((DriverStation.getAlliance()) == (DriverStation.Alliance.Blue)) {
-          if ((Chambers.states[i] == BallState.Red)) {
-            setIntakeMotorSpeed(0, 0.75);
-          }
-      }
-    }
-  }
+   * public void stallDetection() {
+   * for (int i = 0; i < 2; ++i) {
+   * if ((intakeMotors[i].getMotorOutputPercent()) <
+   * (Math.abs(intakeMotorSpeeds[i] * 60))) {
+   * setIntakeMotorSpeed(i, 0);
+   * System.out.println("The lower intake has stopped due to a stalling issue.");
+   * }
+   * }
+   * }
+   */
 
 }

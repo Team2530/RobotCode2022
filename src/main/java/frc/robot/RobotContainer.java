@@ -67,6 +67,7 @@ public class RobotContainer {
   private static boolean manualMode = false;
   private static boolean boostMode = false;
   private static boolean slowMode = false;
+  private static boolean manualModeOp = false;
 
   /**
    * The container for the robot. Contains subsystems, OI devices, and commands.
@@ -142,6 +143,13 @@ public class RobotContainer {
     // Lower intake down (B button)
     new JoystickButton(xbox, 2).whenPressed(() -> intake.setIntakeMotorSpeed(0, 0.75))
         .whenReleased(() -> intake.setIntakeMotorSpeed(0, 0));
+
+    // Button for disabling automatic operation
+    new JoystickButton(xbox, 7).whenPressed(() -> {
+      manualModeOp = true;
+    }).whenReleased(() -> {
+      manualModeOp = false;
+    });
   }
 
   /** Returns whether or not the robot is driving at full speed. */
@@ -157,6 +165,11 @@ public class RobotContainer {
   /** Returns whether or not autonomous/smart systems are disabled. */
   public static boolean getManualMode() {
     return manualMode;
+  }
+
+  /** Returns whether or not automatic operation is distabled. */
+  public static boolean getManualModeOp() {
+    return manualModeOp;
   }
 
   /**
