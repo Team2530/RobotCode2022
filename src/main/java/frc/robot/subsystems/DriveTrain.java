@@ -217,12 +217,16 @@ public class DriveTrain extends SubsystemBase {
    *          1.0.
    */
   public void singleJoystickDrive(double x, double y, double z) {
-    if (stick.getRawButton(Constants.velocityRetentionButton) == true) {
+    if (stick.getRawButton(Constants.velocityRetentionButton)) {
       x = lastJoystickInput[0];
       y = lastJoystickInput[1];
       z = 0;
-    }
-    if (stick.getRawButton(Constants.driveStraightButton) == true) {
+    } else if (stick.getRawButton(Constants.driveStraightButton)) {
+      z = 0;
+    } else if (stick.getPOV() != -1) {
+      double[] driveStraight = actuallyDriveStraighter(x, y);
+      x = driveStraight[0];
+      y = driveStraight[1];
       z = 0;
     }
     joystickInput[0] = x;
@@ -315,6 +319,37 @@ public class DriveTrain extends SubsystemBase {
 
   public void stop() {
     mecanumDrive.stopMotor();
+  }
+
+  public double[] actuallyDriveStraighter(double x, double y) {
+    double[] result = { x, y };
+    int POV = stick.getPOV();
+    if (POV == 0) {
+      result[0] = 0;
+      result[1] = 0.2;
+    } else if (POV == 45) {
+      result[0] = 0.1;
+      result[1] = 0.1;
+    } else if (POV == 90) {
+      result[0] = 0.2;
+      result[1] = 0;
+    } else if (POV == 135) {
+      result[0] = 0.1;
+      result[1] = -0.1;
+    } else if (POV == 180) {
+      result[0] = 0;
+      result[1] = -0.2;
+    } else if (POV == 225) {
+      result[0] = -0.1;
+      result[1] = -0.1;
+    } else if (POV == 270) {
+      result[0] = -0.2;
+      result[1] = 0;
+    } else if (POV == 315) {
+      result[0] = -0.1;
+      result[1] = 0.1;
+    }
+    return result;
   }
 
   // public void putNavXInfo() {
