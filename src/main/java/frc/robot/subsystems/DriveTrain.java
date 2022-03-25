@@ -352,6 +352,11 @@ public class DriveTrain extends SubsystemBase {
     return result;
   }
 
+  /** Rotates 180, why not? */
+  public void deathBlossom() {
+    ahrs.setAngleAdjustment((ahrs.getAngleAdjustment() + 180) % 360);
+  }
+
   // public void putNavXInfo() {
   // SmartDashboard.putNumber("RawAccel_X", ahrs.getRawAccelX());
   // SmartDashboard.putNumber("RawAccel_Y", ahrs.getRawAccelY());

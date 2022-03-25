@@ -150,6 +150,9 @@ public class RobotContainer {
     }).whenReleased(() -> {
       manualModeOp = false;
     });
+
+    // Death Blossom (rotate 180)
+    new JoystickButton(stick1, 12).whenPressed(() -> m_driveTrain.deathBlossom());
   }
 
   /** Returns whether or not the robot is driving at full speed. */
