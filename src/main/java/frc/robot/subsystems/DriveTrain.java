@@ -44,7 +44,7 @@ public class DriveTrain extends SubsystemBase {
   WPI_TalonFX motorFR = new WPI_TalonFX(Constants.MOTOR_FR_DRIVE_PORT);
   WPI_TalonFX motorBL = new WPI_TalonFX(Constants.MOTOR_BL_DRIVE_PORT);
   WPI_TalonFX motorBR = new WPI_TalonFX(Constants.MOTOR_BR_DRIVE_PORT);
-  Joystick stick = new Joystick(Constants.stickport1);
+  Joystick stick;
   XboxController xbox = new XboxController(Constants.xboxport);
   AHRS ahrs;
   Timer timer = new Timer();
@@ -93,7 +93,7 @@ public class DriveTrain extends SubsystemBase {
   /**
    * Creates a new {@link DriveTrain}.
    */
-  public DriveTrain(AHRS ahrs) {
+  public DriveTrain(AHRS ahrs, Joystick stick) {
     // motorFL.configFactoryDefault();
     // motorFR.configFactoryDefault();
     // motorBL.configFactoryDefault();
@@ -116,6 +116,7 @@ public class DriveTrain extends SubsystemBase {
     mecanumDrive.setSafetyEnabled(false);
 
     this.ahrs = ahrs;
+    this.stick = stick;
   }
 
   @Override
@@ -233,14 +234,14 @@ public class DriveTrain extends SubsystemBase {
     fieldXPos = fieldXPos + ahrs.getVelocityY();
     fieldYPos = fieldYPos + ahrs.getVelocityX();
     fieldRotation = fieldRotation + ahrs.getVelocityZ();
-     // Calculations for Movement, Physics, etc...
+    // Calculations for Movement, Physics, etc...
     // field2dSimuationMode();
-    
+
   }
 
-/**
- * Makes sure the robot dosen't go off screen
- */
+  /**
+   * Makes sure the robot dosen't go off screen
+   */
   public void field2dBounds() {
     if (fieldXPos > 16) {
       fieldXPos = 16;
@@ -255,11 +256,12 @@ public class DriveTrain extends SubsystemBase {
       fieldYPos = 8;
     }
   }
+
   /** To use when using field2d on simuation mode */
-  public void field2dSimuationMode(){
+  public void field2dSimuationMode() {
     if (Math.abs(joystickInput[1]) >= .1) {
       fieldSpeed[0] = (joystickLerp[1] / 8);
-      } else {
+    } else {
       fieldSpeed[0] = fieldSpeed[0] * 0.92;
     }
     fieldXPos = fieldXPos + fieldSpeed[0];

@@ -47,7 +47,7 @@ public class RobotContainer {
 
   private final AHRS m_ahrs = new AHRS();
   private final Battery m_battery = new Battery(m_ahrs, xbox);
-  private final DriveTrain m_driveTrain = new DriveTrain(m_ahrs);
+  private final DriveTrain m_driveTrain = new DriveTrain(m_ahrs, stick1);
   private final Climber m_climber = new Climber();
   // private final USBCamera usbCamera = new USBCamera();
   private final PhotonVision vision = new PhotonVision();
@@ -178,8 +178,10 @@ public class RobotContainer {
    *
    * @return the command to run in autonomous
    */
-  public Command getAutonomousCommand(Trajectory trajectory) {
-    return null;
+  public Command getAutonomousCommand() {
+    // Creates a new Autonomous Command for the robot
+    System.out.println("Getting autonomous command");
+    return new Autonomous(m_driveTrain, intake);
   }
 
   public Command getTelopCommand() {
