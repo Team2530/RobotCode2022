@@ -111,7 +111,6 @@ public class DriveTrain extends SubsystemBase {
   // ------------------------ States ------------------------- \\
   Timer timer = new Timer();
 
-  
   /**
    * Speed for Field2d (X, Y, Rotation)
    */
@@ -167,7 +166,7 @@ public class DriveTrain extends SubsystemBase {
 
   @Override
   public void periodic() {
-    // putNavXInfo();
+    putNavXInfo();
     getBatteryRuntime();
     SmartDashboard.putNumber("rotPIDGraph", rotPID.getPositionError());
     ROT_PID_P = rotPidP.getDouble(ROT_PID_P);
@@ -305,8 +304,15 @@ public class DriveTrain extends SubsystemBase {
       // Deadzone.deadZone(-z, 0.1) * Constants.maxDegreesPerSecondRotate *
       // deltaTime);
     }
+    drive(xPIDCalc, yPIDCalc, zPIDCalc, ahrs.getYaw() - ahrs.getAngleAdjustment());
+  }
 
-    mecanumDrive.driveCartesian(-yPIDCalc, -xPIDCalc, -zPIDCalc, ahrs.getYaw() - ahrs.getAngleAdjustment());
+  public void drive(double x, double y, double z) {
+    mecanumDrive.driveCartesian(-y, -x, -z);
+  }
+
+  public void drive(double x, double y, double z, double angle) {
+    mecanumDrive.driveCartesian(-y, -x, -z, angle);
   }
 
   public void stop() {
@@ -349,16 +355,16 @@ public class DriveTrain extends SubsystemBase {
     ahrs.setAngleAdjustment((ahrs.getAngleAdjustment() + 180) % 360);
   }
 
-  // public void putNavXInfo() {
-  // SmartDashboard.putNumber("RawAccel_X", ahrs.getRawAccelX());
-  // SmartDashboard.putNumber("RawAccel_Y", ahrs.getRawAccelY());
-  // SmartDashboard.putNumber("RawAccel_Z", ahrs.getRawAccelZ());
-  // SmartDashboard.putNumber("Velocity_X", ahrs.getVelocityX());
-  // SmartDashboard.putNumber("Velocity_Y", ahrs.getVelocityY());
-  // SmartDashboard.putNumber("Velocity_Z", ahrs.getVelocityZ());
-  // SmartDashboard.putNumber("Accumulated yaw ", ahrs.getAngle());
-  // SmartDashboard.putNumber("Rotational velocity (raw)", ahrs.getRawGyroZ());
-  // }
+  public void putNavXInfo() {
+    SmartDashboard.putNumber("RawAccel_X", ahrs.getRawAccelX());
+    SmartDashboard.putNumber("RawAccel_Y", ahrs.getRawAccelY());
+    SmartDashboard.putNumber("RawAccel_Z", ahrs.getRawAccelZ());
+    SmartDashboard.putNumber("Velocity_X", ahrs.getVelocityX());
+    SmartDashboard.putNumber("Velocity_Y", ahrs.getVelocityY());
+    SmartDashboard.putNumber("Velocity_Z", ahrs.getVelocityZ());
+    SmartDashboard.putNumber("Accumulated yaw ", ahrs.getAngle());
+    SmartDashboard.putNumber("Rotational velocity (raw)", ahrs.getRawGyroZ());
+  }
 
   public void getBatteryRuntime() {
     double a = Math.abs(motorBL.getMotorOutputVoltage());

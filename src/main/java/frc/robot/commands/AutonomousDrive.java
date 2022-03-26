@@ -6,6 +6,7 @@ package frc.robot.commands;
 
 import edu.wpi.first.wpilibj2.command.CommandBase;
 import frc.robot.Constants;
+import frc.robot.libraries.Deadzone;
 import frc.robot.subsystems.DriveTrain;
 import com.kauailabs.navx.frc.AHRS;
 import edu.wpi.first.wpilibj.Timer;
@@ -43,28 +44,28 @@ public class AutonomousDrive extends CommandBase {
     // figure out which direction to go (1 is forward) (2 is back) (3 is right) (4
     // is left)
     ahrs.reset();
+    ahrs.resetDisplacement();
     distanceTraveled = 0;
     if (direction == 1) {
-      driveTrain.actuallyDrive(0.0, 0.2, 0.0);
+      driveTrain.drive(0.0, 0.2, 0.0);
     }
     if (direction == 2) {
-      driveTrain.actuallyDrive(0.0, -0.2, 0.0);
+      driveTrain.drive(0.0, -0.2, 0.0);
     }
     if (direction == 3) {
-      driveTrain.actuallyDrive(0.2, 0.0, 0.0);
+      driveTrain.drive(0.2, 0.0, 0.0);
     }
     if (direction == 4) {
-      driveTrain.actuallyDrive(-0.2, 0.0, 0.0);
+      driveTrain.drive(-0.2, 0.0, 0.0);
     }
-    timer.reset();
-    timer.start();
+    timeSinceChecked = Timer.getFPGATimestamp();
   }
 
   // Called every time the scheduler runs while the command is scheduled.
   @Override
   public void execute() {
-    if (robotVelocity() < Constants.maxMetersPerSecondForwards) {
-      currentVelocity = robotVelocity();
+    robotVelocity();
+    if (Math.abs(currentVelocity) < Constants.maxMetersPerSecondForwards) {
       distanceMaths();
     }
   }
@@ -82,19 +83,19 @@ public class AutonomousDrive extends CommandBase {
     return endCondition();
   }
 
-  public double robotVelocity() {
+  public void robotVelocity() {
+    deltaTime = Timer.getFPGATimestamp() - timeSinceChecked;
+    timeSinceChecked = Timer.getFPGATimestamp();
     if (direction == 1 || direction == 2) {
-      return ahrs.getVelocityY();
+      currentVelocity += Deadzone.deadZone(ahrs.getRawAccelY() * deltaTime, 0.05);
     } else if (direction == 3 || direction == 4) {
-      return ahrs.getVelocityX();
+      currentVelocity += ahrs.getRawAccelX() * deltaTime;
     } else {
-      return 0.0;
+      System.out.println("ERROR");
     }
   }
 
   public void distanceMaths() {
-    deltaTime = timer.get() - timeSinceChecked;
-    timeSinceChecked = timer.get();
     distanceTraveled = distanceTraveled + Math.abs((currentVelocity * deltaTime));
     System.out.println("distance to go : " + (distance - distanceTraveled) + " Dtime :    " + deltaTime);
   }

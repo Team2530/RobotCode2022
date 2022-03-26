@@ -54,7 +54,7 @@ public class RobotContainer {
   private final Chambers ballDetection = new Chambers(3);
   private final Indicators lights = new Indicators(3);
   private final Shooter shooter = new Shooter();
-  private final Field field = new Field();
+  private final Field field = new Field(m_ahrs);
 
   // -------------------- Autonomous Commands -------------------- \\
   // insert autonomous commands here

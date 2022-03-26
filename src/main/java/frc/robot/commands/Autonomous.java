@@ -39,11 +39,11 @@ public class Autonomous extends CommandBase {
     ahrs.reset();
     SequentialCommandGroup autoVroomVroom = new SequentialCommandGroup(
       new InstantCommand(() -> intake.setIntakeMotorSpeed(1, -Constants.intakeSpeed)),
-      new InstantCommand(() -> shooter.setShooterSpeed(1.0)),
+      // new InstantCommand(() -> shooter.setShooterSpeed(1.0)),
       new WaitCommand(3),
       new InstantCommand(() -> intake.setIntakeMotorSpeed(1, 0)),
-      new InstantCommand(() -> shooter.setShooterSpeed(0)),
-      new AutonomousDrive(driveTrain, 2, 2, ahrs),
+      // new InstantCommand(() -> shooter.setShooterSpeed(0)),
+      new AutonomousDrive(driveTrain, 2, 1, ahrs),
       new WaitCommand(.5),
       new AutonomousDrive(driveTrain, 2, 3, ahrs)
 

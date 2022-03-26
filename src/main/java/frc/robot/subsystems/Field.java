@@ -26,8 +26,9 @@ public class Field extends SubsystemBase {
     double fieldRotation = 0.0;
 
     double fieldSpeed[] = { 0.0, 0.0, 0.0 };
-  public Field() {
+  public Field(AHRS ahrs) {
     SmartDashboard.putData(m_field);
+    this.ahrs = ahrs;
   }
 
   @Override
