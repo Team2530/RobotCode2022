@@ -15,7 +15,10 @@ import edu.wpi.first.wpilibj.shuffleboard.BuiltInWidgets;
 import edu.wpi.first.wpilibj.shuffleboard.Shuffleboard;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
-
+import edu.wpi.first.wpilibj.smartdashboard.Field2d;
+import edu.wpi.first.math.geometry.Pose2d;
+import edu.wpi.first.math.geometry.Rotation2d;
+import edu.wpi.first.networktables.NetworkTableEntry;
 import frc.robot.Constants;
 import frc.robot.RobotContainer;
 import frc.robot.libraries.Deadzone;
@@ -112,7 +115,7 @@ public class DriveTrain extends SubsystemBase {
   /**
    * Speed for Field2d (X, Y, Rotation)
    */
-  
+  double fieldSpeed[] = { 0.0, 0.0, 0.0 };
 
   /** The actual joystick input on each axis. */
   public static double[] joystickInput = { 0, 0, 0 };
@@ -166,7 +169,6 @@ public class DriveTrain extends SubsystemBase {
   public void periodic() {
     // putNavXInfo();
     getBatteryRuntime();
-    field2d();
     SmartDashboard.putNumber("rotPIDGraph", rotPID.getPositionError());
     ROT_PID_P = rotPidP.getDouble(ROT_PID_P);
     ROT_PID_I = rotPidI.getDouble(ROT_PID_I);
@@ -372,5 +374,4 @@ public class DriveTrain extends SubsystemBase {
       timer.stop();
     }
   }
-
-  }
+}
