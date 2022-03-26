@@ -13,6 +13,7 @@ import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.CommandBase;
 import frc.robot.Constants;
 import frc.robot.RobotContainer;
+import frc.robot.libraries.AxisConverter;
 import frc.robot.libraries.Deadzone;
 import frc.robot.subsystems.DriveTrain;
 
@@ -53,10 +54,16 @@ public class SingleJoystickDrive extends CommandBase {
 
     // double turn = stick.getRawAxis(3) - stick.getRawAxis(2);
     yawTarget += stick.getZ() * yawRate * deltaTime;
-    m_drivetrain.singleJoystickDrive(Deadzone.deadZone(stick.getRawAxis(1), Constants.deadzone) * m * s,
-        Deadzone.deadZone(stick.getRawAxis(0), Constants.deadzone) * m * s,
-        Deadzone.deadZone(stick.getRawAxis(2), Constants.deadzoneZ) * m * s);
+    double[] stickAxes = { stick.getRawAxis(0), stick.getRawAxis(1), stick.getRawAxis(2) };
+    double[] stdAxes = AxisConverter.convertFromJoystick(stickAxes);
+    double[] driveAxes = AxisConverter.convertToCartesian(stdAxes);
+    m_drivetrain.singleJoystickDrive(prepForDrive(driveAxes[0], m, s), prepForDrive(driveAxes[1], m, s),
+        prepForDrive(driveAxes[2], m, s));
     // m_drivetrain.singleJoystickDrive(stick.getX() * m, 0, 0);
+  }
+
+  public double prepForDrive(double inp, double m, double s) {
+    return Deadzone.deadZone(inp, Constants.deadzone) * m * s;
   }
 
   // Called once the command ends or is interrupted.

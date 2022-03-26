@@ -171,12 +171,12 @@ public class DriveTrain extends SubsystemBase {
         joystickLerp[axis] = joystickInput[axis];
       }
       if (!stick.getRawButton(Constants.velocityRetentionButton)) {
-        lastJoystickInput[0] = joystickInput[1];
-        lastJoystickInput[1] = -joystickInput[0];
+        lastJoystickInput[0] = joystickInput[0];
+        lastJoystickInput[1] = joystickInput[1];
       }
     }
 
-    actuallyDrive(joystickLerp[1], -joystickLerp[0], joystickLerp[2]);
+    actuallyDrive(joystickLerp[0], joystickLerp[1], joystickLerp[2]);
   }
 
   public void actuallyDrive(double x, double y, double z) {
@@ -193,7 +193,7 @@ public class DriveTrain extends SubsystemBase {
     SmartDashboard.putNumber("twist", Deadzone.deadZone(-z,
         Constants.deadzoneZ));
     mecanumDrive.driveCartesian(
-        -y, -x, -z, ahrs.getYaw()); // -rot_pid.calculate(ahrs.getAngle() / 360.0, yawTarget / 360) * 0.25);
+        x, y, z, ahrs.getYaw()); // -rot_pid.calculate(ahrs.getAngle() / 360.0, yawTarget / 360) * 0.25);
   }
 
   public void stop() {
