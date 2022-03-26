@@ -152,6 +152,13 @@ public class RobotContainer {
       manualModeOp = false;
     });
 
+    // View switcher button
+    new JoystickButton(joystick, 11).whenPressed(() -> {
+      // stuff;
+    }).whenReleased(() -> {
+      // otherStuff;
+    })
+
     // Death Blossom (rotate 180)
     new JoystickButton(stick1, 12).whenPressed(() -> m_driveTrain.deathBlossom());
   }
