@@ -11,6 +11,7 @@ import frc.robot.subsystems.DriveTrain;
 import frc.robot.subsystems.Intake;
 import frc.robot.subsystems.Shooter;
 import edu.wpi.first.wpilibj.Timer;
+import frc.robot.Constants;
 import edu.wpi.first.wpilibj2.command.WaitCommand;
 import com.kauailabs.navx.frc.AHRS;
 
@@ -37,12 +38,12 @@ public class Autonomous extends CommandBase {
     AHRS ahrs = new AHRS();
     ahrs.reset();
     SequentialCommandGroup autoVroomVroom = new SequentialCommandGroup(
-      new InstantCommand(() -> intake.setIntakeMotorSpeed(1, 0.85)),
-      new InstantCommand(() -> shooter.setShooterSpeed(0.5)),
+      new InstantCommand(() -> intake.setIntakeMotorSpeed(1, -Constants.intakeSpeed)),
+      new InstantCommand(() -> shooter.setShooterSpeed(1.0)),
       new WaitCommand(3),
       new InstantCommand(() -> intake.setIntakeMotorSpeed(1, 0)),
       new InstantCommand(() -> shooter.setShooterSpeed(0)),
-      new AutonomousDrive(driveTrain, 2, 1, ahrs),
+      new AutonomousDrive(driveTrain, 2, 2, ahrs),
       new WaitCommand(.5),
       new AutonomousDrive(driveTrain, 2, 3, ahrs)
 
