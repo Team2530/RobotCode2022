@@ -225,8 +225,8 @@ public class DriveTrain extends SubsystemBase {
       z = 0;
     } else if (stick.getPOV() != -1) {
       double[] driveStraight = actuallyDriveStraighter(x, y);
-      x = driveStraight[0];
-      y = driveStraight[1];
+      y = driveStraight[0];
+      x = -driveStraight[1];
       z = 0;
     }
     joystickInput[0] = x;
