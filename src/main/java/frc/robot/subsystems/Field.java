@@ -27,13 +27,14 @@ public class Field extends SubsystemBase {
 
     double fieldSpeed[] = { 0.0, 0.0, 0.0 };
   public Field() {
-    SmartDashboard.putData("Field", m_field);
+    SmartDashboard.putData(m_field);
   }
 
   @Override
   public void periodic() {
     // This method will be called once per scheduler run
     field2d(fieldXPos, fieldYPos, fieldRotation);
+    // field2dSimuationMode();
   }
 
   public void field2d(double fieldXPos, double fieldYPos, double fieldRotation) {
@@ -41,13 +42,10 @@ public class Field extends SubsystemBase {
     this.fieldYPos = fieldYPos;
     this.fieldRotation = fieldRotation;
     m_field.setRobotPose(fieldXPos, fieldYPos, m_rotation);
-    // NavX Rotated 90
-    // fieldXPos = fieldXPos + ahrs.getVelocityY();
-    // fieldYPos = fieldYPos + ahrs.getVelocityX();
-    // fieldRotation = fieldRotation + ahrs.getVelocityZ();
-    // Calculations for Movement, Physics, etc...
-    field2dSimuationMode();
-    
+    // NavX Rotated 90 (Values below should update realtime robot position)
+    fieldXPos = fieldXPos + ahrs.getVelocityY();
+    fieldYPos = fieldYPos + ahrs.getVelocityX();
+    fieldRotation = fieldRotation + ahrs.getVelocityZ();  
   }
 
 /**
