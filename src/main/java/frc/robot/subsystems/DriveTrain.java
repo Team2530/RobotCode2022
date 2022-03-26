@@ -15,10 +15,7 @@ import edu.wpi.first.wpilibj.shuffleboard.BuiltInWidgets;
 import edu.wpi.first.wpilibj.shuffleboard.Shuffleboard;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
-import edu.wpi.first.wpilibj.smartdashboard.Field2d;
-import edu.wpi.first.math.geometry.Pose2d;
-import edu.wpi.first.math.geometry.Rotation2d;
-import edu.wpi.first.networktables.NetworkTableEntry;
+
 import frc.robot.Constants;
 import frc.robot.RobotContainer;
 import frc.robot.libraries.Deadzone;
@@ -111,23 +108,16 @@ public class DriveTrain extends SubsystemBase {
   // ------------------------ States ------------------------- \\
   Timer timer = new Timer();
 
-  // --------------------Field2d Stuff------------------------\\
-  Field2d m_field = new Field2d();
-  Pose2d m_pose = new Pose2d();
-  Rotation2d m_rotation = new Rotation2d();
-  Rotation2d rotation;
-  double fieldXPos = 8.0;
-  double fieldYPos = 4.0;
-  double fieldRotation = 0.0;
+  
   /**
    * Speed for Field2d (X, Y, Rotation)
    */
-  double fieldSpeed[] = { 0.0, 0.0, 0.0 };
+  
 
   /** The actual joystick input on each axis. */
   public static double[] joystickInput = { 0, 0, 0 };
   /** The current joystick interpolation on each axis. */
-  private static double[] joystickLerp = { 0, 0, 0 };
+  public static double[] joystickLerp = { 0, 0, 0 };
   /** Last joystick input when button 3 is pressed */
   private static double[] lastJoystickInput = { 0, 0, 0 };
 
@@ -383,57 +373,4 @@ public class DriveTrain extends SubsystemBase {
     }
   }
 
-  public void field2d() {
-    m_field.setRobotPose(fieldXPos, fieldYPos, m_rotation);
-    SmartDashboard.putData(m_field);
-    // NavX Rotated 90
-    fieldXPos = fieldXPos + ahrs.getVelocityY();
-    fieldYPos = fieldYPos + ahrs.getVelocityX();
-    fieldRotation = fieldRotation + ahrs.getVelocityZ();
-    // Calculations for Movement, Physics, etc...
-    // field2dSimuationMode();
-
   }
-
-  /**
-   * Makes sure the robot dosen't go off screen
-   */
-  public void field2dBounds() {
-    if (fieldXPos > 16) {
-      fieldXPos = 16;
-    }
-    if (fieldXPos < 0) {
-      fieldXPos = 0;
-    }
-    if (fieldYPos < 0) {
-      fieldYPos = 0;
-    }
-    if (fieldYPos > 8) {
-      fieldYPos = 8;
-    }
-  }
-
-  /** To use when using field2d on simuation mode */
-  public void field2dSimuationMode() {
-    if (Math.abs(joystickInput[1]) >= .1) {
-      fieldSpeed[0] = (joystickLerp[1] / 8);
-    } else {
-      fieldSpeed[0] = fieldSpeed[0] * 0.92;
-    }
-    fieldXPos = fieldXPos + fieldSpeed[0];
-    if (Math.abs(joystickInput[0]) >= .1) {
-      fieldSpeed[1] = (joystickLerp[0] / 8);
-    } else {
-      fieldSpeed[1] = fieldSpeed[1] * 0.92;
-    }
-    fieldYPos = fieldYPos - fieldSpeed[1];
-    if (Math.abs(joystickInput[2]) >= .5) {
-      fieldSpeed[2] = fieldSpeed[2] + (joystickLerp[2] / 3);
-    } else {
-      fieldSpeed[2] = fieldSpeed[2] * 0.8;
-    }
-    fieldRotation = fieldRotation - fieldSpeed[2];
-    m_rotation = Rotation2d.fromDegrees(fieldRotation);
-    field2dBounds();
-  }
-}
