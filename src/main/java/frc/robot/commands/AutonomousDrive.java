@@ -47,16 +47,16 @@ public class AutonomousDrive extends CommandBase {
     ahrs.resetDisplacement();
     distanceTraveled = 0;
     if (direction == 1) {
-      driveTrain.drive(0.0, 0.2, 0.0);
+      driveTrain.driveRobotOriented(0.0, 0.2, 0.0);
     }
     if (direction == 2) {
-      driveTrain.drive(0.0, -0.2, 0.0);
+      driveTrain.driveRobotOriented(0.0, -0.2, 0.0);
     }
     if (direction == 3) {
-      driveTrain.drive(0.2, 0.0, 0.0);
+      driveTrain.driveRobotOriented(0.2, 0.0, 0.0);
     }
     if (direction == 4) {
-      driveTrain.drive(-0.2, 0.0, 0.0);
+      driveTrain.driveRobotOriented(-0.2, 0.0, 0.0);
     }
     timeSinceChecked = Timer.getFPGATimestamp();
   }
@@ -73,7 +73,7 @@ public class AutonomousDrive extends CommandBase {
   // Called once the command ends or is interrupted.
   @Override
   public void end(boolean interrupted) {
-    driveTrain.actuallyDrive(0.0, 0.0, 0.0);
+    driveTrain.driveRobotOriented(0.0, 0.0, 0.0);
     // throw new Error("You're done");
   }
 

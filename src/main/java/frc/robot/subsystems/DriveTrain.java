@@ -15,15 +15,11 @@ import edu.wpi.first.wpilibj.shuffleboard.BuiltInWidgets;
 import edu.wpi.first.wpilibj.shuffleboard.Shuffleboard;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
-import edu.wpi.first.wpilibj.smartdashboard.Field2d;
-import edu.wpi.first.math.geometry.Pose2d;
-import edu.wpi.first.math.geometry.Rotation2d;
 import edu.wpi.first.networktables.NetworkTableEntry;
 import frc.robot.Constants;
 import frc.robot.RobotContainer;
 import frc.robot.libraries.Deadzone;
 import frc.robot.libraries.Gains;
-import edu.wpi.first.wpilibj.Timer;
 import edu.wpi.first.wpilibj.XboxController;
 
 import java.util.Map;
@@ -34,40 +30,41 @@ import com.kauailabs.navx.frc.AHRS;
 
 /**
  * This is Team 2530's DriveTrain class. It handles all things related to the
- * motors used to drive the robot around, such as directly setting motor power,
- * handling the control mode, and auto-turning.
+ * motors used to drive the robot around.
  */
 public class DriveTrain extends SubsystemBase {
-  public static enum DriveDirection {
-    Forwards,
-    Backwards,
-    Left,
-    Right
-  };
+  /** The actual joystick input on each axis. */
+  public static double[] joystickInput = { 0, 0, 0 };
+  /** The current joystick interpolation on each axis. */
+  public static double[] joystickLerp = { 0, 0, 0 };
+  /** Last joystick input when button 3 is pressed */
+  private static double[] lastJoystickInput = { 0, 0, 0 };
+
+  private double lastExecuted = Timer.getFPGATimestamp();
+
+  public MecanumDrive mecanumDrive;
 
   // -------------------- Motors -------------------- \\
-  // Left Motors
   WPI_TalonFX motorFL = new WPI_TalonFX(Constants.MOTOR_FL_DRIVE_PORT);
   WPI_TalonFX motorFR = new WPI_TalonFX(Constants.MOTOR_FR_DRIVE_PORT);
   WPI_TalonFX motorBL = new WPI_TalonFX(Constants.MOTOR_BL_DRIVE_PORT);
   WPI_TalonFX motorBR = new WPI_TalonFX(Constants.MOTOR_BR_DRIVE_PORT);
   Joystick stick;
-  XboxController xbox = new XboxController(Constants.xboxport);
+  XboxController xbox;
   AHRS ahrs;
 
   // ------------------------ PID gains ------------------------- \\
 
-  /* How to create a Slider: */
-  // NetworkTableEntry example = Shuffleboard.getTab("My Tab")
-  // .add("My Number", 0)
-  // .withWidget(BuiltInWidgets.kNumberSlider)
-  // .withProperties(Map.of("min", 0, "max", 1))
-  // .getEntry();
-
   // Slider Instances
-  NetworkTableEntry rotPidP;
-  NetworkTableEntry rotPidI;
-  NetworkTableEntry rotPidD;
+  NetworkTableEntry rotPidP = Shuffleboard.getTab("PID Constants").add("Rot P", 0)
+      .withWidget(BuiltInWidgets.kNumberSlider)
+      .withProperties(Map.of("min", 0, "max", 1)).getEntry();
+  NetworkTableEntry rotPidI = Shuffleboard.getTab("PID Constants").add("Rot I", 0)
+      .withWidget(BuiltInWidgets.kNumberSlider)
+      .withProperties(Map.of("min", 0, "max", 1)).getEntry();
+  NetworkTableEntry rotPidD = Shuffleboard.getTab("PID Constants").add("Rot D", 0)
+      .withWidget(BuiltInWidgets.kNumberSlider)
+      .withProperties(Map.of("min", 0, "max", 1)).getEntry();
 
   // Slider Values
   static double ROT_PID_P = 0;
@@ -108,66 +105,22 @@ public class DriveTrain extends SubsystemBase {
   PIDController strafePID = drivePIDGains.getPID();
   PIDController drivePID = strafePIDGains.getPID();
 
-  // ------------------------ States ------------------------- \\
-  Timer timer = new Timer();
-
-  /**
-   * Speed for Field2d (X, Y, Rotation)
-   */
-  double fieldSpeed[] = { 0.0, 0.0, 0.0 };
-
-  /** The actual joystick input on each axis. */
-  public static double[] joystickInput = { 0, 0, 0 };
-  /** The current joystick interpolation on each axis. */
-  public static double[] joystickLerp = { 0, 0, 0 };
-  /** Last joystick input when button 3 is pressed */
-  private static double[] lastJoystickInput = { 0, 0, 0 };
-
-  private double lastExecuted = Timer.getFPGATimestamp();
-
-  public MecanumDrive mecanumDrive;
-
   /**
    * Creates a new {@link DriveTrain}.
    */
-  public DriveTrain(AHRS ahrs, Joystick stick) {
-    // motorFL.configFactoryDefault();
-    // motorFR.configFactoryDefault();
-    // motorBL.configFactoryDefault();
-    // motorBR.configFactoryDefault();
-    setCoast(NeutralMode.Brake);
-    motorFL.setSelectedSensorPosition(0);
-    motorFR.setSelectedSensorPosition(0);
-    motorBL.setSelectedSensorPosition(0);
-    motorBR.setSelectedSensorPosition(0);
-    // motorFL.feed();
-    // motorFR.feed();
-    // motorBL.feed();
-    // motorBR.feed();
-    motorFL.setInverted(false);
-    motorBL.setInverted(false);
-    motorFR.setInverted(true);
-    motorBR.setInverted(true);
+  public DriveTrain(AHRS ahrs, Joystick stick, XboxController xbox) {
+    this.ahrs = ahrs;
+    this.stick = stick;
+    this.xbox = xbox;
+    lastExecuted = Timer.getFPGATimestamp();
 
     mecanumDrive = new MecanumDrive(motorFL, motorBL, motorFR, motorBR);
     mecanumDrive.setSafetyEnabled(false);
-
-    lastExecuted = Timer.getFPGATimestamp();
-    this.ahrs = ahrs;
-    this.stick = stick;
-
-    rotPidP = Shuffleboard.getTab("PID Constants").add("Rot P", 0).withWidget(BuiltInWidgets.kNumberSlider)
-        .withProperties(Map.of("min", 0, "max", 1)).getEntry();
-    rotPidI = Shuffleboard.getTab("PID Constants").add("Rot I", 0).withWidget(BuiltInWidgets.kNumberSlider)
-        .withProperties(Map.of("min", 0, "max", 1)).getEntry();
-    rotPidD = Shuffleboard.getTab("PID Constants").add("Rot D", 0).withWidget(BuiltInWidgets.kNumberSlider)
-        .withProperties(Map.of("min", 0, "max", 1)).getEntry();
   }
 
   @Override
   public void periodic() {
-    putNavXInfo();
-    getBatteryRuntime();
+    // putNavXInfo();
     SmartDashboard.putNumber("rotPIDGraph", rotPID.getPositionError());
     ROT_PID_P = rotPidP.getDouble(ROT_PID_P);
     ROT_PID_I = rotPidI.getDouble(ROT_PID_I);
@@ -176,14 +129,6 @@ public class DriveTrain extends SubsystemBase {
         Constants.rotPIDGainsP == 0 ? ROT_PID_P : Constants.rotPIDGainsP,
         Constants.rotPIDGainsI == 0 ? ROT_PID_I : Constants.rotPIDGainsI,
         Constants.rotPIDGainsD == 0 ? ROT_PID_D : Constants.rotPIDGainsD);
-
-  }
-
-  public void setCoast(NeutralMode neutralSetting) {
-    motorFL.setNeutralMode(neutralSetting);
-    motorFR.setNeutralMode(neutralSetting);
-    motorBL.setNeutralMode(neutralSetting);
-    motorBR.setNeutralMode(neutralSetting);
   }
 
   /**
@@ -195,6 +140,23 @@ public class DriveTrain extends SubsystemBase {
     ahrs.reset();
     ahrs.zeroYaw();
     ahrs.resetDisplacement();
+
+    setCoast(NeutralMode.Brake);
+    motorFL.setSelectedSensorPosition(0);
+    motorFR.setSelectedSensorPosition(0);
+    motorBL.setSelectedSensorPosition(0);
+    motorBR.setSelectedSensorPosition(0);
+    motorFL.setInverted(false);
+    motorBL.setInverted(false);
+    motorFR.setInverted(true);
+    motorBR.setInverted(true);
+  }
+
+  public void setCoast(NeutralMode neutralSetting) {
+    motorFL.setNeutralMode(neutralSetting);
+    motorFR.setNeutralMode(neutralSetting);
+    motorBL.setNeutralMode(neutralSetting);
+    motorBR.setNeutralMode(neutralSetting);
   }
 
   /**
@@ -212,24 +174,27 @@ public class DriveTrain extends SubsystemBase {
       x = lastJoystickInput[0];
       y = lastJoystickInput[1];
       z = 0;
-    } else if (stick.getRawButton(Constants.driveStraightButton)) {
-      z = 0;
-    } else if (stick.getPOV() != -1) {
-      double[] driveStraight = actuallyDriveStraighter(x, y);
-      y = driveStraight[0];
-      x = -driveStraight[1];
-      z = 0;
+    } else {
+      lastJoystickInput[0] = joystickInput[1];
+      lastJoystickInput[1] = -joystickInput[0];
+      if (stick.getRawButton(Constants.driveStraightButton)) {
+        z = 0;
+      } else if (stick.getPOV() != -1) {
+        double[] driveStraight = actuallyDriveStraighter(x, y);
+        y = driveStraight[0];
+        x = -driveStraight[1];
+        z = 0;
+      }
     }
+
+    // Keep track of unmodified joystick input
     joystickInput[0] = x;
     joystickInput[1] = y;
     joystickInput[2] = z;
-    // Do for each joystick axis
+
+    // Drive gradient (ramping)
     for (int axis = 0; axis < 3; ++axis) {
-      // Is the magnitude of the actual joystick input greater than the magnitude of
-      // the current joystick interpolation?
       boolean isIncreasing = Math.abs(joystickInput[axis]) > Math.abs(joystickLerp[axis]);
-      // Is the difference between the actual and interpolated joystick input greater
-      // than the acceptable margin?
       boolean isOutsideMargin = Math.abs(joystickLerp[axis] - joystickInput[axis]) > Constants.DRIVE_RAMP_INTERVAL;
       if (!RobotContainer.getManualMode() && isIncreasing && isOutsideMargin) {
         // If we're not there yet
@@ -239,18 +204,11 @@ public class DriveTrain extends SubsystemBase {
         // If our patience has paid off
         joystickLerp[axis] = joystickInput[axis];
       }
-      if (!stick.getRawButton(Constants.velocityRetentionButton)) {
-        lastJoystickInput[0] = joystickInput[1];
-        lastJoystickInput[1] = -joystickInput[0];
-      }
     }
 
-    actuallyDrive(joystickLerp[1], -joystickLerp[0], joystickLerp[2]);
-  }
-
-  public void actuallyDrive(double x, double y, double z) {
-    // TODO : Test deadzone
-    // mecanumDrive.driveCartesian(y, -x, -z);
+    x = joystickLerp[1];
+    y = -joystickLerp[0];
+    z = joystickLerp[2];
 
     // navX coordinates:
     // +X = drive forward, -X = drive backward
@@ -267,12 +225,10 @@ public class DriveTrain extends SubsystemBase {
     if (Math.abs(y) == 0 && Math.abs(x) == 0) {
       // If we're not intentionally strafing or driving forwards/backwards, engage
       // teenage resistance (positional lock)
-      yPIDCalc = Deadzone.cutOff(
-          -resistStrafePID.calculate(ahrs.getDisplacementY() / (Constants.maxMetersPerSecondStrafe * deltaTime), 0),
-          Constants.cutOffMotorSpeed);
-      xPIDCalc = Deadzone.cutOff(
-          -resistStrafePID.calculate(ahrs.getDisplacementX() / (Constants.maxMetersPerSecondForwards * deltaTime), 0),
-          Constants.cutOffMotorSpeed);
+      yPIDCalc = -resistStrafePID.calculate(ahrs.getDisplacementY() / (Constants.maxMetersPerSecondStrafe * deltaTime),
+          0);
+      xPIDCalc = -resistStrafePID
+          .calculate(ahrs.getDisplacementX() / (Constants.maxMetersPerSecondForwards * deltaTime), 0);
     } else {
       // If we *are* intentionally strafing or driving, keep track of the current
       // position
@@ -292,27 +248,29 @@ public class DriveTrain extends SubsystemBase {
     if (Math.abs(z) == 0) {
       // If we're not intentionally turning, engage teenage resistance (directional
       // lock)
-      zPIDCalc = Deadzone.cutOff(
-          -rotPID.calculate(ahrs.getAngle() / (Constants.maxDegreesPerSecondRotate * deltaTime), 0),
-          Constants.cutOffMotorSpeed);
+      zPIDCalc = -rotPID.calculate(ahrs.getAngle() / (Constants.maxDegreesPerSecondRotate * deltaTime), 0);
     } else {
       // If we *are* intentionally turning, keep track of the current angle
-      ahrs.zeroYaw();
+      // ahrs.zeroYaw();
       zPIDCalc = z;
       // TODO: Transition back to velocity PIDs
       // zPIDCalc = turnRatePID.calculate(ahrs.getRate(),
       // Deadzone.deadZone(-z, 0.1) * Constants.maxDegreesPerSecondRotate *
       // deltaTime);
     }
-    drive(xPIDCalc, yPIDCalc, zPIDCalc, ahrs.getYaw() - ahrs.getAngleAdjustment());
+
+    driveFieldOriented(xPIDCalc, yPIDCalc, zPIDCalc, ahrs.getYaw() - ahrs.getAngleAdjustment());
   }
 
-  public void drive(double x, double y, double z) {
-    mecanumDrive.driveCartesian(-y, -x, -z);
+  public void driveRobotOriented(double x, double y, double z) {
+    driveFieldOriented(x, y, z, 0.0);
   }
 
-  public void drive(double x, double y, double z, double angle) {
-    mecanumDrive.driveCartesian(-y, -x, -z, angle);
+  public void driveFieldOriented(double x, double y, double z, double angle) {
+    double driveX = Deadzone.cutOff(-y, Constants.cutOffMotorSpeed);
+    double driveY = Deadzone.cutOff(-x, Constants.cutOffMotorSpeed);
+    double driveZ = Deadzone.cutOff(-z, Constants.cutOffMotorSpeed);
+    mecanumDrive.driveCartesian(driveX, driveY, driveZ, angle);
   }
 
   public void stop() {
@@ -364,20 +322,5 @@ public class DriveTrain extends SubsystemBase {
     SmartDashboard.putNumber("Velocity_Z", ahrs.getVelocityZ());
     SmartDashboard.putNumber("Accumulated yaw ", ahrs.getAngle());
     SmartDashboard.putNumber("Rotational velocity (raw)", ahrs.getRawGyroZ());
-  }
-
-  public void getBatteryRuntime() {
-    double a = Math.abs(motorBL.getMotorOutputVoltage());
-    double b = Math.abs(motorBR.getMotorOutputVoltage());
-    double q = Math.abs(motorFL.getMotorOutputVoltage());
-    double e = Math.abs(motorFR.getMotorOutputVoltage());
-
-    if ((a > .1) || (b > .1) || (q > .1) || (e > .1) || xbox.getRawButton(3) || xbox.getRawButton(1)
-        || xbox.getRawButton(2)) {
-      timer.start();
-      SmartDashboard.putNumber("Battery Runtime", timer.get());
-    } else {
-      timer.stop();
-    }
   }
 }
