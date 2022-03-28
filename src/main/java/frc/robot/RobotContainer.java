@@ -133,7 +133,7 @@ public class RobotContainer {
               intake.setIntakeMotorSpeed(1, -Constants.intakeSpeed);
             }),
             new InstantCommand(() -> {
-              shooter.setShooterSpeed(1.0);
+              shooter.setShooterSpeed(0.25);
             })))
         .whenReleased(
             new ParallelCommandGroup(

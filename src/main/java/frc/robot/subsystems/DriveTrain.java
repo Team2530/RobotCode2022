@@ -136,8 +136,8 @@ public class DriveTrain extends SubsystemBase {
    * re-center the stabilization
    */
   public void reset() {
-    ahrs.enableBoardlevelYawReset(true);
-    ahrs.reset();
+    // ahrs.enableBoardlevelYawReset(true);
+    // ahrs.reset();
     ahrs.zeroYaw();
     ahrs.resetDisplacement();
 

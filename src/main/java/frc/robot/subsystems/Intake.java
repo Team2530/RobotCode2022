@@ -62,7 +62,7 @@ public class Intake extends SubsystemBase {
       } else if ((Chambers.ballDetected[0] || Chambers.ballDetected[1])
           && Chambers.ballDetected[3]) {
         // Do not allow running bottom intake up if both chambers are full
-        intakeMotorSpeeds[0] = 0;
+        intakeMotorSpeeds[0] = inputSpeeds[0] < 0 ? 0 : inputSpeeds[0];
         intakeMotorSpeeds[1] = inputSpeeds[1];
       } else if (Chambers.ballDetected[1]) {
         // Chamber transfer - run both intake motors in the direction of the lower
