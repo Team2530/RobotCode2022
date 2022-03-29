@@ -187,11 +187,9 @@ public class Intake extends SubsystemBase {
       executed++;
       if (executed < ticks) {
         SmartDashboard.putBoolean(tableName, tempBool);
-        System.out.println(tempBool);
         tempBool = false;
       } else if (executed > ticks && executed < ticks * 2) {
         SmartDashboard.putBoolean(tableName, tempBool);
-        System.out.println(tempBool);
         tempBool = true;
       } else if (executed > ticks * 2) {
         executed = 0;
