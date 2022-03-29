@@ -259,7 +259,7 @@ public class DriveTrain extends SubsystemBase {
       // deltaTime);
     }
 
-    driveFieldOriented(xPIDCalc, yPIDCalc, zPIDCalc, ahrs.getYaw() - ahrs.getAngleAdjustment());
+    driveFieldOriented(xPIDCalc, yPIDCalc, zPIDCalc, ahrs.getYaw());
   }
 
   public void driveRobotOriented(double x, double y, double z) {
