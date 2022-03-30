@@ -96,7 +96,7 @@ public class AutonomousDrive extends CommandBase {
   }
 
   public void distanceMaths() {
-    distanceTraveled = distanceTraveled + Math.abs((currentVelocity * deltaTime));
+    distanceTraveled = distanceTraveled + Math.abs((currentVelocity * Math.pow(deltaTime, 2)));
     System.out.println("distance to go : " + (distance - distanceTraveled) + " Dtime :    " + deltaTime);
   }
 
