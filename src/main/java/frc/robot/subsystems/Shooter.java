@@ -71,9 +71,10 @@ public class Shooter extends SubsystemBase {
       currentShooterSpeed -= Shooter.triggerChange;
     }
     currentShooterSpeed = Math.min(currentShooterSpeed, Constants.maxShooterSpeed);
-    currentShooterSpeed = Math.max(currentShooterSpeed, 0.0);
-    System.out.println(currentShooterSpeed);
-    SmartDashboard.putNumber("Shooter Power", currentShooterSpeed);
+    currentShooterSpeed = Math.max(currentShooterSpeed, 0.1);
+
+    
+    SmartDashboard.putNumber("Shooter Power", currentShooterSpeed * 100);
     return currentShooterSpeed;
   }
 }
