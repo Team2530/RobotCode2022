@@ -16,13 +16,14 @@ import edu.wpi.first.wpilibj2.command.WaitCommand;
 import com.kauailabs.navx.frc.AHRS;
 
 public class Autonomous extends CommandBase {
-  
+
   /** Creates a new Autonomous. */
   AHRS ahrs = new AHRS();
   DriveTrain driveTrain;
   Intake intake = new Intake();
   Shooter shooter = new Shooter();
   Timer timer = new Timer();
+
   public Autonomous(DriveTrain driveTrain, Intake intake) {
     // Use addRequirements() here to declare subsystem dependencies.
     this.driveTrain = driveTrain;
@@ -37,21 +38,30 @@ public class Autonomous extends CommandBase {
   public void initialize() {
     AHRS ahrs = new AHRS();
     ahrs.reset();
+    driveTrain.reset();
     SequentialCommandGroup autoVroomVroom = new SequentialCommandGroup(
-      new InstantCommand(() -> intake.setIntakeMotorSpeed(1, -Constants.intakeSpeed)),
-      // new InstantCommand(() -> shooter.setShooterSpeed(1.0)),
-      new WaitCommand(3),
-      new InstantCommand(() -> intake.setIntakeMotorSpeed(1, 0)),
-      // new InstantCommand(() -> shooter.setShooterSpeed(0)),
-      new AutonomousDrive(driveTrain, 2, 1, ahrs),
-      new WaitCommand(.5),
-      new AutonomousDrive(driveTrain, 2, 3, ahrs)
+        new InstantCommand(() -> intake.setIntakeMotorSpeed(1, -Constants.intakeSpeed)),
+        new InstantCommand(() -> shooter.setShooterSpeed(0.5)),
+        new WaitCommand(3),
+        new InstantCommand(() -> intake.setIntakeMotorSpeed(1, 0)),
+        new InstantCommand(() -> shooter.setShooterSpeed(0)),
+
+        // new AutonomousDrive(driveTrain, 2, 1, ahrs),
+        new InstantCommand(() -> driveTrain.driveRobotOriented(0.0, 0.2, 0.0)),
+        new WaitCommand(2),
+        new InstantCommand(() -> driveTrain.driveRobotOriented(0.0, 0.0, 0.0)),
+        new WaitCommand(0.5),
+        // new AutonomousDrive(driveTrain, 2, 3, ahrs)
+        new InstantCommand(() -> driveTrain
+            .driveRobotOriented(0.2, 0.0, 0.0)),
+        new WaitCommand(1),
+        new InstantCommand(() -> driveTrain.driveRobotOriented(0.0, 0.0, 0.0))
 
     );
     System.out.println("Starting Autonomous Commands...");
     System.out.println("Please don't run into something!");
     autoVroomVroom.schedule();
-   
+
     // add more commands here
     // autoVroomVroom.schedule();
     // System.out.println("Scheduled!");

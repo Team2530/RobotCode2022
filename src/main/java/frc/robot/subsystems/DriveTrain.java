@@ -262,10 +262,25 @@ public class DriveTrain extends SubsystemBase {
     driveFieldOriented(xPIDCalc, yPIDCalc, zPIDCalc, ahrs.getYaw());
   }
 
+  /**
+   * Drives the robot in a direction relative to itself.
+   * 
+   * @param x Positive is strafing right, negative is strafing left
+   * @param y Positive is driving forward, negative is driving backward
+   * @param z I have no idea
+   */
   public void driveRobotOriented(double x, double y, double z) {
     driveFieldOriented(x, y, z, 0.0);
   }
 
+  /**
+   * Drives the robot in a direction relative to where the navX was last
+   * calibrated.
+   * 
+   * @param x Positive is strafing right, negative is strafing left
+   * @param y Positive is driving forward, negative is driving backward
+   * @param z I have no idea
+   */
   public void driveFieldOriented(double x, double y, double z, double angle) {
     double driveX = Deadzone.cutOff(-y, Constants.cutOffMotorSpeed);
     double driveY = Deadzone.cutOff(-x, Constants.cutOffMotorSpeed);

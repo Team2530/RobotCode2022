@@ -50,6 +50,7 @@ public class AutonomousDrive extends CommandBase {
       driveTrain.driveRobotOriented(0.0, 0.2, 0.0);
     }
     if (direction == 2) {
+      // driveTrain.mecanumDrive.driveCartesian(0.2, 0.0, 0.0);
       driveTrain.driveRobotOriented(0.0, -0.2, 0.0);
     }
     if (direction == 3) {
@@ -87,16 +88,18 @@ public class AutonomousDrive extends CommandBase {
     deltaTime = Timer.getFPGATimestamp() - timeSinceChecked;
     timeSinceChecked = Timer.getFPGATimestamp();
     if (direction == 1 || direction == 2) {
-      currentVelocity += Deadzone.deadZone(ahrs.getRawAccelY() * deltaTime, 0.05);
+      currentVelocity = ahrs.getVelocityY();
+      // currentVelocity = Deadzone.deadZone(ahrs.getVelocityY(), 0.05);
     } else if (direction == 3 || direction == 4) {
-      currentVelocity += ahrs.getRawAccelX() * deltaTime;
+      currentVelocity = ahrs.getVelocityX();
+      // currentVelocity = ahrs.getVelocityX();
     } else {
       System.out.println("ERROR");
     }
   }
 
   public void distanceMaths() {
-    distanceTraveled = distanceTraveled + Math.abs((currentVelocity * Math.pow(deltaTime, 2)));
+    distanceTraveled = distanceTraveled + Math.abs(currentVelocity);
     System.out.println("distance to go : " + (distance - distanceTraveled) + " Dtime :    " + deltaTime);
   }
 
