@@ -11,6 +11,7 @@ import frc.robot.subsystems.DriveTrain;
 import frc.robot.subsystems.Intake;
 import frc.robot.subsystems.Shooter;
 import edu.wpi.first.wpilibj.Timer;
+import edu.wpi.first.wpilibj.XboxController;
 import frc.robot.Constants;
 import edu.wpi.first.wpilibj2.command.WaitCommand;
 import com.kauailabs.navx.frc.AHRS;
@@ -19,9 +20,10 @@ public class Autonomous extends CommandBase {
   
   /** Creates a new Autonomous. */
   AHRS ahrs = new AHRS();
+  XboxController xbox;
   DriveTrain driveTrain;
   Intake intake = new Intake();
-  Shooter shooter = new Shooter();
+  Shooter shooter = new Shooter(xbox);
   Timer timer = new Timer();
   public Autonomous(DriveTrain driveTrain, Intake intake) {
     // Use addRequirements() here to declare subsystem dependencies.
