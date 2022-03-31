@@ -54,7 +54,7 @@ public class RobotContainer {
   private final Intake intake = new Intake();
   private final Chambers ballDetection = new Chambers(3);
   private final Indicators lights = new Indicators(3);
-  private final Shooter shooter = new Shooter();
+  private final Shooter shooter = new Shooter(xbox);
 
   // Diagnostics
   private final Battery m_battery = new Battery(m_ahrs, m_driveTrain, xbox);
@@ -133,7 +133,11 @@ public class RobotContainer {
               intake.setIntakeMotorSpeed(1, -Constants.intakeSpeed);
             }),
             new InstantCommand(() -> {
+              // Normal Shooter Operation
               shooter.setShooterSpeed(0.7);
+              // Change shooter with xbox triggers
+              // shooter.setShooterSpeed(Shooter.shooterSpeedWithTriggerChange);
+              
             })))
         .whenReleased(
             new ParallelCommandGroup(

@@ -37,7 +37,12 @@ public class Field extends SubsystemBase {
     field2d(fieldXPos, fieldYPos, fieldRotation);
     // field2dSimuationMode();
   }
-
+  /**
+   * Does everything Field2d realted
+   * @param fieldXPos current robot position x wise
+   * @param fieldYPos current robot position y wise
+   * @param fieldRotation current robot rotation value
+   */
   public void field2d(double fieldXPos, double fieldYPos, double fieldRotation) {
     this.fieldXPos = fieldXPos;
     this.fieldYPos = fieldYPos;
@@ -88,9 +93,9 @@ public class Field extends SubsystemBase {
     fieldRotation = fieldRotation - fieldSpeed[2];
     m_rotation = Rotation2d.fromDegrees(fieldRotation);
     field2dBounds();
-    System.out.println(DriveTrain.joystickInput[0]);
-    System.out.println(DriveTrain.joystickInput[1]);
-    System.out.println(DriveTrain.joystickInput[2]);
+    // System.out.println(DriveTrain.joystickInput[0]);
+    // System.out.println(DriveTrain.joystickInput[1]);
+    // System.out.println(DriveTrain.joystickInput[2]);
   }
 
 }

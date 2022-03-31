@@ -38,12 +38,12 @@ public class Intake extends SubsystemBase {
 
   //-----------Intake Behavior States-----------\\
   // ball was rejected by the robot
-  boolean ballRejection = true;
+  boolean ballRejection = false;
   // upper chamber is currently empty
   boolean upperChamberEmpty = true;
   // you have dumped the ball that the robot rejected
   boolean reverseIsPressed = true;
-  boolean reversePressed = false;
+  boolean reversePressed = true;
   // a ball may be eaten
   boolean readyToIntake = true;
   // robot has 2 balls
