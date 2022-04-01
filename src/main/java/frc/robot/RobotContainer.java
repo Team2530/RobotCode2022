@@ -134,9 +134,9 @@ public class RobotContainer {
             }),
             new InstantCommand(() -> {
               // Normal Shooter Operation
-              shooter.setShooterSpeed(0.7);
+              // shooter.setShooterSpeed(0.7);
               // Change shooter with xbox triggers
-              // shooter.setShooterSpeed(Shooter.shooterSpeedWithTriggerChange);
+              shooter.setShooterSpeed(Shooter.shooterSpeedWithTriggerChange);
               
             })))
         .whenReleased(
