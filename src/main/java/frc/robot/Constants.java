@@ -135,5 +135,5 @@ public final class Constants {
     public static final int driveStraightButton = 5; // button to disable rotation
     public static final double intakeSpeed = 0.75; // speed of the intake motors
     public static final double maxShooterSpeed = 0.75;
-    public static final double maxDriveSpeed = 0.5;
+    public static final double maxDriveSpeed = 1.0;
 }
