@@ -35,8 +35,7 @@ public class Intake extends SubsystemBase {
 
   Timer timer = new Timer();
 
-
-  //-----------Intake Behavior States-----------\\
+  // -----------Intake Behavior States-----------\\
   // ball was rejected by the robot
   boolean ballRejection = false;
   // upper chamber is currently empty
@@ -57,7 +56,6 @@ public class Intake extends SubsystemBase {
 
   double timerLast = 0.0;
   int executed = 0;
-
 
   Joystick stick = new Joystick(Constants.stickport1);
   XboxController xbox = new XboxController(Constants.xboxport);
@@ -84,13 +82,12 @@ public class Intake extends SubsystemBase {
       readyToIntake = false;
     }
     if (xbox.getRawButton(2)) {
-      reversePressed = true; 
+      reversePressed = true;
       readyToIntake = true;
-    } 
+    }
     reverseIsPressed = xbox.getRawButton(2);
     shooting = xbox.getRawButton(3);
 
-    
     // This method will be called once per scheduler run
     BallState matchingBallState = DriverStation.getAlliance() == DriverStation.Alliance.Red
         ? BallState.Red
@@ -99,14 +96,14 @@ public class Intake extends SubsystemBase {
         ? BallState.Blue
         : BallState.Red;
 
-        // if both chambers are full, update the value on SmartDashboard
-        if ((Chambers.states[0] == matchingBallState || Chambers.states[1] == matchingBallState)
+    // if both chambers are full, update the value on SmartDashboard
+    if ((Chambers.states[0] == matchingBallState || Chambers.states[1] == matchingBallState)
         && (Chambers.states[2] == matchingBallState
-        || Chambers.states[3] == matchingBallState)) {
-          readyToShoot = true;
-        } else {
-          readyToShoot = false;
-        }
+            || Chambers.states[3] == matchingBallState)) {
+      readyToShoot = true;
+    } else {
+      readyToShoot = false;
+    }
 
     if (!RobotContainer.getManualModeOp()) {
       if (Chambers.states[0] == opposingBallState || Chambers.states[1] == opposingBallState) {
@@ -146,11 +143,12 @@ public class Intake extends SubsystemBase {
       // Standard intake behavior
       intakeMotorSpeeds[0] = inputSpeeds[0];
       intakeMotorSpeeds[1] = inputSpeeds[1];
-      
 
     }
-    SmartDashboard.putString("inputSpeeds", inputSpeeds[0] + " " + inputSpeeds[1]);
-    SmartDashboard.putString("actualSpeeds", intakeMotorSpeeds[0] + " " + intakeMotorSpeeds[1]);
+    // SmartDashboard.putString("inputSpeeds", inputSpeeds[0] + " " +
+    // inputSpeeds[1]);
+    // SmartDashboard.putString("actualSpeeds", intakeMotorSpeeds[0] + " " +
+    // intakeMotorSpeeds[1]);
     intakeSpeedGradient();
   }
 
@@ -183,20 +181,19 @@ public class Intake extends SubsystemBase {
     }
   }
 
-  public void flashColor(boolean chamberState, String tableName, int ticks){
-      executed++;
-      if (executed < ticks) {
-        SmartDashboard.putBoolean(tableName, tempBool);
-        tempBool = false;
-      } else if (executed > ticks && executed < ticks * 2) {
-        SmartDashboard.putBoolean(tableName, tempBool);
-        tempBool = true;
-      } else if (executed > ticks * 2) {
-        executed = 0;
-      }
-  } 
+  public void flashColor(boolean chamberState, String tableName, int ticks) {
+    executed++;
+    if (executed < ticks) {
+      SmartDashboard.putBoolean(tableName, tempBool);
+      tempBool = false;
+    } else if (executed > ticks && executed < ticks * 2) {
+      SmartDashboard.putBoolean(tableName, tempBool);
+      tempBool = true;
+    } else if (executed > ticks * 2) {
+      executed = 0;
+    }
+  }
 
-  
   /*
    * public void stallDetection() {
    * for (int i = 0; i < 2; ++i) {
@@ -209,6 +206,4 @@ public class Intake extends SubsystemBase {
    * }
    */
 
-   
-  }
-
+}

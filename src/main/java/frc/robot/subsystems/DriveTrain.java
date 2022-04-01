@@ -40,6 +40,8 @@ public class DriveTrain extends SubsystemBase {
   /** Last joystick input when button 3 is pressed */
   private static double[] lastJoystickInput = { 0, 0, 0 };
 
+  private static double yawTarget = 0.0;
+
   private double lastExecuted = Timer.getFPGATimestamp();
 
   public MecanumDrive mecanumDrive;
@@ -137,9 +139,10 @@ public class DriveTrain extends SubsystemBase {
    */
   public void reset() {
     // ahrs.enableBoardlevelYawReset(true);
-    // ahrs.reset();
+    ahrs.reset();
     ahrs.zeroYaw();
     ahrs.resetDisplacement();
+    yawTarget = 0.0;
 
     setCoast(NeutralMode.Brake);
     motorFL.setSelectedSensorPosition(0);
@@ -225,9 +228,9 @@ public class DriveTrain extends SubsystemBase {
     if (Math.abs(y) == 0 && Math.abs(x) == 0) {
       // If we're not intentionally strafing or driving forwards/backwards, engage
       // teenage resistance (positional lock)
-      yPIDCalc = -resistStrafePID.calculate(ahrs.getDisplacementY() / (Constants.maxMetersPerSecondStrafe * deltaTime),
+      yPIDCalc = resistStrafePID.calculate(ahrs.getDisplacementY() / (Constants.maxMetersPerSecondStrafe * deltaTime),
           0);
-      xPIDCalc = -resistStrafePID
+      xPIDCalc = resistStrafePID
           .calculate(ahrs.getDisplacementX() / (Constants.maxMetersPerSecondForwards * deltaTime), 0);
     } else {
       // If we *are* intentionally strafing or driving, keep track of the current
@@ -248,10 +251,12 @@ public class DriveTrain extends SubsystemBase {
     if (Math.abs(z) == 0) {
       // If we're not intentionally turning, engage teenage resistance (directional
       // lock)
-      zPIDCalc = -rotPID.calculate(ahrs.getAngle() / (Constants.maxDegreesPerSecondRotate * deltaTime), 0);
+      zPIDCalc = Math.min(rotPID.calculate(ahrs.getAngle(), yawTarget), 0.5);
     } else {
       // If we *are* intentionally turning, keep track of the current angle
-      // ahrs.zeroYaw();
+      yawTarget = ahrs.getAngle();
+      SmartDashboard.putNumber("target angle", yawTarget);
+      SmartDashboard.putNumber("actual angle", ahrs.getAngle());
       zPIDCalc = z;
       // TODO: Transition back to velocity PIDs
       // zPIDCalc = turnRatePID.calculate(ahrs.getRate(),
@@ -282,9 +287,9 @@ public class DriveTrain extends SubsystemBase {
    * @param z I have no idea
    */
   public void driveFieldOriented(double x, double y, double z, double angle) {
-    double driveX = Deadzone.cutOff(-y, Constants.cutOffMotorSpeed);
-    double driveY = Deadzone.cutOff(-x, Constants.cutOffMotorSpeed);
-    double driveZ = Deadzone.cutOff(-z, Constants.cutOffMotorSpeed);
+    double driveX = Deadzone.cutOff(-y, Constants.cutOffMotorSpeed) * Constants.maxDriveSpeed;
+    double driveY = Deadzone.cutOff(-x, Constants.cutOffMotorSpeed) * Constants.maxDriveSpeed;
+    double driveZ = Deadzone.cutOff(-z, Constants.cutOffMotorSpeed) * Constants.maxDriveSpeed;
     mecanumDrive.driveCartesian(driveX, driveY, driveZ, angle);
   }
 
