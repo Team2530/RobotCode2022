@@ -137,7 +137,6 @@ public class RobotContainer {
               // shooter.setShooterSpeed(0.7);
               // Change shooter with xbox triggers
               shooter.setShooterSpeed(Shooter.shooterSpeedWithTriggerChange);
-              
             })))
         .whenReleased(
             new ParallelCommandGroup(

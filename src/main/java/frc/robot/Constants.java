@@ -134,6 +134,13 @@ public final class Constants {
     public static final int velocityRetentionButton = 3; // velocity retention button
     public static final int driveStraightButton = 5; // button to disable rotation
     public static final double intakeSpeed = 0.75; // speed of the intake motors
+    /** The maximum permitted shooter speed, in decimal percentage. */
     public static final double maxShooterSpeed = 0.75;
+    /**
+     * The minimum percentage of the target shooter speed before the shooter may
+     * shoot, in whole-number percentage.
+     */
+    public static final double shooterSpeedThreshold = 85;
+    /** The maximum permitted drive speed, in decimal percentage. */
     public static final double maxDriveSpeed = 1.0;
 }

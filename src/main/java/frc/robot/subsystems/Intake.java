@@ -137,13 +137,17 @@ public class Intake extends SubsystemBase {
         intakeMotorSpeeds[0] = inputSpeeds[0];
         intakeMotorSpeeds[1] = inputSpeeds[1];
         SmartDashboard.putString("Current intake auto", "normal");
-
+      }
+      // Do not move upper intake if a ball is present and the shooter is running but
+      // is below the allowed speed threshold
+      if (Chambers.ballDetected[3] && !Shooter.meetsSpeedThreshold()) {
+        intakeMotorSpeeds[1] = 0;
       }
     } else {
       // Standard intake behavior
       intakeMotorSpeeds[0] = inputSpeeds[0];
       intakeMotorSpeeds[1] = inputSpeeds[1];
-
+      SmartDashboard.putString("Current intake auto", "manual mode");
     }
     // SmartDashboard.putString("inputSpeeds", inputSpeeds[0] + " " +
     // inputSpeeds[1]);
