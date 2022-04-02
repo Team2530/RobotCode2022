@@ -54,6 +54,7 @@ public class RobotContainer {
   private final Intake intake = new Intake();
   private final Chambers ballDetection = new Chambers(3);
   private final Indicators lights = new Indicators(3);
+  private final FeedbackPanel m_feedbackPanel = new FeedbackPanel(3);
   private final Shooter shooter = new Shooter(xbox);
 
   // Diagnostics
@@ -194,7 +195,7 @@ public class RobotContainer {
   public Command getAutonomousCommand() {
     // Creates a new Autonomous Command for the robot
     System.out.println("Getting autonomous command");
-    return new Autonomous(m_driveTrain, intake, shooter, m_ahrs, xbox);
+    return new Autonomous(m_driveTrain, intake, shooter, m_ahrs, xbox, m_feedbackPanel);
   }
 
   public Command getTelopCommand() {
