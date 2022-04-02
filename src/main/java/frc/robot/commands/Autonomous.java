@@ -10,8 +10,10 @@ import edu.wpi.first.wpilibj2.command.SequentialCommandGroup;
 import frc.robot.subsystems.DriveTrain;
 import frc.robot.subsystems.Intake;
 import frc.robot.subsystems.Shooter;
+import frc.robot.subsystems.FeedbackPanel.PanelMode;
 import edu.wpi.first.wpilibj.Timer;
 import edu.wpi.first.wpilibj.XboxController;
+import frc.robot.subsystems.FeedbackPanel;
 import frc.robot.Constants;
 import edu.wpi.first.wpilibj2.command.WaitCommand;
 import com.kauailabs.navx.frc.AHRS;
@@ -24,14 +26,17 @@ public class Autonomous extends CommandBase {
   DriveTrain driveTrain;
   Intake intake;
   Shooter shooter;
+  FeedbackPanel panel;
+  
   Timer timer = new Timer();
 
-  public Autonomous(DriveTrain driveTrain, Intake intake, Shooter shooter, AHRS ahrs, XboxController xbox) {
+  public Autonomous(DriveTrain driveTrain, Intake intake, Shooter shooter, AHRS ahrs, XboxController xbox, FeedbackPanel panel) {
     // Use addRequirements() here to declare subsystem dependencies.
     this.driveTrain = driveTrain;
     this.intake = intake;
     this.shooter = shooter;
     this.ahrs = ahrs;
+    this.panel = panel;
     timer.start();
   }
 
@@ -42,6 +47,7 @@ public class Autonomous extends CommandBase {
   public void initialize() {
     ahrs.reset();
     driveTrain.reset();
+    //panel.setDisplayMode(PanelMode.Boot);
     // Robot travels ~1 m/sec forward and backward
     // Competition settings: 1.5m backward, 1m right (1.5 sec backward, 2 sec right)
     SequentialCommandGroup autoVroomVroom = new SequentialCommandGroup(
@@ -78,9 +84,22 @@ public class Autonomous extends CommandBase {
         new InstantCommand(() -> intake.setIntakeMotorSpeed(1, 0)),
         new InstantCommand(() -> shooter.setShooterSpeed(0.0))
     );
+
+    SequentialCommandGroup testVroomVroom = new SequentialCommandGroup(
+      new InstantCommand(() -> intake.setIntakeMotorSpeed(0, -Constants.intakeSpeed)),
+      new InstantCommand(() -> intake.setIntakeMotorSpeed(1, -Constants.intakeSpeed)),
+      new InstantCommand(() -> shooter.setShooterSpeed(0.5)),
+      new WaitCommand(2),
+      new InstantCommand(() -> intake.setIntakeMotorSpeed(1, 0)),
+      new InstantCommand(() -> intake.setIntakeMotorSpeed(0, 0)),
+      new InstantCommand(() -> shooter.setShooterSpeed(0)),
+      new AutonomousDrive(driveTrain, 2, 2, ahrs),
+      new WaitCommand(1.5),
+      new AutonomousDrive(driveTrain, 2, 3, ahrs)
+    );
     System.out.println("Starting Autonomous Commands...");
     System.out.println("Please don't run into something!");
-    autoVroomVroom.schedule();
+    testVroomVroom.schedule();
 
     // add more commands here
     // autoVroomVroom.schedule();
@@ -95,6 +114,7 @@ public class Autonomous extends CommandBase {
   // Called once the command ends or is interrupted.
   @Override
   public void end(boolean interrupted) {
+    //panel.setDisplayMode(PanelMode.Status);
   }
 
   // Returns true when the command should end.

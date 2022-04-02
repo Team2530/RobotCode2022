@@ -27,7 +27,7 @@ public class AutonomousDrive extends CommandBase {
   double[] navxData = { 0, 0, 0, 0, 0 };
 
   /**
-   * 1 is forward, 2 is back, 3 is right, 4 is left
+   * @param direction  1 is forward, 2 is back, 3 is right, 4 is left
    */
   public AutonomousDrive(DriveTrain driveTrain, double distance, int direction, AHRS ahrs) {
     this.driveTrain = driveTrain;
@@ -88,17 +88,17 @@ public class AutonomousDrive extends CommandBase {
     deltaTime = Timer.getFPGATimestamp() - timeSinceChecked;
     timeSinceChecked = Timer.getFPGATimestamp();
     if (direction == 1 || direction == 2) {
-      currentVelocity = ahrs.getVelocityY();
+      currentVelocity = ahrs.getWorldLinearAccelY() / 9.8;
       // currentVelocity = Deadzone.deadZone(ahrs.getVelocityY(), 0.05);
-    } else if (direction == 3 || direction == 4) {
-      currentVelocity = ahrs.getVelocityX();
+    } else if (direction == 3 || direction == 4) { 
+      currentVelocity = ahrs.getWorldLinearAccelX() / 9.8;
     } else {
       System.out.println("ERROR");
     }
   }
 
   public void distanceMaths() {
-    distanceTraveled = distanceTraveled + Math.abs(currentVelocity * deltaTime);
+    distanceTraveled = distanceTraveled + Math.abs(currentVelocity);
     System.out.println("distance to go : " + (distance - distanceTraveled) + " Dtime :    " + deltaTime);
   }
 

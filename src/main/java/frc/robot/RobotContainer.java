@@ -23,6 +23,7 @@ import edu.wpi.first.wpilibj2.command.button.JoystickButton;
 import edu.wpi.first.wpilibj.smartdashboard.Field2d;
 import frc.robot.commands.*;
 import frc.robot.subsystems.*;
+import frc.robot.subsystems.FeedbackPanel.PanelMode;
 
 /**
  * This class is where the bulk of the robot should be declared. Since
@@ -54,6 +55,7 @@ public class RobotContainer {
   private final Intake intake = new Intake();
   private final Chambers ballDetection = new Chambers(3);
   private final Indicators lights = new Indicators(3);
+  private final FeedbackPanel m_feedbackPanel = new FeedbackPanel(3);
   private final Shooter shooter = new Shooter(xbox);
 
   // Diagnostics
@@ -194,10 +196,12 @@ public class RobotContainer {
   public Command getAutonomousCommand() {
     // Creates a new Autonomous Command for the robot
     System.out.println("Getting autonomous command");
-    return new Autonomous(m_driveTrain, intake, shooter, m_ahrs, xbox);
+    m_feedbackPanel.setDisplayMode(PanelMode.Boot);
+    return new Autonomous(m_driveTrain, intake, shooter, m_ahrs, xbox, m_feedbackPanel);
   }
 
   public Command getTelopCommand() {
+    m_feedbackPanel.setDisplayMode(PanelMode.Status);
     // Toggles dual joystick, should be replaced with an actual check in the future
     return new SingleJoystickDrive(m_driveTrain, stick1);
   }
