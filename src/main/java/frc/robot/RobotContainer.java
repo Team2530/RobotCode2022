@@ -19,7 +19,6 @@ import edu.wpi.first.math.trajectory.Trajectory;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.InstantCommand;
 import edu.wpi.first.wpilibj2.command.ParallelCommandGroup;
-import edu.wpi.first.wpilibj2.command.RamseteCommand;
 import edu.wpi.first.wpilibj2.command.button.JoystickButton;
 import edu.wpi.first.wpilibj.smartdashboard.Field2d;
 import frc.robot.commands.*;
@@ -45,16 +44,21 @@ public class RobotContainer {
 
   // -------------------- Subsystems -------------------- \\
 
+  // Inputs
   private final AHRS m_ahrs = new AHRS();
-  private final Battery m_battery = new Battery(m_ahrs, xbox);
-  private final DriveTrain m_driveTrain = new DriveTrain(m_ahrs);
-  private final Climber m_climber = new Climber();
-  // private final USBCamera usbCamera = new USBCamera();
   private final PhotonVision vision = new PhotonVision();
+
+  // Outputs
+  private final DriveTrain m_driveTrain = new DriveTrain(m_ahrs, stick1, xbox);
+  private final Climber m_climber = new Climber();
   private final Intake intake = new Intake();
   private final Chambers ballDetection = new Chambers(3);
   private final Indicators lights = new Indicators(3);
-  private final Shooter shooter = new Shooter();
+  private final Shooter shooter = new Shooter(xbox);
+
+  // Diagnostics
+  private final Battery m_battery = new Battery(m_ahrs, m_driveTrain, xbox);
+  private final Field field = new Field(m_ahrs);
 
   // -------------------- Autonomous Commands -------------------- \\
   // insert autonomous commands here
@@ -129,7 +133,10 @@ public class RobotContainer {
               intake.setIntakeMotorSpeed(1, -Constants.intakeSpeed);
             }),
             new InstantCommand(() -> {
-              shooter.setShooterSpeed(0.7);
+              // Normal Shooter Operation
+              // shooter.setShooterSpeed(0.7);
+              // Change shooter with xbox triggers
+              shooter.setShooterSpeed(Shooter.shooterSpeedWithTriggerChange);
             })))
         .whenReleased(
             new ParallelCommandGroup(
@@ -151,6 +158,12 @@ public class RobotContainer {
     }).whenReleased(() -> {
       manualModeOp = false;
     });
+
+    // Toggle intake cockpit
+    new JoystickButton(stick1, 11).whenPressed(() -> m_driveTrain.toggleIntakeCockpit());
+
+    // Death Blossom (rotate 180)
+    new JoystickButton(stick1, 12).whenPressed(() -> m_driveTrain.deathBlossom());
   }
 
   /** Returns whether or not the robot is driving at full speed. */
@@ -178,12 +191,18 @@ public class RobotContainer {
    *
    * @return the command to run in autonomous
    */
-  public Command getAutonomousCommand(Trajectory trajectory) {
-    return null;
+  public Command getAutonomousCommand() {
+    // Creates a new Autonomous Command for the robot
+    System.out.println("Getting autonomous command");
+    return new Autonomous(m_driveTrain, intake);
   }
 
   public Command getTelopCommand() {
     // Toggles dual joystick, should be replaced with an actual check in the future
+    return new SingleJoystickDrive(m_driveTrain, stick1);
+  }
+
+  public Command getTestCommand() {
     return new SingleJoystickDrive(m_driveTrain, stick1);
   }
 

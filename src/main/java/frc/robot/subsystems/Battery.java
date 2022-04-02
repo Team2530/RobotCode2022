@@ -2,26 +2,25 @@ package frc.robot.subsystems;
 
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 
-import com.ctre.phoenix.motion.MotionProfileStatus;
 import com.kauailabs.navx.frc.AHRS;
 import edu.wpi.first.wpilibj.GenericHID.RumbleType;
-import edu.wpi.first.hal.simulation.PowerDistributionDataJNI;
-import edu.wpi.first.wpilibj.PowerDistribution;
 import edu.wpi.first.wpilibj.RobotController;
+import edu.wpi.first.wpilibj.Timer;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
-import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import frc.robot.Constants;
-import edu.wpi.first.wpilibj.DriverStation;
-import frc.robot.subsystems.DriveTrain;
 import edu.wpi.first.wpilibj.XboxController;
 
 public class Battery extends SubsystemBase {
 
    AHRS ahrs;
-   XboxController xbox = new XboxController(Constants.xboxport);
+   DriveTrain driveTrain;
+   XboxController xbox;
 
-   public Battery(AHRS ahrs, XboxController xbox) {
+   Timer timer = new Timer();
+
+   public Battery(AHRS ahrs, DriveTrain driveTrain, XboxController xbox) {
       this.ahrs = ahrs;
+      this.driveTrain = driveTrain;
       this.xbox = xbox;
    }
 
@@ -33,7 +32,7 @@ public class Battery extends SubsystemBase {
    }
 
    public int calculateBatteryPercentage() {
-      return (int) Math.round((getVoltage() - 12) / 0.75 * 100);
+      return (int) Math.round((getVoltage() - 12.4) / 0.35 * 100);
    }
 
    public void updateMinBatteryVoltage() {
@@ -47,13 +46,31 @@ public class Battery extends SubsystemBase {
 
    public void updateBatteryPercentage() {
       batteryPercentage = calculateBatteryPercentage();
-      SmartDashboard.putString("Battery", batteryPercentage + "%");
+      String output = minVoltage > 12.4 ? batteryPercentage + "%"
+            : minVoltage > 12 ? "Avoid high-power functions" : "Replace battery now";
+      SmartDashboard.putString("Battery", output);
    }
-
 
    @Override
    public void periodic() {
+      getBatteryRuntime();
       updateMinBatteryVoltage();
-      if (!ahrs.isMoving() && !ahrs.isRotating()) updateBatteryPercentage();
+      if (!ahrs.isMoving() && !ahrs.isRotating())
+         updateBatteryPercentage();
+   }
+
+   public void getBatteryRuntime() {
+      double a = Math.abs(driveTrain.motorBL.getMotorOutputVoltage());
+      double b = Math.abs(driveTrain.motorBR.getMotorOutputVoltage());
+      double q = Math.abs(driveTrain.motorFL.getMotorOutputVoltage());
+      double e = Math.abs(driveTrain.motorFR.getMotorOutputVoltage());
+
+      if ((a > .1) || (b > .1) || (q > .1) || (e > .1) || xbox.getRawButton(3) || xbox.getRawButton(1)
+            || xbox.getRawButton(2)) {
+         timer.start();
+         SmartDashboard.putNumber("Battery Runtime", timer.get());
+      } else {
+         timer.stop();
+      }
    }
 }

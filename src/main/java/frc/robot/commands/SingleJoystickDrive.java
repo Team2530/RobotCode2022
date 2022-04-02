@@ -7,9 +7,13 @@
 
 package frc.robot.commands;
 
+import edu.wpi.first.math.controller.PIDController;
+import edu.wpi.first.wpilibj.XboxController;
+
+import org.photonvision.PhotonCamera;
+import org.photonvision.targeting.PhotonPipelineResult;
+
 import edu.wpi.first.wpilibj.Joystick;
-import edu.wpi.first.wpilibj.Timer;
-import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.CommandBase;
 import frc.robot.Constants;
 import frc.robot.RobotContainer;
@@ -22,10 +26,16 @@ public class SingleJoystickDrive extends CommandBase {
    */
   DriveTrain m_drivetrain;
   Joystick stick;
-  private double yawTarget = 0.0;
-
-  private final double yawRate = 310.0;
-  private double lastExecuted = Timer.getFPGATimestamp();
+  XboxController xboxController = new XboxController(0);
+  private int camera = 1;
+  PhotonCamera BSideCamera = new PhotonCamera("Breaker");
+  // PhotonCamera ESideCamera = new PhotonCamera("Ethernet");
+  PhotonCamera curCamera = BSideCamera;
+  double forwardSpeed;
+  double rotationSpeed;
+  double kP = 0.5, kI = 0, kD = 0;
+  PIDController forwardController = new PIDController(kP, kI, kD);
+  PIDController turnController = new PIDController(kP, kI, kD);
 
   public SingleJoystickDrive(DriveTrain m_drivetrain, Joystick stick) {
     this.m_drivetrain = m_drivetrain;
@@ -37,26 +47,45 @@ public class SingleJoystickDrive extends CommandBase {
   @Override
   public void initialize() {
     m_drivetrain.reset();
-    lastExecuted = Timer.getFPGATimestamp();
   }
 
   // Called every time the scheduler runs while the command is scheduled.
   @Override
   public void execute() {
-    // if' (stick.getMagnitude() < 0.2) return;
-    double m = RobotContainer.getBoostMode() ? 1.0 : 0.5;
-    double s = RobotContainer.getSlowMode() ? 0.5 : 1;
-    // m *= (stick.getRawAxis(3) + 1.0) / 2.0;
+    if (xboxController.getYButton()) {
+      BSideCamera.setPipelineIndex(2);
 
-    double deltaTime = Timer.getFPGATimestamp() - lastExecuted;
-    lastExecuted = Timer.getFPGATimestamp();
+      // TODO: Make this the other PiD
 
-    // double turn = stick.getRawAxis(3) - stick.getRawAxis(2);
-    yawTarget += stick.getZ() * yawRate * deltaTime;
-    m_drivetrain.singleJoystickDrive(Deadzone.deadZone(stick.getRawAxis(1), Constants.deadzone) * m * s,
-        Deadzone.deadZone(stick.getRawAxis(0), Constants.deadzone) * m * s,
-        Deadzone.deadZone(stick.getRawAxis(2), Constants.deadzoneZ) * m * s);
-    // m_drivetrain.singleJoystickDrive(stick.getX() * m, 0, 0);
+      PhotonPipelineResult result = BSideCamera.getLatestResult();
+      double gain = 1.0;
+      System.out.println(result.hasTargets());
+      if (result.hasTargets()) {
+        System.out.println();
+        gain = Math.min(0.75, Math.sqrt(result.getBestTarget().getArea()) / 2);
+        rotationSpeed = turnController.calculate(result.getBestTarget().getYaw()
+            / 30, -0.1);
+        if (result.getBestTarget().getArea() > 7.5)
+          rotationSpeed = 0.0;
+        forwardSpeed = xboxController.getLeftX() / 2;
+      } else {
+        System.out.println("No Ball(s)");
+        rotationSpeed = 0;
+      }
+
+      m_drivetrain.mecanumDrive.driveCartesian(
+          0,
+          forwardSpeed,
+          rotationSpeed);
+    } else {
+      double m = RobotContainer.getBoostMode() ? 1.0 : 0.5;
+      double s = RobotContainer.getSlowMode() ? 0.5 : 1;
+      // m *= (stick.getRawAxis(3) + 1.0) / 2.0;
+
+      m_drivetrain.singleJoystickDrive(Deadzone.deadZone(stick.getRawAxis(1), Constants.deadzone) * m * s,
+          Deadzone.deadZone(stick.getRawAxis(0), Constants.deadzone) * m * s,
+          Deadzone.deadZone(stick.getRawAxis(2), Constants.deadzoneZ) * m * s);
+    }
   }
 
   // Called once the command ends or is interrupted.
