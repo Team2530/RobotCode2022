@@ -4,6 +4,7 @@ import edu.wpi.first.wpilibj2.command.SubsystemBase;
 
 import com.kauailabs.navx.frc.AHRS;
 import edu.wpi.first.wpilibj.GenericHID.RumbleType;
+import edu.wpi.first.wpilibj.shuffleboard.Shuffleboard;
 import edu.wpi.first.wpilibj.RobotController;
 import edu.wpi.first.wpilibj.Timer;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
@@ -18,14 +19,15 @@ public class Battery extends SubsystemBase {
 
    Timer timer = new Timer();
 
+   double minVoltage = getVoltage();
+   int batteryPercentage = calculateBatteryPercentage();
+
    public Battery(AHRS ahrs, DriveTrain driveTrain, XboxController xbox) {
       this.ahrs = ahrs;
       this.driveTrain = driveTrain;
       this.xbox = xbox;
+      Shuffleboard.getTab("Technical Info").add("Minimum voltage ever", minVoltage);
    }
-
-   double minVoltage = getVoltage();
-   int batteryPercentage = calculateBatteryPercentage();
 
    public double getVoltage() {
       return RobotController.getBatteryVoltage();
@@ -37,7 +39,6 @@ public class Battery extends SubsystemBase {
 
    public void updateMinBatteryVoltage() {
       minVoltage = Math.min(minVoltage, getVoltage());
-      SmartDashboard.putNumber("Minimum voltage ever", minVoltage);
       if (minVoltage < Constants.brownOutVoltage) {
          xbox.setRumble(RumbleType.kLeftRumble, 1);
          xbox.setRumble(RumbleType.kRightRumble, 1);

@@ -39,7 +39,8 @@ public class DriveTrain extends SubsystemBase {
     LEFT,
     RIGHT
   }
-  private static Cockpit cockpitMode; 
+
+  private static Cockpit cockpitMode;
 
   /** The actual joystick input on each axis. */
   public static double[] joystickInput = { 0, 0, 0 };
@@ -126,12 +127,13 @@ public class DriveTrain extends SubsystemBase {
 
     mecanumDrive = new MecanumDrive(motorFL, motorBL, motorFR, motorBR);
     mecanumDrive.setSafetyEnabled(false);
+
+    Shuffleboard.getTab("Technical Info").add("rotPIDGraph", rotPID.getPositionError());
   }
 
   @Override
   public void periodic() {
     // putNavXInfo();
-    SmartDashboard.putNumber("rotPIDGraph", rotPID.getPositionError());
     ROT_PID_P = rotPidP.getDouble(ROT_PID_P);
     ROT_PID_I = rotPidI.getDouble(ROT_PID_I);
     ROT_PID_D = rotPidD.getDouble(ROT_PID_D);
@@ -272,7 +274,8 @@ public class DriveTrain extends SubsystemBase {
       // Deadzone.deadZone(-z, 0.1) * Constants.maxDegreesPerSecondRotate *
       // deltaTime);
     }
-    SmartDashboard.putString("Cockpit mode", cockpitMode == Cockpit.FRONT ? "Front" : cockpitMode == Cockpit.LEFT ? "Left" : "Right");
+    SmartDashboard.putString("Cockpit mode",
+        cockpitMode == Cockpit.FRONT ? "Front" : cockpitMode == Cockpit.LEFT ? "Left" : "Right");
     if (cockpitMode == Cockpit.FRONT) {
       driveFieldOriented(xPIDCalc, yPIDCalc, zPIDCalc);
     } else if (cockpitMode == Cockpit.LEFT) {

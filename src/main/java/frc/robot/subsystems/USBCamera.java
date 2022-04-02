@@ -53,7 +53,7 @@ public class USBCamera extends CommandBase {
   }
 
   private static void putToDashboard(UsbCamera source) {
-    Shuffleboard.getTab("SmartDashboard")
+    Shuffleboard.getTab("Driver Dashboard")
         .add("Camera", source)
         .withWidget(BuiltInWidgets.kCameraStream);
   }

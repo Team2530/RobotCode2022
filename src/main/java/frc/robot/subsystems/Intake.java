@@ -6,6 +6,8 @@ package frc.robot.subsystems;
 
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 
+import java.util.Map;
+
 import com.ctre.phoenix.motorcontrol.can.WPI_TalonFX;
 
 import frc.robot.Constants;
@@ -15,6 +17,9 @@ import edu.wpi.first.wpilibj.DriverStation;
 import edu.wpi.first.wpilibj.Timer;
 import edu.wpi.first.wpilibj.Joystick;
 import edu.wpi.first.wpilibj.XboxController;
+import edu.wpi.first.wpilibj.shuffleboard.ComplexWidget;
+import edu.wpi.first.wpilibj.shuffleboard.Shuffleboard;
+import edu.wpi.first.wpilibj.shuffleboard.SimpleWidget;
 import edu.wpi.first.wpilibj.simulation.XboxControllerSim;
 // import frc.robot.subsystems.Rev3ColorSensor;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
@@ -36,6 +41,8 @@ public class Intake extends SubsystemBase {
   Timer timer = new Timer();
 
   // -----------Intake Behavior States-----------\\
+  SimpleWidget lowerIntakeWidget;
+  SimpleWidget upperIntakeWidget;
   // ball was rejected by the robot
   boolean ballRejection = false;
   // upper chamber is currently empty
@@ -45,14 +52,17 @@ public class Intake extends SubsystemBase {
   boolean reversePressed = true;
   // a ball may be eaten
   boolean readyToIntake = true;
+  // a ball is being consumed
+  boolean intaking = false;
   // robot has 2 balls
   boolean robotFull = false;
-  // I just need this
-  boolean tempBool = false;
   // Robot is full and able to shoot
   boolean readyToShoot = false;
   // shooter is being used
   boolean shooting = false;
+
+  // Current state of auto-intake
+  String autoIntakeDescription = "Not run yet";
 
   double timerLast = 0.0;
   int executed = 0;
@@ -66,28 +76,13 @@ public class Intake extends SubsystemBase {
     inputSpeeds[1] = 0;
     intakeMotorSpeeds[0] = 0;
     intakeMotorSpeeds[1] = 0;
+    upperIntakeWidget = Shuffleboard.getTab("Driver Dashboard").add("Upper intake status", true);
+    lowerIntakeWidget = Shuffleboard.getTab("Driver Dashboard").add("Lower intake status", true);
+    Shuffleboard.getTab("Technical Info").add("Current intake auto", autoIntakeDescription);
   }
 
   @Override
   public void periodic() {
-
-    SmartDashboard.putBoolean("Ball Rejection", ballRejection);
-    SmartDashboard.putBoolean("Staus", readyToIntake);
-    SmartDashboard.putBoolean("Reverse", reverseIsPressed);
-    SmartDashboard.putBoolean("Full?", readyToShoot);
-    SmartDashboard.putBoolean("Shooting", shooting);
-    // Update Intake Square and Flash if you haven't dumped the ball yet
-    if (!reversePressed) {
-      flashColor(ballRejection, "Ball Rejection", 15);
-      readyToIntake = false;
-    }
-    if (xbox.getRawButton(2)) {
-      reversePressed = true;
-      readyToIntake = true;
-    }
-    reverseIsPressed = xbox.getRawButton(2);
-    shooting = xbox.getRawButton(3);
-
     // This method will be called once per scheduler run
     BallState matchingBallState = DriverStation.getAlliance() == DriverStation.Alliance.Red
         ? BallState.Red
@@ -96,15 +91,6 @@ public class Intake extends SubsystemBase {
         ? BallState.Blue
         : BallState.Red;
 
-    // if both chambers are full, update the value on SmartDashboard
-    if ((Chambers.states[0] == matchingBallState || Chambers.states[1] == matchingBallState)
-        && (Chambers.states[2] == matchingBallState
-            || Chambers.states[3] == matchingBallState)) {
-      readyToShoot = true;
-    } else {
-      readyToShoot = false;
-    }
-
     if (!RobotContainer.getManualModeOp()) {
       if (Chambers.states[0] == opposingBallState || Chambers.states[1] == opposingBallState) {
         // Ball rejection - run bottom intake down, run top intake as usual
@@ -112,31 +98,32 @@ public class Intake extends SubsystemBase {
         intakeMotorSpeeds[1] = inputSpeeds[1];
         reversePressed = false;
         readyToIntake = false;
-        SmartDashboard.putString("Current intake auto", "ball rejection");
+        autoIntakeDescription = "Ball rejection";
       } else if ((Chambers.states[0] == matchingBallState || Chambers.states[1] == matchingBallState
           || Chambers.states[2] == matchingBallState)
           && Chambers.ballNotDetected[3]) {
         // Move lower chamber contents up if upper chamber is empty
         intakeMotorSpeeds[0] = -Constants.intakeSpeed;
         intakeMotorSpeeds[1] = -Constants.intakeSpeed;
-        SmartDashboard.putString("Current intake auto", "upper chamber empty");
+        autoIntakeDescription = "Upper chamber empty";
         upperChamberEmpty = true;
       } else if ((Chambers.ballDetected[0] || Chambers.ballDetected[1])
           && Chambers.ballDetected[3]) {
         // Do not allow running bottom intake up if both chambers are full
         intakeMotorSpeeds[0] = inputSpeeds[0] < 0 ? 0 : inputSpeeds[0];
         intakeMotorSpeeds[1] = inputSpeeds[1];
+        autoIntakeDescription = "full";
       } else if (Chambers.ballDetected[1]) {
         // Chamber transfer - run both intake motors in the direction of the lower
         // intake
         intakeMotorSpeeds[0] = inputSpeeds[0];
         intakeMotorSpeeds[1] = inputSpeeds[0];
-        SmartDashboard.putString("Current intake auto", "chamber transfer");
+        autoIntakeDescription = "Chamber transfer";
       } else {
         // Standard intake behavior
         intakeMotorSpeeds[0] = inputSpeeds[0];
         intakeMotorSpeeds[1] = inputSpeeds[1];
-        SmartDashboard.putString("Current intake auto", "normal");
+        autoIntakeDescription = "Normal";
       }
       // Do not move upper intake if a ball is present and the shooter is running but
       // is below the allowed speed threshold
@@ -147,13 +134,54 @@ public class Intake extends SubsystemBase {
       // Standard intake behavior
       intakeMotorSpeeds[0] = inputSpeeds[0];
       intakeMotorSpeeds[1] = inputSpeeds[1];
-      SmartDashboard.putString("Current intake auto", "manual mode");
+      autoIntakeDescription = "Manual mode";
     }
     // SmartDashboard.putString("inputSpeeds", inputSpeeds[0] + " " +
     // inputSpeeds[1]);
     // SmartDashboard.putString("actualSpeeds", intakeMotorSpeeds[0] + " " +
     // intakeMotorSpeeds[1]);
     intakeSpeedGradient();
+
+    // Update Shuffleboard panels
+    if (xbox.getRawButton(2)) {
+      reversePressed = true;
+      readyToIntake = true;
+    }
+    intaking = xbox.getAButton();
+    reverseIsPressed = xbox.getRawButton(2);
+    shooting = xbox.getRawButton(3);
+
+    // if both chambers are full, update the value on SmartDashboard
+    if ((Chambers.states[0] == matchingBallState || Chambers.states[1] == matchingBallState)
+        && (Chambers.states[2] == matchingBallState
+            || Chambers.states[3] == matchingBallState)) {
+      readyToShoot = true;
+    } else {
+      readyToShoot = false;
+    }
+
+    if (autoIntakeDescription == "Ball rejection" && !reversePressed) {
+      readyToIntake = false;
+      setIntakeStatus(lowerIntakeWidget, flashColor("yellow", "white", 10));
+    } else if (reversePressed) {
+      setIntakeStatus(lowerIntakeWidget, "yellow");
+    } else if (intaking) {
+      setIntakeStatus(lowerIntakeWidget, "green");
+    } else if (readyToIntake) {
+      setIntakeStatus(lowerIntakeWidget, flashColor("green", "white", 15));
+    } else if (Chambers.ballDetected[0] || Chambers.ballDetected[1]) {
+      setIntakeStatus(lowerIntakeWidget, "#b3b3b3");
+    }
+
+    if (shooting) {
+      setIntakeStatus(upperIntakeWidget, "green");
+    } else if (readyToShoot) {
+      setIntakeStatus(upperIntakeWidget, flashColor("green", "white", 15));
+    } else if (autoIntakeDescription == "Upper chamber empty") {
+      setIntakeStatus(upperIntakeWidget, flashColor("#b3b3b3", "white", 15));
+    } else {
+      setIntakeStatus(upperIntakeWidget, "#b3b3b3");
+    }
   }
 
   /**
@@ -185,16 +213,18 @@ public class Intake extends SubsystemBase {
     }
   }
 
-  public void flashColor(boolean chamberState, String tableName, int ticks) {
+  public void setIntakeStatus(SimpleWidget intakeWidget, String color) {
+    intakeWidget.withProperties(Map.of("colorWhenTrue", color));
+  }
+
+  public String flashColor(String color1, String color2, int ticks) {
     executed++;
-    if (executed < ticks) {
-      SmartDashboard.putBoolean(tableName, tempBool);
-      tempBool = false;
-    } else if (executed > ticks && executed < ticks * 2) {
-      SmartDashboard.putBoolean(tableName, tempBool);
-      tempBool = true;
-    } else if (executed > ticks * 2) {
+    if (executed > ticks * 2)
       executed = 0;
+    if (executed < ticks) {
+      return color1;
+    } else {
+      return color2;
     }
   }
 
