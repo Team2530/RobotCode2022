@@ -347,8 +347,8 @@ public class DriveTrain extends SubsystemBase {
   }
 
   /** Rotates 180, why not? */
-  public void deathBlossom() {
-    yawTarget += 180;
+  public void deathBlossom(double degrees) {
+    yawTarget += degrees;
   }
 
   public void putNavXInfo() {

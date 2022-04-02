@@ -163,7 +163,7 @@ public class RobotContainer {
     new JoystickButton(stick1, 11).whenPressed(() -> m_driveTrain.toggleIntakeCockpit());
 
     // Death Blossom (rotate 180)
-    new JoystickButton(stick1, 12).whenPressed(() -> m_driveTrain.deathBlossom());
+    new JoystickButton(stick1, 12).whenPressed(() -> m_driveTrain.deathBlossom(180));
   }
 
   /** Returns whether or not the robot is driving at full speed. */
@@ -194,7 +194,7 @@ public class RobotContainer {
   public Command getAutonomousCommand() {
     // Creates a new Autonomous Command for the robot
     System.out.println("Getting autonomous command");
-    return new Autonomous(m_driveTrain, intake);
+    return new Autonomous(m_driveTrain, intake, shooter, m_ahrs, xbox);
   }
 
   public Command getTelopCommand() {
