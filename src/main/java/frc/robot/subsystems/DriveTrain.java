@@ -330,7 +330,7 @@ public class DriveTrain extends SubsystemBase {
 
   /** Rotates 180, why not? */
   public void deathBlossom() {
-    ahrs.setAngleAdjustment((ahrs.getAngleAdjustment() + 180) % 360);
+    yawTarget += 180;
   }
 
   public void putNavXInfo() {
