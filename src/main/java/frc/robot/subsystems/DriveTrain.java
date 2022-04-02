@@ -8,6 +8,7 @@
 package frc.robot.subsystems;
 
 import edu.wpi.first.math.controller.PIDController;
+import edu.wpi.first.wpilibj.DriverStation;
 import edu.wpi.first.wpilibj.Joystick;
 import edu.wpi.first.wpilibj.Timer;
 import edu.wpi.first.wpilibj.drive.MecanumDrive;
@@ -33,6 +34,13 @@ import com.kauailabs.navx.frc.AHRS;
  * motors used to drive the robot around.
  */
 public class DriveTrain extends SubsystemBase {
+  public static enum Cockpit {
+    FRONT,
+    LEFT,
+    RIGHT
+  }
+  private static Cockpit cockpitMode; 
+
   /** The actual joystick input on each axis. */
   public static double[] joystickInput = { 0, 0, 0 };
   /** The current joystick interpolation on each axis. */
@@ -143,6 +151,7 @@ public class DriveTrain extends SubsystemBase {
     ahrs.zeroYaw();
     ahrs.resetDisplacement();
     yawTarget = 0.0;
+    cockpitMode = Cockpit.FRONT;
 
     setCoast(NeutralMode.Brake);
     motorFL.setSelectedSensorPosition(0);
@@ -264,7 +273,13 @@ public class DriveTrain extends SubsystemBase {
       // deltaTime);
     }
 
-    driveFieldOriented(xPIDCalc, yPIDCalc, zPIDCalc, ahrs.getYaw());
+    if (cockpitMode == Cockpit.FRONT) {
+      driveFieldOriented(xPIDCalc, yPIDCalc, zPIDCalc);
+    } else if (cockpitMode == Cockpit.LEFT) {
+      driveOrientedToAngle(xPIDCalc, yPIDCalc, zPIDCalc, -90.0);
+    } else if (cockpitMode == Cockpit.RIGHT) {
+      driveOrientedToAngle(xPIDCalc, yPIDCalc, zPIDCalc, 90.0);
+    }
   }
 
   /**
@@ -275,7 +290,11 @@ public class DriveTrain extends SubsystemBase {
    * @param z I have no idea
    */
   public void driveRobotOriented(double x, double y, double z) {
-    driveFieldOriented(x, y, z, 0.0);
+    driveOrientedToAngle(x, y, z, 0.0);
+  }
+
+  public void driveFieldOriented(double x, double y, double z) {
+    driveOrientedToAngle(x, y, z, ahrs.getYaw());
   }
 
   /**
@@ -286,7 +305,7 @@ public class DriveTrain extends SubsystemBase {
    * @param y Positive is driving forward, negative is driving backward
    * @param z I have no idea
    */
-  public void driveFieldOriented(double x, double y, double z, double angle) {
+  public void driveOrientedToAngle(double x, double y, double z, double angle) {
     double driveX = Deadzone.cutOff(-y, Constants.cutOffMotorSpeed) * Constants.maxDriveSpeed;
     double driveY = Deadzone.cutOff(-x, Constants.cutOffMotorSpeed) * Constants.maxDriveSpeed;
     double driveZ = Deadzone.cutOff(-z, Constants.cutOffMotorSpeed) * Constants.maxDriveSpeed;
@@ -326,6 +345,17 @@ public class DriveTrain extends SubsystemBase {
       result[1] = 0.1;
     }
     return result;
+  }
+
+  public void toggleIntakeCockpit() {
+    if (cockpitMode == Cockpit.FRONT) {
+      cockpitMode = Cockpit.LEFT;
+    } else if (cockpitMode == Cockpit.LEFT) {
+      cockpitMode = Cockpit.RIGHT;
+    } else if (cockpitMode == Cockpit.RIGHT) {
+      cockpitMode = Cockpit.FRONT;
+    }
+    USBCamera.changeCameraSource(cockpitMode);
   }
 
   /** Rotates 180, why not? */

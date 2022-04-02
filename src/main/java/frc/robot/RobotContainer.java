@@ -159,6 +159,9 @@ public class RobotContainer {
       manualModeOp = false;
     });
 
+    // Toggle intake cockpit
+    new JoystickButton(stick1, 11).whenPressed(() -> m_driveTrain.toggleIntakeCockpit());
+
     // Death Blossom (rotate 180)
     new JoystickButton(stick1, 12).whenPressed(() -> m_driveTrain.deathBlossom());
   }
