@@ -27,7 +27,7 @@ public class AutonomousDrive extends CommandBase {
   double[] navxData = { 0, 0, 0, 0, 0 };
 
   /**
-   * 1 is forward, 2 is back, 3 is right, 4 is left
+   * @param direction  1 is forward, 2 is back, 3 is right, 4 is left
    */
   public AutonomousDrive(DriveTrain driveTrain, double distance, int direction, AHRS ahrs) {
     this.driveTrain = driveTrain;
