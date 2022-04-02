@@ -86,10 +86,12 @@ public class Autonomous extends CommandBase {
     );
 
     SequentialCommandGroup testVroomVroom = new SequentialCommandGroup(
+      new InstantCommand(() -> intake.setIntakeMotorSpeed(0, -Constants.intakeSpeed)),
       new InstantCommand(() -> intake.setIntakeMotorSpeed(1, -Constants.intakeSpeed)),
       new InstantCommand(() -> shooter.setShooterSpeed(0.5)),
       new WaitCommand(2),
       new InstantCommand(() -> intake.setIntakeMotorSpeed(1, 0)),
+      new InstantCommand(() -> intake.setIntakeMotorSpeed(0, 0)),
       new InstantCommand(() -> shooter.setShooterSpeed(0)),
       new AutonomousDrive(driveTrain, 2, 2, ahrs),
       new WaitCommand(1.5),
