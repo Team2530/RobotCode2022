@@ -6,19 +6,26 @@ package frc.robot.subsystems;
 
 import edu.wpi.first.wpilibj2.command.CommandBase;
 import edu.wpi.first.cameraserver.CameraServer;
+import edu.wpi.first.cscore.HttpCamera;
+import edu.wpi.first.cscore.MjpegServer;
 import edu.wpi.first.cscore.UsbCamera;
 import edu.wpi.first.wpilibj.shuffleboard.BuiltInWidgets;
 import edu.wpi.first.wpilibj.shuffleboard.Shuffleboard;
 
 public class USBCamera extends CommandBase {
-  static UsbCamera driveCam, leftIntakeCam, rightIntakeCam;
+  static HttpCamera driveCam, leftIntakeCam, rightIntakeCam;
+  static MjpegServer dashboardCam = CameraServer.addSwitchedCamera("Dashcam");
 
   /** Creates a new USBCamera. */
   public USBCamera() {
     // Use addRequirements() here to declare subsystem dependencies.
-    driveCam = CameraServer.startAutomaticCapture("driveCam", 0);
-    leftIntakeCam = CameraServer.startAutomaticCapture("leftIntakeCam", 1);
-    rightIntakeCam = CameraServer.startAutomaticCapture("rightIntakeCam", 2);
+    driveCam = new HttpCamera("driveCam", "http://10.25.30.2:1182/stream.mjpg");
+    leftIntakeCam = new HttpCamera("leftIntakeCam", "http://10.25.30.55:1183/stream.mjpg");
+    rightIntakeCam = new HttpCamera("rightIntakeCam", "http://10.25.30.55:1184/stream.mjpg");
+    dashboardCam.setSource(driveCam);
+    Shuffleboard.getTab("Driver Dashboard")
+        .add("Camera", dashboardCam.getSource())
+        .withWidget(BuiltInWidgets.kCameraStream);
   }
 
   // Called when the command is initially scheduled.
@@ -52,9 +59,7 @@ public class USBCamera extends CommandBase {
     }
   }
 
-  private static void putToDashboard(UsbCamera source) {
-    Shuffleboard.getTab("Driver Dashboard")
-        .add("Camera", source)
-        .withWidget(BuiltInWidgets.kCameraStream);
+  private static void putToDashboard(HttpCamera source) {
+    dashboardCam.setSource(source);
   }
 }

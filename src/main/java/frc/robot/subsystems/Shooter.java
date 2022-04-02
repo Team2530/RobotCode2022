@@ -6,12 +6,16 @@ package frc.robot.subsystems;
 
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 
+import java.util.Map;
+
 import com.ctre.phoenix.motorcontrol.can.WPI_TalonFX;
 
 import edu.wpi.first.wpilibj.XboxController;
-
+import edu.wpi.first.wpilibj.shuffleboard.BuiltInWidgets;
+import edu.wpi.first.wpilibj.shuffleboard.Shuffleboard;
 import frc.robot.Constants;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
+import edu.wpi.first.networktables.NetworkTableEntry;
 import edu.wpi.first.wpilibj.DriverStation;
 // import frc.robot.subsystems.Rev3ColorSensor;
 
@@ -23,6 +27,11 @@ public class Shooter extends SubsystemBase {
   XboxController xbox;
   public static double shooterSpeedWithTriggerChange = 0.5;
   private static double triggerChange = 0.01;
+
+  private static NetworkTableEntry shooterPowerDial = Shuffleboard.getTab("Driver Dashboard")
+      .add("Shooter Speed", shooterSpeedWithTriggerChange * 100)
+      .withWidget(BuiltInWidgets.kDial)
+      .withProperties(Map.of("min", Constants.minShooterSpeed * 100, "max", Constants.maxShooterSpeed * 100)).getEntry();
 
   /** Creates a new {@link Intake}. */
   public Shooter(XboxController xbox) {
@@ -78,7 +87,7 @@ public class Shooter extends SubsystemBase {
     currentShooterSpeed = Math.min(currentShooterSpeed, Constants.maxShooterSpeed);
     currentShooterSpeed = Math.max(currentShooterSpeed, Constants.minShooterSpeed);
 
-    SmartDashboard.putNumber("Shooter Power", currentShooterSpeed * 100);
+    shooterPowerDial.setValue(currentShooterSpeed * 100);
     return currentShooterSpeed;
   }
 

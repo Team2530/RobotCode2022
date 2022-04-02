@@ -17,12 +17,8 @@ import edu.wpi.first.wpilibj.DriverStation;
 import edu.wpi.first.wpilibj.Timer;
 import edu.wpi.first.wpilibj.Joystick;
 import edu.wpi.first.wpilibj.XboxController;
-import edu.wpi.first.wpilibj.shuffleboard.ComplexWidget;
 import edu.wpi.first.wpilibj.shuffleboard.Shuffleboard;
 import edu.wpi.first.wpilibj.shuffleboard.SimpleWidget;
-import edu.wpi.first.wpilibj.simulation.XboxControllerSim;
-// import frc.robot.subsystems.Rev3ColorSensor;
-import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 
 /**
  * This is Team 2530's Intake class.
@@ -47,9 +43,10 @@ public class Intake extends SubsystemBase {
   boolean ballRejection = false;
   // upper chamber is currently empty
   boolean upperChamberEmpty = true;
-  // you have dumped the ball that the robot rejected
+  // The rejection button is being pressed
   boolean reverseIsPressed = true;
-  boolean reversePressed = true;
+  // you have dumped the ball that the robot rejected
+  boolean reverseWasPressed = true;
   // a ball may be eaten
   boolean readyToIntake = true;
   // a ball is being consumed
@@ -96,7 +93,7 @@ public class Intake extends SubsystemBase {
         // Ball rejection - run bottom intake down, run top intake as usual
         intakeMotorSpeeds[0] = Constants.intakeSpeed;
         intakeMotorSpeeds[1] = inputSpeeds[1];
-        reversePressed = false;
+        reverseWasPressed = false;
         readyToIntake = false;
         autoIntakeDescription = "Ball rejection";
       } else if ((Chambers.states[0] == matchingBallState || Chambers.states[1] == matchingBallState
@@ -144,44 +141,46 @@ public class Intake extends SubsystemBase {
 
     // Update Shuffleboard panels
     if (xbox.getRawButton(2)) {
-      reversePressed = true;
+      reverseWasPressed = true;
       readyToIntake = true;
     }
     intaking = xbox.getAButton();
     reverseIsPressed = xbox.getRawButton(2);
     shooting = xbox.getRawButton(3);
 
-    // if both chambers are full, update the value on SmartDashboard
-    if ((Chambers.states[0] == matchingBallState || Chambers.states[1] == matchingBallState)
-        && (Chambers.states[2] == matchingBallState
-            || Chambers.states[3] == matchingBallState)) {
-      readyToShoot = true;
-    } else {
-      readyToShoot = false;
-    }
+    readyToShoot = Chambers.ballDetected[2] || Chambers.ballDetected[3];
 
-    if (autoIntakeDescription == "Ball rejection" && !reversePressed) {
+    if (autoIntakeDescription == "Ball rejection" && !reverseWasPressed) {
       readyToIntake = false;
-      setIntakeStatus(lowerIntakeWidget, flashColor("yellow", "white", 10));
-    } else if (reversePressed) {
+      setIntakeStatus(lowerIntakeWidget, flashColor("yellow", "white", 15));
+    } else if (reverseIsPressed) {
       setIntakeStatus(lowerIntakeWidget, "yellow");
     } else if (intaking) {
       setIntakeStatus(lowerIntakeWidget, "green");
     } else if (readyToIntake) {
-      setIntakeStatus(lowerIntakeWidget, flashColor("green", "white", 15));
+      setIntakeStatus(lowerIntakeWidget, flashColor("green", "white", 20));
     } else if (Chambers.ballDetected[0] || Chambers.ballDetected[1]) {
       setIntakeStatus(lowerIntakeWidget, "#b3b3b3");
+    } else {
+      setIntakeStatus(lowerIntakeWidget, "white");
     }
 
     if (shooting) {
       setIntakeStatus(upperIntakeWidget, "green");
     } else if (readyToShoot) {
-      setIntakeStatus(upperIntakeWidget, flashColor("green", "white", 15));
+      setIntakeStatus(upperIntakeWidget, flashColor("green", "white", 20));
     } else if (autoIntakeDescription == "Upper chamber empty") {
-      setIntakeStatus(upperIntakeWidget, flashColor("#b3b3b3", "white", 15));
-    } else {
+      setIntakeStatus(upperIntakeWidget, flashColor("#b3b3b3", "white", 20));
+    } else if ((Chambers.states[0] == matchingBallState || Chambers.states[1] == matchingBallState)
+        && (Chambers.states[2] == matchingBallState
+            || Chambers.states[3] == matchingBallState)) {
       setIntakeStatus(upperIntakeWidget, "#b3b3b3");
+    } else {
+      setIntakeStatus(upperIntakeWidget, "white");
     }
+
+    // Ticks for flashing
+    executed++;
   }
 
   /**
@@ -218,7 +217,6 @@ public class Intake extends SubsystemBase {
   }
 
   public String flashColor(String color1, String color2, int ticks) {
-    executed++;
     if (executed > ticks * 2)
       executed = 0;
     if (executed < ticks) {

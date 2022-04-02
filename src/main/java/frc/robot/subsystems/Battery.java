@@ -2,9 +2,14 @@ package frc.robot.subsystems;
 
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 
+import java.util.Map;
+
 import com.kauailabs.navx.frc.AHRS;
 import edu.wpi.first.wpilibj.GenericHID.RumbleType;
+import edu.wpi.first.wpilibj.shuffleboard.BuiltInWidgets;
 import edu.wpi.first.wpilibj.shuffleboard.Shuffleboard;
+import edu.wpi.first.wpilibj.shuffleboard.WidgetType;
+import edu.wpi.first.networktables.NetworkTableEntry;
 import edu.wpi.first.wpilibj.RobotController;
 import edu.wpi.first.wpilibj.Timer;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
@@ -22,10 +27,17 @@ public class Battery extends SubsystemBase {
    double minVoltage = getVoltage();
    int batteryPercentage = calculateBatteryPercentage();
 
+   NetworkTableEntry batteryBar = Shuffleboard.getTab("Driver Dashboard")
+         .add("Battery", batteryPercentage)
+         .withWidget(BuiltInWidgets.kNumberBar).withProperties(
+               Map.of("min", 0, "max", 100))
+         .getEntry();
+
    public Battery(AHRS ahrs, DriveTrain driveTrain, XboxController xbox) {
       this.ahrs = ahrs;
       this.driveTrain = driveTrain;
       this.xbox = xbox;
+
       Shuffleboard.getTab("Technical Info").add("Minimum voltage ever", minVoltage);
    }
 
@@ -47,17 +59,16 @@ public class Battery extends SubsystemBase {
 
    public void updateBatteryPercentage() {
       batteryPercentage = calculateBatteryPercentage();
-      String output = minVoltage > 12.4 ? batteryPercentage + "%"
-            : minVoltage > 12 ? "Avoid high-power functions" : "Replace battery now";
-      SmartDashboard.putString("Battery", output);
+      batteryBar.setValue(batteryPercentage);
+      // String output = minVoltage > 12.4 ? batteryPercentage + "%"
+      // : minVoltage > 12 ? "Avoid high-power functions" : "Replace battery now";
    }
 
    @Override
    public void periodic() {
       getBatteryRuntime();
       updateMinBatteryVoltage();
-      if (!ahrs.isMoving() && !ahrs.isRotating())
-         updateBatteryPercentage();
+      updateBatteryPercentage();
    }
 
    public void getBatteryRuntime() {

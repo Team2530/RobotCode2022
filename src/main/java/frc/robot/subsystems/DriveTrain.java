@@ -347,6 +347,7 @@ public class DriveTrain extends SubsystemBase {
       cockpitMode = Cockpit.FRONT;
     }
     USBCamera.changeCameraSource(cockpitMode);
+    System.out.println("I did it");
   }
 
   /** Rotates 180, why not? */
