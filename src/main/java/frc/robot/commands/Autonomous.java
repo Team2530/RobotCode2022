@@ -47,7 +47,7 @@ public class Autonomous extends CommandBase {
   public void initialize() {
     ahrs.reset();
     driveTrain.reset();
-    panel.setDisplayMode(PanelMode.Boot);
+    //panel.setDisplayMode(PanelMode.Boot);
     // Robot travels ~1 m/sec forward and backward
     // Competition settings: 1.5m backward, 1m right (1.5 sec backward, 2 sec right)
     SequentialCommandGroup autoVroomVroom = new SequentialCommandGroup(
@@ -84,9 +84,13 @@ public class Autonomous extends CommandBase {
         new InstantCommand(() -> intake.setIntakeMotorSpeed(1, 0)),
         new InstantCommand(() -> shooter.setShooterSpeed(0.0))
     );
+
+    SequentialCommandGroup testVroomVroom = new SequentialCommandGroup(
+      new AutonomousDrive(driveTrain, 2, 3, ahrs)
+    );
     System.out.println("Starting Autonomous Commands...");
     System.out.println("Please don't run into something!");
-    autoVroomVroom.schedule();
+    testVroomVroom.schedule();
 
     // add more commands here
     // autoVroomVroom.schedule();
@@ -101,7 +105,7 @@ public class Autonomous extends CommandBase {
   // Called once the command ends or is interrupted.
   @Override
   public void end(boolean interrupted) {
-    panel.setDisplayMode(PanelMode.Status);
+    //panel.setDisplayMode(PanelMode.Status);
   }
 
   // Returns true when the command should end.
