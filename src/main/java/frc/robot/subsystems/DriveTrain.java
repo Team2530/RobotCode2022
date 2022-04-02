@@ -272,7 +272,7 @@ public class DriveTrain extends SubsystemBase {
       // Deadzone.deadZone(-z, 0.1) * Constants.maxDegreesPerSecondRotate *
       // deltaTime);
     }
-
+    SmartDashboard.putString("Cockpit mode", cockpitMode == Cockpit.FRONT ? "Front" : cockpitMode == Cockpit.LEFT ? "Left" : "Right");
     if (cockpitMode == Cockpit.FRONT) {
       driveFieldOriented(xPIDCalc, yPIDCalc, zPIDCalc);
     } else if (cockpitMode == Cockpit.LEFT) {
@@ -322,27 +322,15 @@ public class DriveTrain extends SubsystemBase {
     if (POV == 0) {
       result[0] = 0;
       result[1] = 0.2;
-    } else if (POV == 45) {
-      result[0] = 0.1;
-      result[1] = 0.1;
     } else if (POV == 90) {
-      result[0] = 0.2;
+      result[0] = 0.4;
       result[1] = 0;
-    } else if (POV == 135) {
-      result[0] = 0.1;
-      result[1] = -0.1;
     } else if (POV == 180) {
       result[0] = 0;
       result[1] = -0.2;
-    } else if (POV == 225) {
-      result[0] = -0.1;
-      result[1] = -0.1;
     } else if (POV == 270) {
-      result[0] = -0.2;
+      result[0] = -0.4;
       result[1] = 0;
-    } else if (POV == 315) {
-      result[0] = -0.1;
-      result[1] = 0.1;
     }
     return result;
   }
@@ -359,8 +347,8 @@ public class DriveTrain extends SubsystemBase {
   }
 
   /** Rotates 180, why not? */
-  public void deathBlossom() {
-    yawTarget += 180;
+  public void deathBlossom(double degrees) {
+    yawTarget += degrees;
   }
 
   public void putNavXInfo() {

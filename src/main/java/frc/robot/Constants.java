@@ -62,7 +62,7 @@ public final class Constants {
 
     // Rotation teenage resistance
     // TODO: Tune (unfinalized constants commented out below)
-    public static final double rotPIDGainsP = 0, rotPIDGainsI = 0, rotPIDGainsD = 0;
+    public static final double rotPIDGainsP = 0.01, rotPIDGainsI = 0, rotPIDGainsD = 0;
     // public static final double rotPIDGainsP = 0.249382716049383, rotPIDGainsI =
     // 0.155555555555556,
     // rotPIDGainsD = 0.019753086419753;
@@ -136,6 +136,7 @@ public final class Constants {
     public static final double intakeSpeed = 0.75; // speed of the intake motors
     /** The maximum permitted shooter speed, in decimal percentage. */
     public static final double maxShooterSpeed = 0.75;
+    public static final double minShooterSpeed = 0.30;
     /**
      * The minimum percentage of the target shooter speed before the shooter may
      * shoot, in whole-number percentage.

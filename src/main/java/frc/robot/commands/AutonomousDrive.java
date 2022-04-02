@@ -14,7 +14,7 @@ import frc.robot.subsystems.Intake;
 
 public class AutonomousDrive extends CommandBase {
   /** Creates a new AutonomousDrive. */
-  AHRS ahrs = new AHRS();
+  AHRS ahrs;
   Timer timer = new Timer();
   DriveTrain driveTrain;
   int direction = 0;
@@ -92,14 +92,13 @@ public class AutonomousDrive extends CommandBase {
       // currentVelocity = Deadzone.deadZone(ahrs.getVelocityY(), 0.05);
     } else if (direction == 3 || direction == 4) {
       currentVelocity = ahrs.getVelocityX();
-      // currentVelocity = ahrs.getVelocityX();
     } else {
       System.out.println("ERROR");
     }
   }
 
   public void distanceMaths() {
-    distanceTraveled = distanceTraveled + Math.abs(currentVelocity);
+    distanceTraveled = distanceTraveled + Math.abs(currentVelocity * deltaTime);
     System.out.println("distance to go : " + (distance - distanceTraveled) + " Dtime :    " + deltaTime);
   }
 

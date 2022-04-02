@@ -19,17 +19,19 @@ import com.kauailabs.navx.frc.AHRS;
 public class Autonomous extends CommandBase {
 
   /** Creates a new Autonomous. */
-  AHRS ahrs = new AHRS();
+  AHRS ahrs;
   XboxController xbox;
   DriveTrain driveTrain;
-  Intake intake = new Intake();
-  Shooter shooter = new Shooter(xbox);
+  Intake intake;
+  Shooter shooter;
   Timer timer = new Timer();
 
-  public Autonomous(DriveTrain driveTrain, Intake intake) {
+  public Autonomous(DriveTrain driveTrain, Intake intake, Shooter shooter, AHRS ahrs, XboxController xbox) {
     // Use addRequirements() here to declare subsystem dependencies.
     this.driveTrain = driveTrain;
     this.intake = intake;
+    this.shooter = shooter;
+    this.ahrs = ahrs;
     timer.start();
   }
 
@@ -38,27 +40,43 @@ public class Autonomous extends CommandBase {
   // Called when the command is initially scheduled.
   @Override
   public void initialize() {
-    AHRS ahrs = new AHRS();
     ahrs.reset();
     driveTrain.reset();
+    // Robot travels ~1 m/sec forward and backward
+    // Competition settings: 1.5m backward, 1m right (1.5 sec backward, 2 sec right)
     SequentialCommandGroup autoVroomVroom = new SequentialCommandGroup(
+        // Runs upper chamber and shooter for 2 seconds - shoots starting ball
         new InstantCommand(() -> intake.setIntakeMotorSpeed(1, -Constants.intakeSpeed)),
         new InstantCommand(() -> shooter.setShooterSpeed(0.5)),
-        new WaitCommand(3),
+        new WaitCommand(2),
         new InstantCommand(() -> intake.setIntakeMotorSpeed(1, 0)),
         new InstantCommand(() -> shooter.setShooterSpeed(0)),
-
-        // new AutonomousDrive(driveTrain, 2, 1, ahrs),
+        // Drives backward for 1.5 seconds (~1.5 meters)
         new InstantCommand(() -> driveTrain.driveRobotOriented(0.0, 0.2, 0.0)),
+        new WaitCommand(1.5),
+        new InstantCommand(() -> driveTrain.driveRobotOriented(0.0, 0.0, 0.0)),
+        new WaitCommand(0.5),
+        // Strafes to the robot's right for 2 seconds (~1 meter) while running lower intake to acquire ball
+        new InstantCommand(() -> intake.setIntakeMotorSpeed(0, -Constants.intakeSpeed)),
+        new InstantCommand(() -> driveTrain.driveRobotOriented(0.2, 0.0, 0.0)),
         new WaitCommand(2),
         new InstantCommand(() -> driveTrain.driveRobotOriented(0.0, 0.0, 0.0)),
         new WaitCommand(0.5),
-        // new AutonomousDrive(driveTrain, 2, 3, ahrs)
-        new InstantCommand(() -> driveTrain
-            .driveRobotOriented(0.2, 0.0, 0.0)),
-        new WaitCommand(1),
-        new InstantCommand(() -> driveTrain.driveRobotOriented(0.0, 0.0, 0.0))
-
+        new InstantCommand(() -> intake.setIntakeMotorSpeed(0, 0)),
+        // Rotates the robot to face the goal before driving back into the tarmac (~1.8 meters)
+        new InstantCommand(() -> driveTrain.deathBlossom(26)),
+        new InstantCommand(() -> driveTrain.driveRobotOriented(0.0, -0.2, 0.0)),
+        new WaitCommand(1.8),
+        new InstantCommand(() -> driveTrain.driveRobotOriented(0.0, 0.0, 0.0)),
+        // Shoots the newly-acquired ball
+        new InstantCommand(() -> intake.setIntakeMotorSpeed(0, -Constants.intakeSpeed)),
+        new InstantCommand(() -> intake.setIntakeMotorSpeed(1, -Constants.intakeSpeed)),
+        new InstantCommand(() -> shooter.setShooterSpeed(0.5)),
+        new WaitCommand(3),
+        // Stops the shootage
+        new InstantCommand(() -> intake.setIntakeMotorSpeed(0, 0)),
+        new InstantCommand(() -> intake.setIntakeMotorSpeed(1, 0)),
+        new InstantCommand(() -> shooter.setShooterSpeed(0.0))
     );
     System.out.println("Starting Autonomous Commands...");
     System.out.println("Please don't run into something!");

@@ -21,7 +21,7 @@ import edu.wpi.first.wpilibj.DriverStation;
 public class Shooter extends SubsystemBase {
   private static WPI_TalonFX shooterMotor = new WPI_TalonFX(Constants.SHOOTER_MOTOR_PORT);
   XboxController xbox;
-  public static double shooterSpeedWithTriggerChange = 0.0;
+  public static double shooterSpeedWithTriggerChange = 0.5;
   private static double triggerChange = 0.01;
 
   /** Creates a new {@link Intake}. */
@@ -34,8 +34,9 @@ public class Shooter extends SubsystemBase {
     // This method will be called once per scheduler run
     // takes the desired shooter speed and puts it into a variable to be
     // used in Robot Container's shooter
-    shooterSpeedWithTriggerChange = changeShooterSpeed(shooterSpeedWithTriggerChange);
-
+    if (DriverStation.isTeleopEnabled()) {
+      shooterSpeedWithTriggerChange = changeShooterSpeed(shooterSpeedWithTriggerChange);
+    }
   }
 
   /**
@@ -72,8 +73,10 @@ public class Shooter extends SubsystemBase {
     } else if (xbox.getRawAxis(2) > 0.1) {
       currentShooterSpeed -= Shooter.triggerChange;
     }
+
+    // Dont change these no matter how backwards they seem
     currentShooterSpeed = Math.min(currentShooterSpeed, Constants.maxShooterSpeed);
-    currentShooterSpeed = Math.max(currentShooterSpeed, 0.1);
+    currentShooterSpeed = Math.max(currentShooterSpeed, Constants.minShooterSpeed);
 
     SmartDashboard.putNumber("Shooter Power", currentShooterSpeed * 100);
     return currentShooterSpeed;
