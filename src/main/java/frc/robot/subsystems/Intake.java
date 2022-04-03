@@ -89,7 +89,7 @@ public class Intake extends SubsystemBase {
         : BallState.Red;
 
     if (!RobotContainer.getManualModeOp()) {
-      if (Chambers.states[0] == opposingBallState || Chambers.states[1] == opposingBallState) {
+      if (Chambers.states[0] == opposingBallState) {
         // Ball rejection - run bottom intake down, run top intake as usual
         intakeMotorSpeeds[0] = Constants.intakeSpeed;
         intakeMotorSpeeds[1] = inputSpeeds[1];
