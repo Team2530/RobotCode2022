@@ -1,12 +1,15 @@
 package frc.robot.subsystems;
 
 import java.util.Arrays;
+import java.util.Map;
 
 import com.revrobotics.ColorSensorV3;
 
 import edu.wpi.first.wpilibj.I2C;
 import edu.wpi.first.wpilibj.I2C.Port;
-import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
+import edu.wpi.first.wpilibj.shuffleboard.Shuffleboard;
+import edu.wpi.first.wpilibj.shuffleboard.ShuffleboardTab;
+import edu.wpi.first.wpilibj.shuffleboard.SimpleWidget;
 import frc.robot.InCANDevice;
 import frc.robot.libraries.Deadzone;
 
@@ -36,10 +39,15 @@ public class Chambers extends InCANDevice {
      */
     public static boolean[] ballNotDetected = new boolean[states.length];
 
-    public Chambers(
-            int deviceNum) {
+    public static SimpleWidget[] chamberWidgets = new SimpleWidget[states.length];
+
+    public Chambers(int deviceNum) {
         super(deviceNum);
         this.apiID = 32 << 4;
+        ShuffleboardTab tab = Shuffleboard.getTab("Driver Dashboard");
+        for (int i = 0; i < chamberWidgets.length; ++i) {
+            chamberWidgets[i] = tab.add("Ball State " + i, true);
+        }
     }
 
     @Override
@@ -48,13 +56,26 @@ public class Chambers extends InCANDevice {
             states[si] = BallState.values()[data[si]];
             ballDetected[si] = states[si] == BallState.Red || states[si] == BallState.Blue;
             ballNotDetected[si] = states[si] == BallState.None || states[si] == BallState.Green;
+            if (states[si] == BallState.IDK) {
+                setChamberStatus(chamberWidgets[si], "#fe9f01");
+            } else if (states[si] == BallState.None) {
+                setChamberStatus(chamberWidgets[si], "white");
+            } else if (states[si] == BallState.Red) {
+                setChamberStatus(chamberWidgets[si], "red");
+            } else if (states[si] == BallState.Blue) {
+                setChamberStatus(chamberWidgets[si], "blue");
+            } else {
+                setChamberStatus(chamberWidgets[si], "white");
+            }
         }
-
-        SmartDashboard.putString("Ball states: ", String.format("%s\n", Arrays.toString(states)));
     }
 
     @Override
     public void periodic() {
         super.periodic(); // Make sure to call super, InCANDevice needs to look for CAN messages
+    }
+
+    public void setChamberStatus(SimpleWidget chamberWidget, String color) {
+        chamberWidget.withProperties(Map.of("colorWhenTrue", color));
     }
 }

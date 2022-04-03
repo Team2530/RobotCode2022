@@ -13,6 +13,7 @@ import com.ctre.phoenix.motorcontrol.can.WPI_TalonFX;
 import frc.robot.Constants;
 import frc.robot.RobotContainer;
 import frc.robot.subsystems.Chambers.BallState;
+import edu.wpi.first.networktables.NetworkTableEntry;
 import edu.wpi.first.wpilibj.DriverStation;
 import edu.wpi.first.wpilibj.Timer;
 import edu.wpi.first.wpilibj.Joystick;
@@ -39,6 +40,7 @@ public class Intake extends SubsystemBase {
   // -----------Intake Behavior States-----------\\
   SimpleWidget lowerIntakeWidget;
   SimpleWidget upperIntakeWidget;
+  NetworkTableEntry intakeAutoWidget;
   // ball was rejected by the robot
   boolean ballRejection = false;
   // upper chamber is currently empty
@@ -75,7 +77,7 @@ public class Intake extends SubsystemBase {
     intakeMotorSpeeds[1] = 0;
     upperIntakeWidget = Shuffleboard.getTab("Driver Dashboard").add("Upper intake status", true);
     lowerIntakeWidget = Shuffleboard.getTab("Driver Dashboard").add("Lower intake status", true);
-    Shuffleboard.getTab("Technical Info").add("Current intake auto", autoIntakeDescription);
+    intakeAutoWidget = Shuffleboard.getTab("Technical Info").add("Current intake auto", autoIntakeDescription).getEntry();
   }
 
   @Override
@@ -137,6 +139,8 @@ public class Intake extends SubsystemBase {
     // inputSpeeds[1]);
     // SmartDashboard.putString("actualSpeeds", intakeMotorSpeeds[0] + " " +
     // intakeMotorSpeeds[1]);
+    intakeAutoWidget.setValue(autoIntakeDescription);
+
     intakeSpeedGradient();
 
     // Update Shuffleboard panels

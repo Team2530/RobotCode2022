@@ -116,6 +116,9 @@ public class DriveTrain extends SubsystemBase {
   PIDController strafePID = drivePIDGains.getPID();
   PIDController drivePID = strafePIDGains.getPID();
 
+  // ------------------------ Diagnostics ------------------------- \\
+  NetworkTableEntry rotPIDErrorWidget, cockpitReportWidget;
+
   /**
    * Creates a new {@link DriveTrain}.
    */
@@ -128,7 +131,8 @@ public class DriveTrain extends SubsystemBase {
     mecanumDrive = new MecanumDrive(motorFL, motorBL, motorFR, motorBR);
     mecanumDrive.setSafetyEnabled(false);
 
-    Shuffleboard.getTab("Technical Info").add("rotPIDGraph", rotPID.getPositionError());
+    rotPIDErrorWidget = Shuffleboard.getTab("Technical Info").add("rotPIDGraph", rotPID.getPositionError()).getEntry();
+    cockpitReportWidget = Shuffleboard.getTab("Technical Info").add("Cockpit mode", cockpitMode).getEntry();
   }
 
   @Override
@@ -141,6 +145,9 @@ public class DriveTrain extends SubsystemBase {
         Constants.rotPIDGainsP == 0 ? ROT_PID_P : Constants.rotPIDGainsP,
         Constants.rotPIDGainsI == 0 ? ROT_PID_I : Constants.rotPIDGainsI,
         Constants.rotPIDGainsD == 0 ? ROT_PID_D : Constants.rotPIDGainsD);
+    rotPIDErrorWidget.setValue(rotPID.getPositionError());
+    cockpitReportWidget
+        .setValue(cockpitMode == Cockpit.FRONT ? "Front" : cockpitMode == Cockpit.LEFT ? "Left" : "Right");
   }
 
   /**
@@ -266,16 +273,14 @@ public class DriveTrain extends SubsystemBase {
     } else {
       // If we *are* intentionally turning, keep track of the current angle
       yawTarget = ahrs.getAngle();
-      SmartDashboard.putNumber("target angle", yawTarget);
-      SmartDashboard.putNumber("actual angle", ahrs.getAngle());
       zPIDCalc = z;
       // TODO: Transition back to velocity PIDs
       // zPIDCalc = turnRatePID.calculate(ahrs.getRate(),
       // Deadzone.deadZone(-z, 0.1) * Constants.maxDegreesPerSecondRotate *
       // deltaTime);
     }
-    SmartDashboard.putString("Cockpit mode",
-        cockpitMode == Cockpit.FRONT ? "Front" : cockpitMode == Cockpit.LEFT ? "Left" : "Right");
+
+    // Drive in an orientation based on the current cockpit setting
     if (cockpitMode == Cockpit.FRONT) {
       driveFieldOriented(xPIDCalc, yPIDCalc, zPIDCalc);
     } else if (cockpitMode == Cockpit.LEFT) {

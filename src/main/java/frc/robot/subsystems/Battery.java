@@ -12,7 +12,6 @@ import edu.wpi.first.wpilibj.shuffleboard.WidgetType;
 import edu.wpi.first.networktables.NetworkTableEntry;
 import edu.wpi.first.wpilibj.RobotController;
 import edu.wpi.first.wpilibj.Timer;
-import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import frc.robot.Constants;
 import edu.wpi.first.wpilibj.XboxController;
 
@@ -31,14 +30,21 @@ public class Battery extends SubsystemBase {
          .add("Battery", batteryPercentage)
          .withWidget(BuiltInWidgets.kNumberBar).withProperties(
                Map.of("min", 0, "max", 100))
+         .withSize(2, 1)
+         .getEntry();
+   NetworkTableEntry batteryRuntimeWidget = Shuffleboard.getTab("Technical Info")
+         .add("Battery runtime", 0)
+         .withSize(2, 1)
+         .getEntry();
+   NetworkTableEntry minVoltageWidget = Shuffleboard.getTab("Technical Info")
+         .add("Minimum voltage ever", 0)
+         .withSize(2, 1)
          .getEntry();
 
    public Battery(AHRS ahrs, DriveTrain driveTrain, XboxController xbox) {
       this.ahrs = ahrs;
       this.driveTrain = driveTrain;
       this.xbox = xbox;
-
-      Shuffleboard.getTab("Technical Info").add("Minimum voltage ever", minVoltage);
    }
 
    public double getVoltage() {
@@ -51,9 +57,13 @@ public class Battery extends SubsystemBase {
 
    public void updateMinBatteryVoltage() {
       minVoltage = Math.min(minVoltage, getVoltage());
+      minVoltageWidget.setValue(minVoltage);
       if (minVoltage < Constants.brownOutVoltage) {
          xbox.setRumble(RumbleType.kLeftRumble, 1);
          xbox.setRumble(RumbleType.kRightRumble, 1);
+      } else {
+         xbox.setRumble(RumbleType.kLeftRumble, 0);
+         xbox.setRumble(RumbleType.kRightRumble, 0);
       }
    }
 
@@ -80,7 +90,7 @@ public class Battery extends SubsystemBase {
       if ((a > .1) || (b > .1) || (q > .1) || (e > .1) || xbox.getRawButton(3) || xbox.getRawButton(1)
             || xbox.getRawButton(2)) {
          timer.start();
-         SmartDashboard.putNumber("Battery Runtime", timer.get());
+         batteryRuntimeWidget.setValue(timer.get());
       } else {
          timer.stop();
       }
