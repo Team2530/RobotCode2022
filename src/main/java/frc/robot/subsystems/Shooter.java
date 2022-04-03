@@ -30,7 +30,10 @@ public class Shooter extends SubsystemBase {
   private static NetworkTableEntry shooterPowerDial = Shuffleboard.getTab("Driver Dashboard")
       .add("Shooter Speed", shooterSpeedWithTriggerChange * 100)
       .withWidget(BuiltInWidgets.kDial)
-      .withProperties(Map.of("min", Constants.minShooterSpeed * 100, "max", Constants.maxShooterSpeed * 100)).getEntry();
+      .withSize(2, 1)
+      .withPosition(3, 0)
+      .withProperties(Map.of("min", Constants.minShooterSpeed * 100, "max", Constants.maxShooterSpeed * 100))
+      .getEntry();
 
   /** Creates a new {@link Intake}. */
   public Shooter(XboxController xbox) {

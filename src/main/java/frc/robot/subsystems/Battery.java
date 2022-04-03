@@ -8,7 +8,6 @@ import com.kauailabs.navx.frc.AHRS;
 import edu.wpi.first.wpilibj.GenericHID.RumbleType;
 import edu.wpi.first.wpilibj.shuffleboard.BuiltInWidgets;
 import edu.wpi.first.wpilibj.shuffleboard.Shuffleboard;
-import edu.wpi.first.wpilibj.shuffleboard.WidgetType;
 import edu.wpi.first.networktables.NetworkTableEntry;
 import edu.wpi.first.wpilibj.RobotController;
 import edu.wpi.first.wpilibj.Timer;
@@ -31,6 +30,7 @@ public class Battery extends SubsystemBase {
          .withWidget(BuiltInWidgets.kNumberBar).withProperties(
                Map.of("min", 0, "max", 100))
          .withSize(2, 1)
+         .withPosition(3, 3)
          .getEntry();
    NetworkTableEntry batteryRuntimeWidget = Shuffleboard.getTab("Technical Info")
          .add("Battery runtime", 0)

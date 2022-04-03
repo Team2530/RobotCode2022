@@ -75,9 +75,17 @@ public class Intake extends SubsystemBase {
     inputSpeeds[1] = 0;
     intakeMotorSpeeds[0] = 0;
     intakeMotorSpeeds[1] = 0;
-    upperIntakeWidget = Shuffleboard.getTab("Driver Dashboard").add("Upper intake status", true);
-    lowerIntakeWidget = Shuffleboard.getTab("Driver Dashboard").add("Lower intake status", true);
-    intakeAutoWidget = Shuffleboard.getTab("Technical Info").add("Current intake auto", autoIntakeDescription).getEntry();
+    upperIntakeWidget = Shuffleboard.getTab("Driver Dashboard")
+        .add("Upper intake status", true)
+        .withSize(2, 2)
+        .withPosition(1, 0);
+    lowerIntakeWidget = Shuffleboard.getTab("Driver Dashboard")
+        .add("Lower intake status", true)
+        .withSize(2, 2)
+        .withPosition(1, 2);
+    intakeAutoWidget = Shuffleboard.getTab("Technical Info")
+        .add("Current intake auto", autoIntakeDescription)
+        .getEntry();
   }
 
   @Override

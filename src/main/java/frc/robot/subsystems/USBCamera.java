@@ -25,7 +25,9 @@ public class USBCamera extends CommandBase {
     dashboardCam.setSource(driveCam);
     Shuffleboard.getTab("Driver Dashboard")
         .add("Camera", dashboardCam.getSource())
-        .withWidget(BuiltInWidgets.kCameraStream);
+        .withWidget(BuiltInWidgets.kCameraStream)
+        .withSize(4, 4)
+        .withPosition(8, 0);
   }
 
   // Called when the command is initially scheduled.
