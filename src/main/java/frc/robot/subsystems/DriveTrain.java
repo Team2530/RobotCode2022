@@ -13,7 +13,9 @@ import edu.wpi.first.wpilibj.Joystick;
 import edu.wpi.first.wpilibj.Timer;
 import edu.wpi.first.wpilibj.drive.MecanumDrive;
 import edu.wpi.first.wpilibj.shuffleboard.BuiltInWidgets;
+import edu.wpi.first.wpilibj.shuffleboard.ComplexWidget;
 import edu.wpi.first.wpilibj.shuffleboard.Shuffleboard;
+import edu.wpi.first.wpilibj.smartdashboard.SendableChooser;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import edu.wpi.first.networktables.NetworkTableEntry;
@@ -64,7 +66,11 @@ public class DriveTrain extends SubsystemBase {
   XboxController xbox;
   AHRS ahrs;
 
-  // ------------------------ PID gains ------------------------- \\
+  // ----------------- Shuffleboard Controls ------------------ \\
+
+  // navX Calibration
+  SendableChooser<Integer> tarmacHeadingChooser = new SendableChooser<Integer>();
+  ComplexWidget tarmacConfig;
 
   // Slider Instances
   NetworkTableEntry rotPidP = Shuffleboard.getTab("PID Constants").add("Rot P", 0)
@@ -81,6 +87,8 @@ public class DriveTrain extends SubsystemBase {
   static double ROT_PID_P = 0;
   static double ROT_PID_I = 0;
   static double ROT_PID_D = 0;
+
+  // ------------------------ PID gains ------------------------- \\
 
   // "Teenage resistance" for rotation
   // private final double hkP = 0.05, hkI = 0.0015, hkD = 0.00175;
@@ -131,6 +139,18 @@ public class DriveTrain extends SubsystemBase {
     mecanumDrive = new MecanumDrive(motorFL, motorBL, motorFR, motorBR);
     mecanumDrive.setSafetyEnabled(false);
 
+    tarmacHeadingChooser.setDefaultOption("Pointing forward", 0);
+    tarmacHeadingChooser.addOption("Pointing forward-right", 45);
+    tarmacHeadingChooser.addOption("Pointing right", 90);
+    tarmacHeadingChooser.addOption("Pointing backward-right", 135);
+    tarmacHeadingChooser.addOption("Pointing backward", 180);
+    tarmacHeadingChooser.addOption("Pointing backward-left", 225);
+    tarmacHeadingChooser.addOption("Pointing left", 270);
+    tarmacHeadingChooser.addOption("Pointing forward-left", 315);
+    tarmacConfig = Shuffleboard.getTab("Config")
+      .add("Tarmac orientation", tarmacHeadingChooser)
+      .withWidget(BuiltInWidgets.kSplitButtonChooser);
+
     rotPIDErrorWidget = Shuffleboard.getTab("Technical Info").add("rotPIDGraph", rotPID.getPositionError()).getEntry();
     cockpitReportWidget = Shuffleboard.getTab("Technical Info").add("Cockpit mode", cockpitMode).getEntry();
   }
@@ -158,6 +178,7 @@ public class DriveTrain extends SubsystemBase {
     // ahrs.enableBoardlevelYawReset(true);
     ahrs.reset();
     ahrs.zeroYaw();
+    ahrs.setAngleAdjustment(0);
     ahrs.resetDisplacement();
     yawTarget = 0.0;
     cockpitMode = Cockpit.FRONT;
@@ -171,6 +192,16 @@ public class DriveTrain extends SubsystemBase {
     motorBL.setInverted(false);
     motorFR.setInverted(true);
     motorBR.setInverted(true);
+  }
+
+  /**
+   * Same as a regular reset, but also calibrates the navX based on the selected option on Shuffleboard.
+   * @param initial Whether or not to calibrate based on the config (can be excluded for regular reset)
+   */
+  public void reset(boolean initial) {
+    if (initial) 
+      ahrs.setAngleAdjustment(tarmacHeadingChooser.getSelected());
+    reset();
   }
 
   public void setCoast(NeutralMode neutralSetting) {
@@ -302,7 +333,7 @@ public class DriveTrain extends SubsystemBase {
   }
 
   public void driveFieldOriented(double x, double y, double z) {
-    driveOrientedToAngle(x, y, z, ahrs.getYaw());
+    driveOrientedToAngle(x, y, z, ahrs.getAngle());
   }
 
   /**

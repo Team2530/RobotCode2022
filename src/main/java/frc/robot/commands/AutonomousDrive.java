@@ -43,8 +43,6 @@ public class AutonomousDrive extends CommandBase {
   public void initialize() {
     // figure out which direction to go (1 is forward) (2 is back) (3 is right) (4
     // is left)
-    ahrs.reset();
-    ahrs.resetDisplacement();
     distanceTraveled = 0;
     if (direction == 1) {
       driveTrain.driveRobotOriented(0.0, 0.2, 0.0);

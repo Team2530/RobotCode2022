@@ -50,7 +50,7 @@ public class RobotContainer {
   private final PhotonVision vision = new PhotonVision();
 
   // Outputs
-  private final DriveTrain m_driveTrain = new DriveTrain(m_ahrs, stick1, xbox);
+  public final DriveTrain m_driveTrain = new DriveTrain(m_ahrs, stick1, xbox);
   private final Climber m_climber = new Climber();
   private final Intake intake = new Intake();
   private final Chambers ballDetection = new Chambers(3);
@@ -82,7 +82,8 @@ public class RobotContainer {
     // Configure the button bindings
     configureButtonBindings();
     // Switch Shuffleboard to the driver dashboard
-    Shuffleboard.selectTab("Driver Dashboard");
+    Shuffleboard.getTab("Config");
+    Shuffleboard.selectTab("Config");
   }
 
   /**
@@ -191,6 +192,17 @@ public class RobotContainer {
   }
 
   /**
+   * Use this to pass the enable command to the main {@link Robot} class.
+   * This command is run immediately when the robot is enabled (not simply turned
+   * on), regardless of whether the robot is in teleop or autonomous.
+   *
+   * @return the command to run when the robot is enabled
+   */
+  public Command getEnableCommand() {
+    return new InstantCommand(() -> m_driveTrain.reset(true));
+  }
+
+  /**
    * Use this to pass the autonomous command to the main {@link Robot} class.
    *
    * @return the command to run in autonomous
@@ -204,7 +216,7 @@ public class RobotContainer {
 
   public Command getTelopCommand() {
     m_feedbackPanel.setDisplayMode(PanelMode.Status);
-    // Toggles dual joystick, should be replaced with an actual check in the future
+    Shuffleboard.selectTab("Driver Dashboard");
     return new SingleJoystickDrive(m_driveTrain, stick1);
   }
 
