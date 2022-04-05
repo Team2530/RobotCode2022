@@ -148,12 +148,14 @@ public class DriveTrain extends SubsystemBase {
     tarmacHeadingChooser.addOption("Pointing left", 270);
     tarmacHeadingChooser.addOption("Pointing forward-left", 315);
     tarmacConfig = Shuffleboard.getTab("Config")
-      .add("Tarmac orientation", tarmacHeadingChooser)
-      .withWidget(BuiltInWidgets.kSplitButtonChooser)
-      .withSize(12, 1);
+        .add("Tarmac orientation", tarmacHeadingChooser)
+        .withWidget(BuiltInWidgets.kSplitButtonChooser)
+        .withSize(12, 1);
 
-    // rotPIDErrorWidget = Shuffleboard.getTab("Technical Info").add("rotPIDGraph", rotPID.getPositionError()).getEntry();
-    // cockpitReportWidget = Shuffleboard.getTab("Technical Info").add("Cockpit mode", cockpitMode).getEntry();
+    // rotPIDErrorWidget = Shuffleboard.getTab("Technical Info").add("rotPIDGraph",
+    // rotPID.getPositionError()).getEntry();
+    // cockpitReportWidget = Shuffleboard.getTab("Technical Info").add("Cockpit
+    // mode", cockpitMode).getEntry();
   }
 
   @Override
@@ -168,7 +170,8 @@ public class DriveTrain extends SubsystemBase {
         Constants.rotPIDGainsD == 0 ? ROT_PID_D : Constants.rotPIDGainsD);
     // rotPIDErrorWidget.setValue(rotPID.getPositionError());
     // cockpitReportWidget
-    //     .setValue(cockpitMode == Cockpit.FRONT ? "Front" : cockpitMode == Cockpit.LEFT ? "Left" : "Right");
+    // .setValue(cockpitMode == Cockpit.FRONT ? "Front" : cockpitMode ==
+    // Cockpit.LEFT ? "Left" : "Right");
   }
 
   /**
@@ -196,8 +199,11 @@ public class DriveTrain extends SubsystemBase {
   }
 
   /**
-   * Same as a regular reset, but also calibrates the navX based on the selected option on Shuffleboard.
-   * @param initial Whether or not to calibrate based on the config (can be excluded for regular reset)
+   * Same as a regular reset, but also calibrates the navX based on the selected
+   * option on Shuffleboard.
+   * 
+   * @param initial Whether or not to calibrate based on the config (can be
+   *                excluded for regular reset)
    */
   public void reset(boolean initial) {
     reset();
@@ -219,11 +225,11 @@ public class DriveTrain extends SubsystemBase {
    * Initializes a drive mode where only one joystick controls the drive motors.
    * 
    * @param x The joystick's forward/backward tilt. Any value from
-   *          -1.0 to 1.0.
-   * @param y The joystick's sideways tilt. Any value from -1.0 to
-   *          1.0.
-   * @param z The joystick's vertical "twist". Any value from -1.0 to
-   *          1.0.
+   *          -1.0 (forward) to 1.0 (backward).
+   * @param y The joystick's sideways tilt. Any value from -1.0 (left) to
+   *          1.0 (right).
+   * @param z The joystick's vertical "twist". Any value from -1.0
+   *          (counterclockwise) to 1.0 (clockwise).
    */
   public void singleJoystickDrive(double x, double y, double z) {
     if (stick.getRawButton(Constants.velocityRetentionButton)) {
@@ -231,19 +237,19 @@ public class DriveTrain extends SubsystemBase {
       y = lastJoystickInput[1];
       z = 0;
     } else {
-      lastJoystickInput[0] = joystickInput[1];
-      lastJoystickInput[1] = -joystickInput[0];
+      lastJoystickInput[0] = joystickInput[0];
+      lastJoystickInput[1] = joystickInput[1];
       if (stick.getRawButton(Constants.driveStraightButton)) {
         z = 0;
       } else if (stick.getPOV() != -1) {
         double[] driveStraight = actuallyDriveStraighter(x, y);
-        y = driveStraight[0];
-        x = -driveStraight[1];
+        x = driveStraight[0];
+        y = driveStraight[1];
         z = 0;
       }
     }
 
-    // Keep track of unmodified joystick input
+    // Keep track of unramped joystick input
     joystickInput[0] = x;
     joystickInput[1] = y;
     joystickInput[2] = z;
@@ -262,10 +268,54 @@ public class DriveTrain extends SubsystemBase {
       }
     }
 
-    x = joystickLerp[1];
-    y = -joystickLerp[0];
-    z = joystickLerp[2];
+    // Drive in an orientation based on the current cockpit setting
+    if (cockpitMode == Cockpit.FRONT) {
+      driveFieldOriented(joystickLerp[0], joystickLerp[1], joystickLerp[2]);
+    } else if (cockpitMode == Cockpit.LEFT) {
+      driveOrientedToAngle(joystickLerp[0], joystickLerp[1], joystickLerp[2], -90.0);
+    } else if (cockpitMode == Cockpit.RIGHT) {
+      driveOrientedToAngle(joystickLerp[0], joystickLerp[1], joystickLerp[2], 90.0);
+    }
+  }
 
+  /**
+   * Drives the robot in a direction relative to itself.
+   * 
+   * @param x The speed to drive. Any value from -1.0 (forward) to 1.0
+   *          (backward).
+   * @param y The speed to strafe. Any value from -1.0 (left) to 1.0 (right).
+   * @param z The speed to rotate. Any value from -1.0 (counterclockwise) to
+   *          1.0 (clockwise).
+   */
+  public void driveRobotOriented(double x, double y, double z) {
+    driveOrientedToAngle(x, y, z, 0.0);
+  }
+
+  /**
+   * Drives the robot in a direction relative to where the navX was last
+   * calibrated.
+   * 
+   * @param x The speed to drive. Any value from -1.0 (forward) to 1.0
+   *          (backward).
+   * @param y The speed to strafe. Any value from -1.0 (left) to 1.0 (right).
+   * @param z The speed to rotate. Any value from -1.0 (counterclockwise) to
+   *          1.0 (clockwise).
+   */
+  public void driveFieldOriented(double x, double y, double z) {
+    driveOrientedToAngle(x, y, z, ahrs.getAngle());
+  }
+
+  /**
+   * Drives the robot in a direction relative to the specified angle.
+   * 
+   * @param x     The speed to drive. Any value from -1.0 (forward) to 1.0
+   *              (backward).
+   * @param y     The speed to strafe. Any value from -1.0 (left) to 1.0 (right).
+   * @param z     The speed to rotate. Any value from -1.0 (counterclockwise) to
+   *              1.0 (clockwise).
+   * @param angle The angle to orient the driving, in degrees
+   */
+  public void driveOrientedToAngle(double x, double y, double z, double angle) {
     // navX coordinates:
     // +X = drive forward, -X = drive backward
     // +Y = strafe left, -Y = strafe right
@@ -274,85 +324,54 @@ public class DriveTrain extends SubsystemBase {
     // PID control for robot forward/backward/strafing control
     // TODO: Double check strafe speed calculation
 
-    double deltaTime = Timer.getFPGATimestamp() - lastExecuted;
-    lastExecuted = Timer.getFPGATimestamp();
+    double yPIDCalc, xPIDCalc, zPIDCalc;
+    if (!RobotContainer.getManualMode()) {
+      double deltaTime = Timer.getFPGATimestamp() - lastExecuted;
+      lastExecuted = Timer.getFPGATimestamp();
 
-    double yPIDCalc, xPIDCalc;
-    if (Math.abs(y) == 0 && Math.abs(x) == 0) {
-      // If we're not intentionally strafing or driving forwards/backwards, engage
-      // teenage resistance (positional lock)
-      yPIDCalc = resistStrafePID.calculate(ahrs.getDisplacementY() / (Constants.maxMetersPerSecondStrafe * deltaTime),
-          0);
-      xPIDCalc = resistStrafePID
-          .calculate(ahrs.getDisplacementX() / (Constants.maxMetersPerSecondForwards * deltaTime), 0);
+      if (Math.abs(y) == 0 && Math.abs(x) == 0) {
+        // If we're not intentionally strafing or driving forwards/backwards, engage
+        // teenage resistance (positional lock)
+        yPIDCalc = resistStrafePID.calculate(-ahrs.getDisplacementY(), 0);
+        xPIDCalc = resistStrafePID.calculate(-ahrs.getDisplacementX(), 0);
+      } else {
+        // If we *are* intentionally strafing or driving, keep track of the current
+        // position
+        ahrs.resetDisplacement();
+        yPIDCalc = y;
+        xPIDCalc = x;
+        // TODO: Transition back to velocity PIDs
+        // yPIDCalc = strafePID.calculate(-ahrs.getVelocityY(), y *
+        // Constants.maxMetersPerSecondStrafe);
+        // xPIDCalc = drivePID.calculate(-ahrs.getVelocityX(), x *
+        // Constants.maxMetersPerSecondForwards);
+      }
+
+      // PID control for robot rotation
+      if (Math.abs(z) == 0) {
+        // If we're not intentionally turning, engage teenage resistance (directional
+        // lock)
+        zPIDCalc = Math.min(rotPID.calculate(ahrs.getAngle(), yawTarget), 0.5);
+      } else {
+        // If we *are* intentionally turning, keep track of the current angle
+        yawTarget = ahrs.getAngle();
+        zPIDCalc = z;
+        // TODO: Transition back to velocity PIDs
+        // zPIDCalc = turnRatePID.calculate(ahrs.getRate(), z *
+        // Constants.maxDegreesPerSecondRotate);
+      }
     } else {
-      // If we *are* intentionally strafing or driving, keep track of the current
-      // position
-      ahrs.resetDisplacement();
-      yPIDCalc = y;
       xPIDCalc = x;
-      // TODO: Transition back to velocity PIDs
-      // yPIDCalc = strafePID.calculate(ahrs.getVelocityY(),
-      // Deadzone.deadZone(y, 0.1) * Constants.maxMetersPerSecondStrafe * deltaTime);
-      // xPIDCalc = drivePID.calculate(ahrs.getVelocityX(),
-      // Deadzone.deadZone(x, 0.1) * Constants.maxMetersPerSecondForwards *
-      // deltaTime);
-    }
-
-    // PID control for robot rotation
-    double zPIDCalc;
-    if (Math.abs(z) == 0) {
-      // If we're not intentionally turning, engage teenage resistance (directional
-      // lock)
-      zPIDCalc = Math.min(rotPID.calculate(ahrs.getAngle(), yawTarget), 0.5);
-    } else {
-      // If we *are* intentionally turning, keep track of the current angle
-      yawTarget = ahrs.getAngle();
+      yPIDCalc = y;
       zPIDCalc = z;
-      // TODO: Transition back to velocity PIDs
-      // zPIDCalc = turnRatePID.calculate(ahrs.getRate(),
-      // Deadzone.deadZone(-z, 0.1) * Constants.maxDegreesPerSecondRotate *
-      // deltaTime);
     }
 
-    // Drive in an orientation based on the current cockpit setting
-    if (cockpitMode == Cockpit.FRONT) {
-      driveFieldOriented(xPIDCalc, yPIDCalc, zPIDCalc);
-    } else if (cockpitMode == Cockpit.LEFT) {
-      driveOrientedToAngle(xPIDCalc, yPIDCalc, zPIDCalc, -90.0);
-    } else if (cockpitMode == Cockpit.RIGHT) {
-      driveOrientedToAngle(xPIDCalc, yPIDCalc, zPIDCalc, 90.0);
-    }
-  }
+    // Enforce limits
+    double driveX = Deadzone.cutOff(xPIDCalc, Constants.cutOffMotorSpeed) * Constants.maxDriveSpeed;
+    double driveY = Deadzone.cutOff(yPIDCalc, Constants.cutOffMotorSpeed) * Constants.maxDriveSpeed;
+    double driveZ = Deadzone.cutOff(zPIDCalc, Constants.cutOffMotorSpeed) * Constants.maxDriveSpeed;
 
-  /**
-   * Drives the robot in a direction relative to itself.
-   * 
-   * @param x Positive is strafing right, negative is strafing left
-   * @param y Positive is driving forward, negative is driving backward
-   * @param z I have no idea
-   */
-  public void driveRobotOriented(double x, double y, double z) {
-    driveOrientedToAngle(x, y, z, 0.0);
-  }
-
-  public void driveFieldOriented(double x, double y, double z) {
-    driveOrientedToAngle(x, y, z, ahrs.getAngle());
-  }
-
-  /**
-   * Drives the robot in a direction relative to where the navX was last
-   * calibrated.
-   * 
-   * @param x Positive is strafing right, negative is strafing left
-   * @param y Positive is driving forward, negative is driving backward
-   * @param z I have no idea
-   */
-  public void driveOrientedToAngle(double x, double y, double z, double angle) {
-    double driveX = Deadzone.cutOff(-y, Constants.cutOffMotorSpeed) * Constants.maxDriveSpeed;
-    double driveY = Deadzone.cutOff(-x, Constants.cutOffMotorSpeed) * Constants.maxDriveSpeed;
-    double driveZ = Deadzone.cutOff(-z, Constants.cutOffMotorSpeed) * Constants.maxDriveSpeed;
-    mecanumDrive.driveCartesian(driveX, driveY, driveZ, angle);
+    mecanumDrive.driveCartesian(driveX, -driveY, -driveZ, angle);
   }
 
   public void stop() {
@@ -363,17 +382,17 @@ public class DriveTrain extends SubsystemBase {
     double[] result = { x, y };
     int POV = stick.getPOV();
     if (POV == 0) {
-      result[0] = 0;
-      result[1] = 0.2;
+      result[0] = -0.2;
+      result[1] = 0;
     } else if (POV == 90) {
-      result[0] = 0.4;
-      result[1] = 0;
-    } else if (POV == 180) {
       result[0] = 0;
-      result[1] = -0.2;
-    } else if (POV == 270) {
-      result[0] = -0.4;
+      result[1] = 0.4;
+    } else if (POV == 180) {
+      result[0] = 0.2;
       result[1] = 0;
+    } else if (POV == 270) {
+      result[0] = 0;
+      result[1] = -0.4;
     }
     return result;
   }
