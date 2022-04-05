@@ -144,4 +144,9 @@ public final class Constants {
     public static final double shooterSpeedThreshold = 85;
     /** The maximum permitted drive speed, in decimal percentage. */
     public static final double maxDriveSpeed = 1.0;
+    
+    /**
+     * Climber lock until 105 seconds of the match have passed
+     */
+    public static final boolean climberTimeLock = false;
 }

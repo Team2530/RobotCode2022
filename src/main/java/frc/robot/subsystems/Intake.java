@@ -104,7 +104,6 @@ public class Intake extends SubsystemBase {
         intakeMotorSpeeds[0] = Constants.intakeSpeed;
         intakeMotorSpeeds[1] = inputSpeeds[1];
         reverseWasPressed = false;
-        readyToIntake = false;
         autoIntakeDescription = "Ball rejection";
       } else if ((Chambers.states[0] == matchingBallState || Chambers.states[1] == matchingBallState
           || Chambers.states[2] == matchingBallState)
@@ -154,7 +153,6 @@ public class Intake extends SubsystemBase {
     // Update Shuffleboard panels
     if (xbox.getRawButton(2)) {
       reverseWasPressed = true;
-      readyToIntake = true;
     }
     intaking = xbox.getAButton();
     reverseIsPressed = xbox.getRawButton(2);
@@ -163,13 +161,13 @@ public class Intake extends SubsystemBase {
     readyToShoot = Chambers.ballDetected[2] || Chambers.ballDetected[3];
 
     if (autoIntakeDescription == "Ball rejection" && !reverseWasPressed) {
-      readyToIntake = false;
       setIntakeStatus(lowerIntakeWidget, flashColor("yellow", "white", 15));
     } else if (reverseIsPressed) {
       setIntakeStatus(lowerIntakeWidget, "yellow");
     } else if (intaking) {
       setIntakeStatus(lowerIntakeWidget, "green");
-    } else if (readyToIntake) {
+    } else if ((Chambers.ballNotDetected[0] && Chambers.ballNotDetected[1])
+        || autoIntakeDescription == "Upper chamber empty") {
       setIntakeStatus(lowerIntakeWidget, flashColor("green", "white", 20));
     } else if (Chambers.ballDetected[0] || Chambers.ballDetected[1]) {
       setIntakeStatus(lowerIntakeWidget, "#b3b3b3");

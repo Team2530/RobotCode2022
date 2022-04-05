@@ -5,9 +5,12 @@
 package frc.robot.commands;
 
 import edu.wpi.first.wpilibj2.command.CommandBase;
+import edu.wpi.first.wpilibj2.command.SequentialCommandGroup;
 import frc.robot.Constants;
 import frc.robot.libraries.Deadzone;
 import frc.robot.subsystems.DriveTrain;
+
+import com.ctre.phoenix.schedulers.SequentialScheduler;
 import com.kauailabs.navx.frc.AHRS;
 import edu.wpi.first.wpilibj.Timer;
 import frc.robot.subsystems.Intake;
@@ -103,7 +106,4 @@ public class AutonomousDrive extends CommandBase {
   public boolean endCondition() {
     return distanceTraveled >= distance;
   }
-  /**
-   * fixes the numbers that are saying the robot is going the speed of light^2
-   */
 }

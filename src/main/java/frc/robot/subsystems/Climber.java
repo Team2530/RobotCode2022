@@ -6,17 +6,24 @@ package frc.robot.subsystems;
 
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 
+import java.util.Map;
+
 import com.ctre.phoenix.motorcontrol.can.WPI_TalonSRX;
 import frc.robot.Constants;
+import edu.wpi.first.networktables.NetworkTableEntry;
 import edu.wpi.first.wpilibj.Timer;
+
+import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
+import edu.wpi.first.wpilibj.shuffleboard.*;
+import edu.wpi.first.wpilibj.shuffleboard.SimpleWidget;
 
 public class Climber extends SubsystemBase {
   private static WPI_TalonSRX climberMotorL = new WPI_TalonSRX(Constants.CLIMBER_MOTOR_PORT_L);
   private static WPI_TalonSRX climberMotorR = new WPI_TalonSRX(Constants.CLIMBER_MOTOR_PORT_R);
   Timer timer = new Timer();
-
   /** Creates a new Climber. */
   public Climber() {
+    
   }
 
   @Override
@@ -35,10 +42,15 @@ public class Climber extends SubsystemBase {
    * @param speed Any value from -1.0 to 1.0.
    */
   public void setClimberSpeed(double speed) {
-    //if (Timer.getMatchTime() >= 105) {
+    if (Constants.climberTimeLock) {
+      if (Timer.getMatchTime() >= 30) {
+        climberMotorL.set(clamp(-speed, -1.0, 0.0));
+        climberMotorR.set(clamp(-speed, -1.0, 0.0));
+      }
+    } else {
       climberMotorL.set(clamp(-speed, -1.0, 0.0));
       climberMotorR.set(clamp(-speed, -1.0, 0.0));
-    //}
+    }
   }
 /*
   public void checkLimitSwitch() {
