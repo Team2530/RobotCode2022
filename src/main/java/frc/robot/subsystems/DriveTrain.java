@@ -200,9 +200,12 @@ public class DriveTrain extends SubsystemBase {
    * @param initial Whether or not to calibrate based on the config (can be excluded for regular reset)
    */
   public void reset(boolean initial) {
-    if (initial) 
-      ahrs.setAngleAdjustment(tarmacHeadingChooser.getSelected());
     reset();
+    if (initial) {
+      double offset = tarmacHeadingChooser.getSelected();
+      ahrs.setAngleAdjustment(offset);
+      yawTarget = offset;
+    }
   }
 
   public void setCoast(NeutralMode neutralSetting) {

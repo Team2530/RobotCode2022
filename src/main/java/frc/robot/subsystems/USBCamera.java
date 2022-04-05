@@ -27,7 +27,7 @@ public class USBCamera extends CommandBase {
         .add("Camera", dashboardCam.getSource())
         .withWidget(BuiltInWidgets.kCameraStream)
         .withSize(4, 4)
-        .withPosition(8, 0);
+        .withPosition(7, 0);
   }
 
   // Called when the command is initially scheduled.

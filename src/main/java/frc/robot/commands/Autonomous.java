@@ -50,9 +50,11 @@ public class Autonomous extends CommandBase {
     // Competition settings: 1.5m backward, 1m right (1.5 sec backward, 2 sec right)
     SequentialCommandGroup autoVroomVroom = new SequentialCommandGroup(
         // Runs upper chamber and shooter for 2 seconds - shoots starting ball
+        new InstantCommand(() -> intake.setIntakeMotorSpeed(0, -Constants.intakeSpeed)),
         new InstantCommand(() -> intake.setIntakeMotorSpeed(1, -Constants.intakeSpeed)),
         new InstantCommand(() -> shooter.setShooterSpeed(0.5)),
-        new WaitCommand(2),
+        new WaitCommand(3),
+        new InstantCommand(() -> intake.setIntakeMotorSpeed(0, 0)),
         new InstantCommand(() -> intake.setIntakeMotorSpeed(1, 0)),
         new InstantCommand(() -> shooter.setShooterSpeed(0)),
         // Drives backward for 1.5 seconds (~1.5 meters)
@@ -63,12 +65,13 @@ public class Autonomous extends CommandBase {
         // Strafes to the robot's right for 2 seconds (~1 meter) while running lower intake to acquire ball
         new InstantCommand(() -> intake.setIntakeMotorSpeed(0, -Constants.intakeSpeed)),
         new InstantCommand(() -> driveTrain.driveRobotOriented(0.2, 0.0, 0.0)),
-        new WaitCommand(2),
+        new WaitCommand(3),
         new InstantCommand(() -> driveTrain.driveRobotOriented(0.0, 0.0, 0.0)),
         new WaitCommand(0.5),
         new InstantCommand(() -> intake.setIntakeMotorSpeed(0, 0)),
         // Rotates the robot to face the goal before driving back into the tarmac (~1.8 meters)
         new InstantCommand(() -> driveTrain.deathBlossom(26)),
+        new WaitCommand(0.5),
         new InstantCommand(() -> driveTrain.driveRobotOriented(0.0, -0.2, 0.0)),
         new WaitCommand(1.8),
         new InstantCommand(() -> driveTrain.driveRobotOriented(0.0, 0.0, 0.0)),
