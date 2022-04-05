@@ -48,6 +48,7 @@ public class RobotContainer {
   // Inputs
   private final AHRS m_ahrs = new AHRS();
   private final PhotonVision vision = new PhotonVision();
+  private final USBCamera usbCamera = new USBCamera();
 
   // Outputs
   public final DriveTrain m_driveTrain = new DriveTrain(m_ahrs, stick1, xbox);
