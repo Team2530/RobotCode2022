@@ -46,7 +46,7 @@ public class Chambers extends InCANDevice {
         this.apiID = 32 << 4;
         ShuffleboardTab tab = Shuffleboard.getTab("Driver Dashboard");
         for (int i = 0; i < chamberWidgets.length; ++i) {
-            chamberWidgets[i] = tab.add("Ball State " + i, true).withPosition(0, i);
+            chamberWidgets[i] = tab.add("Ball State " + i, true).withPosition(0, states.length - i - 1).withSize(1, 1);
         }
     }
 

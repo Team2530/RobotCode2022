@@ -149,10 +149,11 @@ public class DriveTrain extends SubsystemBase {
     tarmacHeadingChooser.addOption("Pointing forward-left", 315);
     tarmacConfig = Shuffleboard.getTab("Config")
       .add("Tarmac orientation", tarmacHeadingChooser)
-      .withWidget(BuiltInWidgets.kSplitButtonChooser);
+      .withWidget(BuiltInWidgets.kSplitButtonChooser)
+      .withSize(12, 1);
 
-    rotPIDErrorWidget = Shuffleboard.getTab("Technical Info").add("rotPIDGraph", rotPID.getPositionError()).getEntry();
-    cockpitReportWidget = Shuffleboard.getTab("Technical Info").add("Cockpit mode", cockpitMode).getEntry();
+    // rotPIDErrorWidget = Shuffleboard.getTab("Technical Info").add("rotPIDGraph", rotPID.getPositionError()).getEntry();
+    // cockpitReportWidget = Shuffleboard.getTab("Technical Info").add("Cockpit mode", cockpitMode).getEntry();
   }
 
   @Override
@@ -165,9 +166,9 @@ public class DriveTrain extends SubsystemBase {
         Constants.rotPIDGainsP == 0 ? ROT_PID_P : Constants.rotPIDGainsP,
         Constants.rotPIDGainsI == 0 ? ROT_PID_I : Constants.rotPIDGainsI,
         Constants.rotPIDGainsD == 0 ? ROT_PID_D : Constants.rotPIDGainsD);
-    rotPIDErrorWidget.setValue(rotPID.getPositionError());
-    cockpitReportWidget
-        .setValue(cockpitMode == Cockpit.FRONT ? "Front" : cockpitMode == Cockpit.LEFT ? "Left" : "Right");
+    // rotPIDErrorWidget.setValue(rotPID.getPositionError());
+    // cockpitReportWidget
+    //     .setValue(cockpitMode == Cockpit.FRONT ? "Front" : cockpitMode == Cockpit.LEFT ? "Left" : "Right");
   }
 
   /**

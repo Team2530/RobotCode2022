@@ -97,7 +97,7 @@ public class Autonomous extends CommandBase {
     );
     System.out.println("Starting Autonomous Commands...");
     System.out.println("Please don't run into something!");
-    testVroomVroom.schedule();
+    autoVroomVroom.schedule();
 
     // add more commands here
     // autoVroomVroom.schedule();
