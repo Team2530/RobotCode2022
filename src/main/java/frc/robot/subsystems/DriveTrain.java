@@ -316,12 +316,14 @@ public class DriveTrain extends SubsystemBase {
    * @param y     The speed to strafe. Any value from -1.0 (left) to 1.0 (right).
    * @param z     The speed to rotate. Any value from -1.0 (counterclockwise) to
    *              1.0 (clockwise).
-   * @param angle The angle to orient the driving, in degrees
+   * @param angle The angle to orient the driving, in degrees (positive =
+   *              clockwise)
    */
   public void driveOrientedToAngle(double x, double y, double z, double angle) {
     // navX coordinates:
     // +X = drive forward, -X = drive backward
     // +Y = strafe left, -Y = strafe right
+    // +Z = rotate clockwise, -Z = rotate counterclockwise
     // TEST: X and Y axis velocity PIDs and independent deadzones
 
     // PID control for robot forward/backward/strafing control
@@ -344,10 +346,12 @@ public class DriveTrain extends SubsystemBase {
         yPIDCalc = y;
         xPIDCalc = x;
         // TODO: Transition back to velocity PIDs
-        // yPIDCalc = strafePID.calculate(-ahrs.getVelocityY(), y *
-        // Constants.maxMetersPerSecondStrafe);
-        // xPIDCalc = drivePID.calculate(-ahrs.getVelocityX(), x *
-        // Constants.maxMetersPerSecondForwards);
+        // yPIDCalc = strafePID.calculate(-ahrs.getVelocityY(),
+        //     (-y * Math.cos(Math.toRadians(angle)) + x * Math.sin(Math.toRadians(angle))) *
+        //         Constants.maxMetersPerSecondStrafe);
+        // xPIDCalc = drivePID.calculate(-ahrs.getVelocityX(),
+        //     (-y * Math.sin(Math.toRadians(angle)) + x * Math.cos(Math.toRadians(angle))) *
+        //         Constants.maxMetersPerSecondForwards);
       }
 
       // PID control for robot rotation
