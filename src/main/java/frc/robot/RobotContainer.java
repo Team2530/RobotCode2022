@@ -23,6 +23,7 @@ import edu.wpi.first.wpilibj2.command.ParallelCommandGroup;
 import edu.wpi.first.wpilibj2.command.button.JoystickButton;
 import frc.robot.commands.*;
 import frc.robot.subsystems.*;
+import frc.robot.subsystems.DriveTrain.Cockpit;
 import frc.robot.subsystems.FeedbackPanel.PanelMode;
 
 /**
@@ -165,8 +166,24 @@ public class RobotContainer {
       manualModeOp = false;
     });
 
-    // Toggle intake cockpit
-    new JoystickButton(stick1, 11).whenPressed(() -> m_driveTrain.toggleIntakeCockpit());
+    // Toggle driving in intake-oriented mode
+    new JoystickButton(stick1, 7).whenPressed(() -> m_driveTrain.setIntakeCockpitMode(Cockpit.LEFT))
+        .whenReleased(() -> {
+          if (m_driveTrain.getIntakeCockpitMode() == Cockpit.LEFT)
+            m_driveTrain.setIntakeCockpitMode(Cockpit.NONE);
+        });
+    new JoystickButton(stick1, 8).whenPressed(() -> m_driveTrain.setIntakeCockpitMode(Cockpit.RIGHT))
+        .whenReleased(() -> {
+          if (m_driveTrain.getIntakeCockpitMode() == Cockpit.RIGHT)
+            m_driveTrain.setIntakeCockpitMode(Cockpit.NONE);
+        });
+
+    // Toggle driving in robot-oriented mode
+    new JoystickButton(stick1, 11).whenPressed(() -> m_driveTrain.setIntakeCockpitMode(Cockpit.FRONT))
+        .whenReleased(() -> {
+          if (m_driveTrain.getIntakeCockpitMode() == Cockpit.FRONT)
+            m_driveTrain.setIntakeCockpitMode(Cockpit.NONE);
+        });
 
     // Death Blossom (rotate 180)
     new JoystickButton(stick1, 12).whenPressed(() -> m_driveTrain.deathBlossom(180));

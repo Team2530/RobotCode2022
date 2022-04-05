@@ -37,6 +37,7 @@ import com.kauailabs.navx.frc.AHRS;
  */
 public class DriveTrain extends SubsystemBase {
   public static enum Cockpit {
+    NONE,
     FRONT,
     LEFT,
     RIGHT
@@ -185,7 +186,7 @@ public class DriveTrain extends SubsystemBase {
     ahrs.setAngleAdjustment(0);
     ahrs.resetDisplacement();
     yawTarget = 0.0;
-    cockpitMode = Cockpit.FRONT;
+    cockpitMode = Cockpit.NONE;
 
     setCoast(NeutralMode.Brake);
     motorFL.setSelectedSensorPosition(0);
@@ -270,11 +271,13 @@ public class DriveTrain extends SubsystemBase {
 
     // Drive in an orientation based on the current cockpit setting
     if (cockpitMode == Cockpit.FRONT) {
-      driveFieldOriented(joystickLerp[0], joystickLerp[1], joystickLerp[2]);
+      driveRobotOriented(joystickLerp[0], joystickLerp[1], joystickLerp[2]);
     } else if (cockpitMode == Cockpit.LEFT) {
       driveOrientedToAngle(joystickLerp[0], joystickLerp[1], joystickLerp[2], -90.0);
     } else if (cockpitMode == Cockpit.RIGHT) {
       driveOrientedToAngle(joystickLerp[0], joystickLerp[1], joystickLerp[2], 90.0);
+    } else {
+      driveFieldOriented(joystickLerp[0], joystickLerp[1], joystickLerp[2]);
     }
   }
 
@@ -397,16 +400,13 @@ public class DriveTrain extends SubsystemBase {
     return result;
   }
 
-  public void toggleIntakeCockpit() {
-    if (cockpitMode == Cockpit.FRONT) {
-      cockpitMode = Cockpit.LEFT;
-    } else if (cockpitMode == Cockpit.LEFT) {
-      cockpitMode = Cockpit.RIGHT;
-    } else if (cockpitMode == Cockpit.RIGHT) {
-      cockpitMode = Cockpit.FRONT;
-    }
-    USBCamera.changeCameraSource(cockpitMode);
-    System.out.println("I did it");
+  public Cockpit getIntakeCockpitMode() {
+    return cockpitMode;
+  }
+
+  public void setIntakeCockpitMode(Cockpit mode) {
+    cockpitMode = mode;
+    USBCamera.changeCameraSource(mode);
   }
 
   /** Rotates 180, why not? */

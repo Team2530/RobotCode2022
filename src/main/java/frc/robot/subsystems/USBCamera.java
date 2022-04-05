@@ -52,12 +52,12 @@ public class USBCamera extends CommandBase {
   }
 
   public static void changeCameraSource(DriveTrain.Cockpit mode) {
-    if (mode == DriveTrain.Cockpit.FRONT) {
-      putToDashboard(driveCam);
-    } else if (mode == DriveTrain.Cockpit.LEFT) {
+    if (mode == DriveTrain.Cockpit.LEFT) {
       putToDashboard(leftIntakeCam);
     } else if (mode == DriveTrain.Cockpit.RIGHT) {
       putToDashboard(rightIntakeCam);
+    } else {
+      putToDashboard(driveCam);
     }
   }
 
