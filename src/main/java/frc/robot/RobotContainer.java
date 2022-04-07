@@ -26,6 +26,12 @@ import frc.robot.subsystems.*;
 import frc.robot.subsystems.DriveTrain.Cockpit;
 import frc.robot.subsystems.FeedbackPanel.PanelMode;
 
+import org.photonvision.PhotonCamera;
+import org.photonvision.targeting.PhotonPipelineResult;
+import edu.wpi.first.math.controller.PIDController;
+import edu.wpi.first.wpilibj.DriverStation.Alliance;
+import edu.wpi.first.wpilibj.DriverStation;
+
 /**
  * This class is where the bulk of the robot should be declared. Since
  * Command-based is a "declarative" paradigm, very little robot logic should
@@ -48,11 +54,11 @@ public class RobotContainer {
 
   // Inputs
   private final AHRS m_ahrs = new AHRS();
-  private final PhotonVision vision = new PhotonVision();
   private final USBCamera usbCamera = new USBCamera();
 
   // Outputs
   public final DriveTrain m_driveTrain = new DriveTrain(m_ahrs, stick1, xbox);
+  private final PhotonVision vision = new PhotonVision(stick1, m_driveTrain);
   private final Climber m_climber = new Climber();
   private final Intake intake = new Intake();
   private final Chambers ballDetection = new Chambers(3);
@@ -96,7 +102,7 @@ public class RobotContainer {
    */
   private void configureButtonBindings() {
     // Button for driving at full speed
-    new JoystickButton(stick1, 1).whenPressed(() -> {
+    new JoystickButton(stick1, 5).whenPressed(() -> {
       boostMode = true;
     }).whenReleased(() -> {
       boostMode = false;
@@ -121,6 +127,15 @@ public class RobotContainer {
       manualMode = true;
     }).whenReleased(() -> {
       manualMode = false;
+    });
+
+    new JoystickButton(stick1, 9).whenPressed(() -> {
+    }).whenReleased(() -> {
+      vision.invertCams();
+    });
+
+    new JoystickButton(stick1, Constants.VISION_DRIVE_BUTTON).whenPressed(() -> {
+      vision.drive();
     });
 
     // Climber control (RB for full power and LB for low power)
@@ -233,6 +248,7 @@ public class RobotContainer {
   }
 
   public Command getTelopCommand() {
+    vision.setPipelineFromAlliance();
     m_feedbackPanel.setDisplayMode(PanelMode.Status);
     Shuffleboard.selectTab("Driver Dashboard");
     return new SingleJoystickDrive(m_driveTrain, stick1);

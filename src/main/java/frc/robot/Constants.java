@@ -124,6 +124,7 @@ public final class Constants {
     public static final double ball_Weight = 0.3125;
 
     // ----------Control (Joystick) Constants----------\\
+    public static final int VISION_DRIVE_BUTTON = 1;
     public static final double deadzone = 0.1;
     public static final double deadzoneZ = 0.4;
     public static final double cutOffMotorSpeed = 0.1;
