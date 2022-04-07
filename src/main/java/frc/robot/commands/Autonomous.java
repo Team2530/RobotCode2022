@@ -62,18 +62,18 @@ public class Autonomous extends CommandBase {
         new WaitCommand(1.5),
         new InstantCommand(() -> driveTrain.driveRobotOriented(0.0, 0.0, 0.0)),
         new WaitCommand(0.5),
-        // Strafes to the robot's right for 2 seconds (~1 meter) while running lower intake to acquire ball
+        // Strafes to the robot's right for 2 seconds (~0.5 meters) while running lower intake to acquire ball
         new InstantCommand(() -> intake.setIntakeMotorSpeed(0, -Constants.intakeSpeed)),
         new InstantCommand(() -> driveTrain.driveRobotOriented(0.2, 0.0, 0.0)),
-        new WaitCommand(3),
+        new WaitCommand(2),
         new InstantCommand(() -> driveTrain.driveRobotOriented(0.0, 0.0, 0.0)),
         new WaitCommand(0.5),
         new InstantCommand(() -> intake.setIntakeMotorSpeed(0, 0)),
-        // Rotates the robot to face the goal before driving back into the tarmac (~1.8 meters)
-        new InstantCommand(() -> driveTrain.deathBlossom(26)),
+        // Rotates the robot to face the goal before driving back into the tarmac (~1.5 meters)
+        new InstantCommand(() -> driveTrain.deathBlossom(20)),
         new WaitCommand(0.5),
         new InstantCommand(() -> driveTrain.driveRobotOriented(0.0, -0.2, 0.0)),
-        new WaitCommand(1.8),
+        new WaitCommand(1.5),
         new InstantCommand(() -> driveTrain.driveRobotOriented(0.0, 0.0, 0.0)),
         // Shoots the newly-acquired ball
         new InstantCommand(() -> intake.setIntakeMotorSpeed(0, -Constants.intakeSpeed)),
