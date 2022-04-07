@@ -24,7 +24,7 @@ import edu.wpi.first.wpilibj.DriverStation;
 public class Shooter extends SubsystemBase {
   private static WPI_TalonFX shooterMotor = new WPI_TalonFX(Constants.SHOOTER_MOTOR_PORT);
   XboxController xbox;
-  public static double shooterSpeedWithTriggerChange = 0.65;
+  public static double shooterSpeedWithTriggerChange = 0.55;
   private static double triggerChange = 0.0075;
 
   private static NetworkTableEntry shooterPowerDial = Shuffleboard.getTab("Driver Dashboard")

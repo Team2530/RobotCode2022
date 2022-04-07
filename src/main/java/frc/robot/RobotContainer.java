@@ -58,11 +58,11 @@ public class RobotContainer {
 
   // Outputs
   public final DriveTrain m_driveTrain = new DriveTrain(m_ahrs, stick1, xbox);
-  private final PhotonVision vision = new PhotonVision(stick1, m_driveTrain);
   private final Climber m_climber = new Climber();
   private final Intake intake = new Intake();
   private final Chambers ballDetection = new Chambers(3);
   private final Indicators lights = new Indicators(3);
+  private final PhotonVision vision = new PhotonVision(stick1, m_driveTrain, lights);
   private final FeedbackPanel m_feedbackPanel = new FeedbackPanel(3);
   private final Shooter shooter = new Shooter(xbox);
 
@@ -81,7 +81,7 @@ public class RobotContainer {
   private static boolean manualMode = false;
   private static boolean boostMode = false;
   private static boolean slowMode = false;
-  private static boolean manualModeOp = false;
+  public static boolean manualModeOp = false;
 
   /**
    * The container for the robot. Contains subsystems, OI devices, and commands.

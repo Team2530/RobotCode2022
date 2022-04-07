@@ -1,6 +1,9 @@
 package frc.robot.subsystems;
 
+import java.awt.Color;
+
 import org.photonvision.PhotonCamera;
+import org.photonvision.PhotonUtils;
 import org.photonvision.targeting.PhotonPipelineResult;
 
 import edu.wpi.first.cameraserver.CameraServer;
@@ -30,8 +33,15 @@ public class PhotonVision extends SubsystemBase {
     private String camerastring;
     private Joystick stick;
     private DriveTrain driveTrain;
+    private Indicators indicators;
 
-    public PhotonVision(Joystick stick, DriveTrain driveTrain) {
+    @Override
+    public void periodic() {
+        // indicators.setIndicatorColor(0, PhotonUtils != null /
+        // Color.GREEN : Color.RED);
+    }
+
+    public PhotonVision(Joystick stick, DriveTrain driveTrain, Indicators indicators) {
         this.stick = stick;
         this.driveTrain = driveTrain;
         CameraServer.addServer("http://10.25.30.55:1183/stream.mjpg");
