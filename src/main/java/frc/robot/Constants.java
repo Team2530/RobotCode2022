@@ -134,7 +134,7 @@ public final class Constants {
     public static final int xboxport = 0; // xbox controller port
     public static final int velocityRetentionButton = 3; // velocity retention button
     public static final int driveStraightButton = 5; // button to disable rotation
-    public static final double intakeSpeed = 0.75; // speed of the intake motors
+    public static final double intakeSpeed = 1; // speed of the intake motors
     /** The maximum permitted shooter speed, in decimal percentage. */
     public static final double maxShooterSpeed = 0.75;
     public static final double minShooterSpeed = 0.30;

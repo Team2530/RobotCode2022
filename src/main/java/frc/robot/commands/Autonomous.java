@@ -27,10 +27,11 @@ public class Autonomous extends CommandBase {
   Intake intake;
   Shooter shooter;
   FeedbackPanel panel;
-  
+
   Timer timer = new Timer();
 
-  public Autonomous(DriveTrain driveTrain, Intake intake, Shooter shooter, AHRS ahrs, XboxController xbox, FeedbackPanel panel) {
+  public Autonomous(DriveTrain driveTrain, Intake intake, Shooter shooter, AHRS ahrs, XboxController xbox,
+      FeedbackPanel panel) {
     // Use addRequirements() here to declare subsystem dependencies.
     this.driveTrain = driveTrain;
     this.intake = intake;
@@ -45,7 +46,7 @@ public class Autonomous extends CommandBase {
   // Called when the command is initially scheduled.
   @Override
   public void initialize() {
-    //panel.setDisplayMode(PanelMode.Boot);
+    // panel.setDisplayMode(PanelMode.Boot);
     // Robot travels ~1 m/sec forward and backward
     // Competition settings: 1.5m backward, 1m right (1.5 sec backward, 2 sec right)
     SequentialCommandGroup autoVroomVroom = new SequentialCommandGroup(
@@ -53,26 +54,28 @@ public class Autonomous extends CommandBase {
         new InstantCommand(() -> intake.setIntakeMotorSpeed(0, -Constants.intakeSpeed)),
         new InstantCommand(() -> intake.setIntakeMotorSpeed(1, -Constants.intakeSpeed)),
         new InstantCommand(() -> shooter.setShooterSpeed(0.5)),
-        new WaitCommand(3),
+        new WaitCommand(4),
         new InstantCommand(() -> intake.setIntakeMotorSpeed(0, 0)),
         new InstantCommand(() -> intake.setIntakeMotorSpeed(1, 0)),
         new InstantCommand(() -> shooter.setShooterSpeed(0)),
         // Drives backward for 1.5 seconds (~1.5 meters)
-        new InstantCommand(() -> driveTrain.driveRobotOriented(0.0, 0.2, 0.0)),
+        new InstantCommand(() -> driveTrain.driveRobotOriented(0.2, 0.0, 0.0)),
         new WaitCommand(1.5),
         new InstantCommand(() -> driveTrain.driveRobotOriented(0.0, 0.0, 0.0)),
         new WaitCommand(0.5),
-        // Strafes to the robot's right for 2 seconds (~0.5 meters) while running lower intake to acquire ball
+        // Strafes to the robot's right for 2 seconds (~0.5 meters) while running lower
+        // intake to acquire ball
         new InstantCommand(() -> intake.setIntakeMotorSpeed(0, -Constants.intakeSpeed)),
-        new InstantCommand(() -> driveTrain.driveRobotOriented(0.2, 0.0, 0.0)),
+        new InstantCommand(() -> driveTrain.driveRobotOriented(0.0, 0.2, 0.0)),
         new WaitCommand(2),
         new InstantCommand(() -> driveTrain.driveRobotOriented(0.0, 0.0, 0.0)),
         new WaitCommand(0.5),
         new InstantCommand(() -> intake.setIntakeMotorSpeed(0, 0)),
-        // Rotates the robot to face the goal before driving back into the tarmac (~1.5 meters)
+        // Rotates the robot to face the goal before driving back into the tarmac (~1.5
+        // meters)
         new InstantCommand(() -> driveTrain.deathBlossom(20)),
         new WaitCommand(0.5),
-        new InstantCommand(() -> driveTrain.driveRobotOriented(0.0, -0.2, 0.0)),
+        new InstantCommand(() -> driveTrain.driveRobotOriented(-0.2, 0.0, 0.0)),
         new WaitCommand(1.5),
         new InstantCommand(() -> driveTrain.driveRobotOriented(0.0, 0.0, 0.0)),
         // Shoots the newly-acquired ball
@@ -83,20 +86,22 @@ public class Autonomous extends CommandBase {
         // Stops the shootage
         new InstantCommand(() -> intake.setIntakeMotorSpeed(0, 0)),
         new InstantCommand(() -> intake.setIntakeMotorSpeed(1, 0)),
-        new InstantCommand(() -> shooter.setShooterSpeed(0.0))
-    );
-    // DO NOT USE!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
+        new InstantCommand(() -> shooter.setShooterSpeed(0.0)));
+    // DO NOT
+    // USE!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
     // SequentialCommandGroup testVroomVroom = new SequentialCommandGroup(
-    //   // new InstantCommand(() -> intake.setIntakeMotorSpeed(0, -Constants.intakeSpeed)),
-    //   // new InstantCommand(() -> intake.setIntakeMotorSpeed(1, -Constants.intakeSpeed)),
-    //   // new InstantCommand(() -> shooter.setShooterSpeed(0.5)),
-    //   // new WaitCommand(2),
-    //   // new InstantCommand(() -> intake.setIntakeMotorSpeed(1, 0)),
-    //   // new InstantCommand(() -> intake.setIntakeMotorSpeed(0, 0)),
-    //   // new InstantCommand(() -> shooter.setShooterSpeed(0)),
-    //   new AutonomousDrive(driveTrain, 2, 2, ahrs),
-    //   new WaitCommand(1.5),
-    //   new AutonomousDrive(driveTrain, 2, 3, ahrs)
+    // // new InstantCommand(() -> intake.setIntakeMotorSpeed(0,
+    // -Constants.intakeSpeed)),
+    // // new InstantCommand(() -> intake.setIntakeMotorSpeed(1,
+    // -Constants.intakeSpeed)),
+    // // new InstantCommand(() -> shooter.setShooterSpeed(0.5)),
+    // // new WaitCommand(2),
+    // // new InstantCommand(() -> intake.setIntakeMotorSpeed(1, 0)),
+    // // new InstantCommand(() -> intake.setIntakeMotorSpeed(0, 0)),
+    // // new InstantCommand(() -> shooter.setShooterSpeed(0)),
+    // new AutonomousDrive(driveTrain, 2, 2, ahrs),
+    // new WaitCommand(1.5),
+    // new AutonomousDrive(driveTrain, 2, 3, ahrs)
     // );
     System.out.println("Starting Autonomous Commands...");
     System.out.println("Please don't run into something!");
@@ -115,7 +120,7 @@ public class Autonomous extends CommandBase {
   // Called once the command ends or is interrupted.
   @Override
   public void end(boolean interrupted) {
-    //panel.setDisplayMode(PanelMode.Status);
+    // panel.setDisplayMode(PanelMode.Status);
   }
 
   // Returns true when the command should end.

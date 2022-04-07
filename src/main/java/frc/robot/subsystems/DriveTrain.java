@@ -209,7 +209,7 @@ public class DriveTrain extends SubsystemBase {
   public void reset(boolean initial) {
     reset();
     if (initial) {
-      double offset = tarmacHeadingChooser.getSelected();
+      double offset = tarmacHeadingChooser.getSelected() - 15;
       ahrs.setAngleAdjustment(offset);
       yawTarget = offset;
     }
