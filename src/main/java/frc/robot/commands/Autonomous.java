@@ -58,6 +58,7 @@ public class Autonomous extends CommandBase {
         new InstantCommand(() -> intake.setIntakeMotorSpeed(1, -Constants.intakeSpeed)),
         new InstantCommand(() -> shooter.setShooterSpeed(0.5)),
         new WaitCommand(4.5),
+        new InstantCommand(() -> intake.setIntakeMotorSpeed(0, 0)),
         new InstantCommand(() -> intake.setIntakeMotorSpeed(1, 0)),
         new InstantCommand(() -> shooter.setShooterSpeed(0)),
         // Drives backward for 1.5 seconds (~1.5 meters)
