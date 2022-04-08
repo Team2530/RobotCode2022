@@ -149,5 +149,5 @@ public final class Constants {
     /**
      * Climber lock until 105 seconds of the match have passed
      */
-    public static final boolean climberTimeLock = false;
+    public static final boolean climberTimeLock = true;
 }

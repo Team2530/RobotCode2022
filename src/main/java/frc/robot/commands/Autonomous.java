@@ -48,7 +48,7 @@ public class Autonomous extends CommandBase {
   @Override
   public void initialize() {
     RobotContainer.manualModeOp = true;
-    // panel.setDisplayMode(PanelMode.Boot);
+    panel.setDisplayMode(PanelMode.Boot);
     // Robot travels ~1 m/sec forward and backward
     // Robot travels ~1 m/sec forward and backward
     // Competition settings: 1.5m backward, 1m right (1.5 sec backward, 2 sec right)
@@ -64,7 +64,7 @@ public class Autonomous extends CommandBase {
         new InstantCommand(() -> driveTrain.driveRobotOriented(-0.2, 0.0, 0.0)),
         new WaitCommand(2),
         new InstantCommand(() -> driveTrain.driveRobotOriented(0.0, 0.0, 0.0))
-        // new WaitCommand(0.5)
+    // new WaitCommand(0.5)
     /*
      * Strafes to the robot's right for 2 seconds (~0.5 meters) while running lower
      * // intake to acquire ball
@@ -123,8 +123,8 @@ public class Autonomous extends CommandBase {
   // Called once the command ends or is interrupted.
   @Override
   public void end(boolean interrupted) {
+    panel.setDisplayMode(PanelMode.Status);
     RobotContainer.manualModeOp = false;
-    // panel.setDisplayMode(PanelMode.Status);
   }
 
   // Returns true when the command should end.
