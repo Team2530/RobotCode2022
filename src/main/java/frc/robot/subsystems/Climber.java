@@ -43,7 +43,7 @@ public class Climber extends SubsystemBase {
    */
   public void setClimberSpeed(double speed) {
     if (Constants.climberTimeLock) {
-      if (Timer.getMatchTime() >= 30) {
+      if (Timer.getMatchTime() <= 30) {
         climberMotorL.set(clamp(-speed, -1.0, 0.0));
         climberMotorR.set(clamp(-speed, -1.0, 0.0));
       }
