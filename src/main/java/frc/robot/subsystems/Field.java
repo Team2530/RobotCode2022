@@ -70,15 +70,16 @@ public class Field extends SubsystemBase {
     MecanumDriveWheelSpeeds wheelSpeeds = new MecanumDriveWheelSpeeds(
       DriveTrain.motorFL.get(), DriveTrain.motorFR.get(), DriveTrain.motorBL.get(), DriveTrain.motorBR.get()
     );
+    wheelSpeeds.desaturate(2);
     double deltaTime = Timer.getFPGATimestamp() - timeSinceChecked;
     timeSinceChecked = Timer.getFPGATimestamp();
     ChassisSpeeds chassisSpeeds = m_kinematics.toChassisSpeeds(wheelSpeeds);
     double forward = chassisSpeeds.vxMetersPerSecond;
     double sideways = chassisSpeeds.vyMetersPerSecond;
     double angular = chassisSpeeds.omegaRadiansPerSecond;
-    fieldYPos = fieldYPos - forward * deltaTime;
-    fieldXPos = fieldXPos + sideways * deltaTime;
-    fieldRotation = fieldRotation + angular * deltaTime;
+    fieldYPos = fieldYPos - (forward * deltaTime * 8);
+    fieldXPos = fieldXPos + (sideways * deltaTime * 8);
+    fieldRotation = fieldRotation + (angular * deltaTime * 8);
     field2dBounds();
   }
 
