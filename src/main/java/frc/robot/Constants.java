@@ -7,6 +7,7 @@
 
 package frc.robot;
 
+import edu.wpi.first.math.geometry.Translation2d;
 import edu.wpi.first.math.util.Units;
 import frc.robot.libraries.Gains;
 
@@ -59,6 +60,12 @@ public final class Constants {
     public static final double WHEEL_RADIUS = 6 * 2.54;
     public static final double DISTANCE_PER_PULSE = Constants.ENCODER_TICKS_PER_REVOLUTION * Math.PI
             * Math.pow(Constants.WHEEL_RADIUS, 2);
+
+    // wheel location reletive to the middle of the robot
+    public static final Translation2d m_frontLeftLocation = new Translation2d(0.381, 0.381);
+    public static final Translation2d m_frontRightLocation = new Translation2d(0.381, -0.381);
+    public static final Translation2d m_backLeftLocation = new Translation2d(-0.381, 0.381);
+    public static final Translation2d m_backRightLocation = new Translation2d(-0.381, -0.381);
 
     // Rotation teenage resistance
     // TODO: Tune (unfinalized constants commented out below)

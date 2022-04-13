@@ -3,12 +3,18 @@
 // the WPILib BSD license file in the root directory of this project.
 
 package frc.robot.subsystems;
+import edu.wpi.first.wpilibj.Timer;
 import edu.wpi.first.wpilibj.smartdashboard.Field2d;
 import edu.wpi.first.math.geometry.Pose2d;
 import edu.wpi.first.math.geometry.Rotation2d;
+import edu.wpi.first.math.kinematics.ChassisSpeeds;
+import edu.wpi.first.math.kinematics.MecanumDriveKinematics;
+import edu.wpi.first.math.kinematics.MecanumDriveWheelSpeeds;
+
 import com.kauailabs.navx.frc.AHRS;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
+import frc.robot.Constants;
 import frc.robot.subsystems.DriveTrain;
 
 public class Field extends SubsystemBase {
@@ -24,6 +30,11 @@ public class Field extends SubsystemBase {
     double fieldXPos = 8.0;
     double fieldYPos = 4.0;
     double fieldRotation = 0.0;
+    double timeSinceChecked = 0.0;
+    MecanumDriveKinematics m_kinematics = new MecanumDriveKinematics(
+    Constants.m_frontLeftLocation, Constants.m_frontRightLocation, 
+    Constants.m_backLeftLocation, Constants.m_backRightLocation
+    );
 
     double fieldSpeed[] = { 0.0, 0.0, 0.0 };
   public Field(AHRS ahrs) {
@@ -49,9 +60,22 @@ public class Field extends SubsystemBase {
     this.fieldRotation = fieldRotation;
     m_field.setRobotPose(fieldXPos, fieldYPos, m_rotation);
     // NavX Rotated 90 (Values below should update realtime robot position)
-    fieldXPos = fieldXPos + ahrs.getVelocityY();
-    fieldYPos = fieldYPos + ahrs.getVelocityX();
-    fieldRotation = fieldRotation + ahrs.getVelocityZ();  
+    // fieldXPos = fieldXPos + ahrs.getVelocityY();
+    // fieldYPos = fieldYPos + ahrs.getVelocityX();
+    // fieldRotation = fieldRotation + ahrs.getVelocityZ();  
+    MecanumDriveWheelSpeeds wheelSpeeds = new MecanumDriveWheelSpeeds(
+      DriveTrain.motorFL.get(), DriveTrain.motorFR.get(), DriveTrain.motorBL.get(), DriveTrain.motorBR.get()
+    );
+    double deltaTime = Timer.getFPGATimestamp() - timeSinceChecked;
+    double timeSinceChecked = Timer.getFPGATimestamp();
+    ChassisSpeeds chassisSpeeds = m_kinematics.toChassisSpeeds(wheelSpeeds);
+    double forward = chassisSpeeds.vxMetersPerSecond;
+    double sideways = chassisSpeeds.vyMetersPerSecond;
+    double angular = chassisSpeeds.omegaRadiansPerSecond;
+    System.out.println(forward);
+    fieldXPos = fieldXPos + forward;
+    fieldYPos = fieldYPos + sideways;
+    fieldRotation = fieldRotation + angular;
   }
 
 /**
