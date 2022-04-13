@@ -63,19 +63,23 @@ public class Field extends SubsystemBase {
     // fieldXPos = fieldXPos + ahrs.getVelocityY();
     // fieldYPos = fieldYPos + ahrs.getVelocityX();
     // fieldRotation = fieldRotation + ahrs.getVelocityZ();  
+    calculateRobotMovement();
+  }
+
+  public void calculateRobotMovement(){
     MecanumDriveWheelSpeeds wheelSpeeds = new MecanumDriveWheelSpeeds(
       DriveTrain.motorFL.get(), DriveTrain.motorFR.get(), DriveTrain.motorBL.get(), DriveTrain.motorBR.get()
     );
     double deltaTime = Timer.getFPGATimestamp() - timeSinceChecked;
-    double timeSinceChecked = Timer.getFPGATimestamp();
+    timeSinceChecked = Timer.getFPGATimestamp();
     ChassisSpeeds chassisSpeeds = m_kinematics.toChassisSpeeds(wheelSpeeds);
     double forward = chassisSpeeds.vxMetersPerSecond;
     double sideways = chassisSpeeds.vyMetersPerSecond;
     double angular = chassisSpeeds.omegaRadiansPerSecond;
-    System.out.println(forward);
-    fieldXPos = fieldXPos + forward;
-    fieldYPos = fieldYPos + sideways;
-    fieldRotation = fieldRotation + angular;
+    fieldYPos = fieldYPos - forward * deltaTime;
+    fieldXPos = fieldXPos + sideways * deltaTime;
+    fieldRotation = fieldRotation + angular * deltaTime;
+    field2dBounds();
   }
 
 /**
