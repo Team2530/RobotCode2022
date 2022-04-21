@@ -150,4 +150,8 @@ public final class Constants {
      * Climber lock until 105 seconds of the match have passed
      */
     public static final boolean climberTimeLock = true;
+    /**
+     * This is for auto. I don't get it either. DoN't qUeStIoN iT.
+     */
+    public static final double dontQuestionIt = 1.6764;
 }

@@ -107,9 +107,13 @@ public class Autonomous extends CommandBase {
     // new WaitCommand(1.5),
     // new AutonomousDrive(driveTrain, 2, 3, ahrs)
     );
+
+    SequentialCommandGroup autoZoomZoom = new SequentialCommandGroup(
+      new AutonomousDrive(driveTrain, 2, 1, ahrs)
+    );
     System.out.println("Starting Autonomous Commands...");
     System.out.println("Please don't run into something!");
-    autoVroomVroom.schedule();
+    autoZoomZoom.schedule();
 
     // add more commands here
     // autoVroomVroom.schedule();

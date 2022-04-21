@@ -28,6 +28,7 @@ public class AutonomousDrive extends CommandBase {
   double distanceTraveled = 0.0;
   double Dtime = 0.0;
   double[] navxData = { 0, 0, 0, 0, 0 };
+  double number = 0.0;
 
   /**
    * @param direction  1 is forward, 2 is back, 3 is right, 4 is left
@@ -46,12 +47,16 @@ public class AutonomousDrive extends CommandBase {
   public void initialize() {
     // figure out which direction to go (1 is forward) (2 is back) (3 is right) (4
     // is left)
+
+    // don't question it
+    // distance = distance * 34;
+    // distance = distance * Constants.dontQuestionIt;
+    distance = distance / Constants.dontQuestionIt;
     distanceTraveled = 0;
     if (direction == 1) {
       driveTrain.driveRobotOriented(0.0, 0.2, 0.0);
     }
     if (direction == 2) {
-      // driveTrain.mecanumDrive.driveCartesian(0.2, 0.0, 0.0);
       driveTrain.driveRobotOriented(0.0, -0.2, 0.0);
     }
     if (direction == 3) {
@@ -75,6 +80,7 @@ public class AutonomousDrive extends CommandBase {
   // Called once the command ends or is interrupted.
   @Override
   public void end(boolean interrupted) {
+    System.out.println("Finnyeeto");
     driveTrain.driveRobotOriented(0.0, 0.0, 0.0);
     // throw new Error("You're done");
   }
@@ -88,10 +94,14 @@ public class AutonomousDrive extends CommandBase {
   public void robotVelocity() {
     deltaTime = Timer.getFPGATimestamp() - timeSinceChecked;
     timeSinceChecked = Timer.getFPGATimestamp();
-    if (direction == 1 || direction == 2) {
+    if (direction == 1) {
       currentVelocity = ahrs.getWorldLinearAccelY() / 9.8;
       // currentVelocity = Deadzone.deadZone(ahrs.getVelocityY(), 0.05);
-    } else if (direction == 3 || direction == 4) { 
+    } else if (direction == 2) {
+      currentVelocity = ahrs.getWorldLinearAccelY() / 9.8 * -1;
+    } else if (direction == 3) { 
+      currentVelocity = ahrs.getWorldLinearAccelX() / 9.8 * -1;
+    } else if (direction == 4) {
       currentVelocity = ahrs.getWorldLinearAccelX() / 9.8;
     } else {
       System.out.println("ERROR");
