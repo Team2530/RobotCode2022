@@ -51,7 +51,7 @@ public class AutonomousDrive extends CommandBase {
     // don't question it
     // distance = distance * 34;
     // distance = distance * Constants.dontQuestionIt;
-    distance = distance / Constants.dontQuestionIt;
+    distance = distance * Constants.dontQuestionIt;
     distanceTraveled = 0;
     if (direction == 1) {
       driveTrain.driveRobotOriented(0.0, 0.2, 0.0);

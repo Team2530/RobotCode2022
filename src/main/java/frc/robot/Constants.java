@@ -153,5 +153,5 @@ public final class Constants {
     /**
      * This is for auto. I don't get it either. DoN't qUeStIoN iT.
      */
-    public static final double dontQuestionIt = 1.6764;
+    public static final double dontQuestionIt = 1.212121;
 }
