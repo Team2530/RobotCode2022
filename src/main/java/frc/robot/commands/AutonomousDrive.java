@@ -31,7 +31,7 @@ public class AutonomousDrive extends CommandBase {
   double number = 0.0;
 
   /**
-   * @param direction  1 is forward, 2 is back, 3 is right, 4 is left
+   * @param direction 1 is forward, 2 is back, 3 is right, 4 is left
    */
   public AutonomousDrive(DriveTrain driveTrain, double distance, int direction, AHRS ahrs) {
     this.driveTrain = driveTrain;
@@ -49,10 +49,10 @@ public class AutonomousDrive extends CommandBase {
     // is left)
 
     // don't question it
-    // distance = distance * 34;
-    // distance = distance * Constants.dontQuestionIt;
-    distance = distance * Constants.dontQuestionIt;
+    // distance = distance / Constants.dontQuestionIt;
+    distance = distance - (distance * .15);
     distanceTraveled = 0;
+
     if (direction == 1) {
       driveTrain.driveRobotOriented(0.0, 0.2, 0.0);
     }
@@ -99,7 +99,7 @@ public class AutonomousDrive extends CommandBase {
       // currentVelocity = Deadzone.deadZone(ahrs.getVelocityY(), 0.05);
     } else if (direction == 2) {
       currentVelocity = ahrs.getWorldLinearAccelY() / 9.8 * -1;
-    } else if (direction == 3) { 
+    } else if (direction == 3) {
       currentVelocity = ahrs.getWorldLinearAccelX() / 9.8 * -1;
     } else if (direction == 4) {
       currentVelocity = ahrs.getWorldLinearAccelX() / 9.8;
