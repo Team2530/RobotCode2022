@@ -22,6 +22,7 @@ public class FeedbackPanel extends InCANDevice {
     public FeedbackPanel(int deviceNum) {
         super(deviceNum);
         this.apiID = 28 << 4;
+        setDisplayMode(PanelMode.Boot);
     }
 
     @Override
