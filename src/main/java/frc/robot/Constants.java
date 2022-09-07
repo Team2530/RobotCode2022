@@ -52,6 +52,16 @@ public final class Constants {
     public static final int kTimeoutMs = 30;
     public static final int COLOR_SENSOR_PORT = 777778;
 
+
+    // ------------LimeLight Constants------------ \\
+    // In inches
+    public static final double limeHeight = 0.0;
+    public static final double limeAngle = 0.0;
+    // In inches
+    public static final double goalHeight = 96.0;
+    
+
+
     // ----------Driving Constants----------\\
     // The ratio between the encoder and the driven wheels
     public static final double DRIVE_GEAR_RATIO = 18.57;

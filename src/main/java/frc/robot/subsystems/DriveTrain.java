@@ -428,4 +428,11 @@ public class DriveTrain extends SubsystemBase {
     SmartDashboard.putNumber("Accumulated yaw ", ahrs.getAngle());
     SmartDashboard.putNumber("Rotational velocity (raw)", ahrs.getRawGyroZ());
   }
+
+  public void turn(Double leftValue , Double rightValue) {
+    motorFL.set(leftValue);
+    motorBL.set(leftValue);
+    motorFR.set(rightValue);
+    motorBR.set(rightValue);
+  }
 }
