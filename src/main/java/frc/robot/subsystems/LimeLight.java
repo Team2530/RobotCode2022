@@ -22,7 +22,11 @@ public class LimeLight extends CommandBase {
   /** Any targets? */
   double tv;
 
+  double turnRate;
+
   double limekP = 0.3;
+
+  double minCommand = 0.05;
 
   NetworkTable table;
   // not sure if this is right or not
@@ -31,7 +35,6 @@ public class LimeLight extends CommandBase {
   int cameraMode = 0;
 
   DriveTrain driveTrain;
-
 
   public LimeLight(DriveTrain driveTrain) {
     // Use addRequirements() here to declare subsystem dependencies.
@@ -91,19 +94,20 @@ public class LimeLight extends CommandBase {
       lightMode = 3;
     }
   }
+
   /**
    * Assume that there is a valid target, we will turn to aim at it
    */
   public void aimAtTarget() {
-    if(tx < 1) {
-      limekP = 0.1;
+    double e = -tx;
+
+    if (tx < 1) {
+      turnRate = limekP * e + minCommand;
     } else {
-      limekP = 0.3;
+      turnRate = limekP * e - minCommand;
     }
     // Use this method to turn to robot at the speeds
-    driveTrain.turn(0.0, 0.0);
-
-
+    driveTrain.turn(turnRate, -turnRate);
 
   }
 }
