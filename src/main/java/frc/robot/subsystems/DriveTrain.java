@@ -347,11 +347,13 @@ public class DriveTrain extends SubsystemBase {
         xPIDCalc = x;
         // TODO: Transition back to velocity PIDs
         // yPIDCalc = strafePID.calculate(-ahrs.getVelocityY(),
-        //     (-y * Math.cos(Math.toRadians(angle)) + x * Math.sin(Math.toRadians(angle))) *
-        //         Constants.maxMetersPerSecondStrafe);
+        // (-y * Math.cos(Math.toRadians(angle)) + x * Math.sin(Math.toRadians(angle)))
+        // *
+        // Constants.maxMetersPerSecondStrafe);
         // xPIDCalc = drivePID.calculate(-ahrs.getVelocityX(),
-        //     (-y * Math.sin(Math.toRadians(angle)) + x * Math.cos(Math.toRadians(angle))) *
-        //         Constants.maxMetersPerSecondForwards);
+        // (-y * Math.sin(Math.toRadians(angle)) + x * Math.cos(Math.toRadians(angle)))
+        // *
+        // Constants.maxMetersPerSecondForwards);
       }
 
       // PID control for robot rotation
@@ -429,7 +431,13 @@ public class DriveTrain extends SubsystemBase {
     SmartDashboard.putNumber("Rotational velocity (raw)", ahrs.getRawGyroZ());
   }
 
-  public void turn(Double leftValue , Double rightValue) {
+  /**
+   * Sets both sides of the Robot to the same value (Goes forward and backward)
+   * 
+   * @param leftValue  value to set the left side to
+   * @param rightValue value to set the right side to
+   */
+  public void setSides(Double leftValue, Double rightValue) {
     motorFL.set(leftValue);
     motorBL.set(leftValue);
     motorFR.set(rightValue);

@@ -24,11 +24,12 @@ public class LimeLight extends CommandBase {
 
   double turnRate;
 
-
-  /**Gain for turning for the LimeLight */
+  /** Gain for turning for the LimeLight */
   double limekP = 0.3;
-  /**If the turn value is really low, we add to it so it still moves */
+  /** If the turn value is really low, we add to it so it still moves */
   double minCommand = 0.05;
+  /**  Amount we are willing to compromise for in our distance */
+  double disttolerance = 0.9;
 
   NetworkTable table;
   // not sure if this is right or not
@@ -109,7 +110,23 @@ public class LimeLight extends CommandBase {
       turnRate = limekP * error - minCommand;
     }
     // Use this method to turn to robot at the speeds
-    driveTrain.turn(turnRate, -turnRate);
+    driveTrain.setSides(turnRate, -turnRate);
+
+  }
+
+  /**
+   * Backs up to a given distance based on maths
+   * <p> Meant to be used called multiple times whilst preparing to shooting is occuring
+   * @param dist Distance away from goal
+   */
+  public void backToDistance(double dist) {
+    double currentdist = distanceToTarget();
+
+    if ((currentdist - dist) < 0) {
+      driveTrain.setSides(-0.2, -0.2);
+    } else {
+      driveTrain.setSides(0.2, 0.2);
+    }
 
   }
 }
