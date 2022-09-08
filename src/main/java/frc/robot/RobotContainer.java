@@ -117,6 +117,8 @@ public class RobotContainer {
     });
     // ! untested!!!!!!
 
+    new JoystickButton(stick1 , 1).whenPressed(() -> m_limelight.aimAtTarget());
+
     new JoystickButton(stick1, 3).whenPressed(() -> m_limelight.changeMode());
 
     // Disable rotation (not yet in this branch)
