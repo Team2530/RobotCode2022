@@ -24,8 +24,10 @@ public class LimeLight extends CommandBase {
 
   double turnRate;
 
-  double limekP = 0.3;
 
+  /**Gain for turning for the LimeLight */
+  double limekP = 0.3;
+  /**If the turn value is really low, we add to it so it still moves */
   double minCommand = 0.05;
 
   NetworkTable table;
@@ -99,12 +101,12 @@ public class LimeLight extends CommandBase {
    * Assume that there is a valid target, we will turn to aim at it
    */
   public void aimAtTarget() {
-    double e = -tx;
+    double error = -tx;
 
     if (tx < 1) {
-      turnRate = limekP * e + minCommand;
+      turnRate = limekP * error + minCommand;
     } else {
-      turnRate = limekP * e - minCommand;
+      turnRate = limekP * error - minCommand;
     }
     // Use this method to turn to robot at the speeds
     driveTrain.turn(turnRate, -turnRate);
