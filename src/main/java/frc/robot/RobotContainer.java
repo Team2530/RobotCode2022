@@ -62,7 +62,7 @@ public class RobotContainer {
   private final Intake intake = new Intake();
   private final Chambers ballDetection = new Chambers(3);
   private final Indicators lights = new Indicators(3);
-  private final PhotonVision vision = new PhotonVision(stick1, m_driveTrain, lights);
+  // private final PhotonVision vision = new PhotonVision(stick1, m_driveTrain, lights);
   private final FeedbackPanel m_feedbackPanel = new FeedbackPanel(3);
   private final Shooter shooter = new Shooter(xbox);
   private final LimeLight m_limelight = new LimeLight(m_driveTrain);
@@ -94,6 +94,8 @@ public class RobotContainer {
     Shuffleboard.getTab("Config");
     Shuffleboard.selectTab("Config");
   }
+  // Establish a command to point at da target
+  InstantCommand pointAtTarget = new InstantCommand(() -> LimeLight.aimAtTarget());
 
   /**
    * Use this method to define your button->command mappings. Buttons can be
@@ -117,7 +119,7 @@ public class RobotContainer {
     });
     // ! untested!!!!!! (Colten code, so...)
 
-    new JoystickButton(stick1 , 1).whenPressed(() -> m_limelight.aimAtTarget());
+    new JoystickButton(stick1 , 1).whileHeld(pointAtTarget).whenReleased(() -> m_limelight.fixOffset());
 
     new JoystickButton(stick1, 3).whenPressed(() -> m_limelight.changeMode());
 
@@ -128,6 +130,8 @@ public class RobotContainer {
 
     // Velocity retention (not yet in this branch)
 
+    
+
     // Button for disabling autonomous/smart functions
     new JoystickButton(stick1, 6).whenPressed(() -> {
       manualMode = true;
@@ -135,14 +139,14 @@ public class RobotContainer {
       manualMode = false;
     });
 
-    new JoystickButton(stick1, 9).whenPressed(() -> {
-    }).whenReleased(() -> {
-      vision.invertCams();
-    });
+    // new JoystickButton(stick1, 9).whenPressed(() -> {
+    // }).whenReleased(() -> {
+    //   vision.invertCams();
+    // });
 
-    new JoystickButton(stick1, Constants.VISION_DRIVE_BUTTON).whenPressed(() -> {
-      vision.drive();
-    });
+    //  new JoystickButton(stick1, Constants.VISION_DRIVE_BUTTON).whenPressed(() -> {
+    //   vision.drive();
+    // });
 
     // Climber control (RB for full power and LB for low power)
     new JoystickButton(xbox, 6).whenPressed(() -> m_climber.setClimberSpeed(1.0))
@@ -254,7 +258,7 @@ public class RobotContainer {
   }
 
   public Command getTelopCommand() {
-    vision.setPipelineFromAlliance();
+    // vision.setPipelineFromAlliance();
     m_feedbackPanel.setDisplayMode(PanelMode.Status);
     Shuffleboard.selectTab("Driver Dashboard");
     return new SingleJoystickDrive(m_driveTrain, stick1);

@@ -52,7 +52,7 @@ public class DriveTrain extends SubsystemBase {
   /** Last joystick input when button 3 is pressed */
   private static double[] lastJoystickInput = { 0, 0, 0 };
 
-  private static double yawTarget = 0.0;
+  public static double yawTarget = 0.0;
 
   private double lastExecuted = Timer.getFPGATimestamp();
 

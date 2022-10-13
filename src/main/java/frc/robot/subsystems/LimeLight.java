@@ -4,81 +4,72 @@
 
 package frc.robot.subsystems;
 
-import edu.wpi.first.networktables.NetworkTable;
+import edu.wpi.first.math.controller.PIDController;
+import edu.wpi.first.networktables.NetworkTableEntry;
 import edu.wpi.first.networktables.NetworkTableInstance;
-import edu.wpi.first.wpilibj2.command.CommandBase;
-import frc.robot.Constants;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
-import frc.robot.subsystems.DriveTrain;
+import edu.wpi.first.wpilibj2.command.SubsystemBase;
+import frc.robot.Constants;
 
-public class LimeLight extends CommandBase {
-  /** Creates a new Limelight. */
-  /** X offset from target */
-  double tx;
-  /** Y offset from target */
-  double ty;
-  /** Target Area */
-  double ta;
+public class LimeLight extends SubsystemBase {
+  static DriveTrain driveTrain;
+
+  static double xoff;
+  static double yoff;
+  static double area;
   /** Any targets? */
-  double tv;
+  static double tv;
 
-  double turnRate;
+  static double turnRate;
 
   /** Gain for turning for the LimeLight */
-  double limekP = 0.3;
-  /** If the turn value is really low, we add to it so it still moves */
-  double minCommand = 0.05;
-  /**  Amount we are willing to compromise for in our distance */
-  double disttolerance = 0.9;
+  static double limekP = 0.012;
+  static double limekI = 0.001;
+  static double limekD = 0.000;
+  static PIDController greenPid = new PIDController(limekP, limekI, limekD);
 
-  NetworkTable table;
+  /** If the turn value is really low, we add to it so it still moves */
+  static double minCommand = 0.07;
+  /** Amount we are willing to compromise for in our distance */
+  static double disttolerance = 0.9;
+
   // not sure if this is right or not
-  public int lightMode = 3;
+  static int lightMode = 3;
 
   int cameraMode = 0;
 
-  DriveTrain driveTrain;
-
+  /** Creates a new LimeLight. */
   public LimeLight(DriveTrain driveTrain) {
-    // Use addRequirements() here to declare subsystem dependencies.
-    table = NetworkTableInstance.getDefault().getTable("limelight");
     this.driveTrain = driveTrain;
 
   }
 
-  // Called when the command is initially scheduled.
   @Override
-  public void initialize() {
-  }
-
-  // Called every time the scheduler runs while the command is scheduled.
-  @Override
-  public void execute() {
+  public void periodic() {
+    // This method will be called once per scheduler run
     updateValues();
+    showValues();
     double distanceFromTarget = distanceToTarget();
+    // System.out.println(distanceFromTarget);
+    // Shuffleboard.getTab("limelight").addNumber("Distance", distanceFromTarget);
     SmartDashboard.putNumber("Lime Distance", distanceFromTarget);
-
-  }
-
-  // Called once the command ends or is interrupted.
-  @Override
-  public void end(boolean interrupted) {
-  }
-
-  // Returns true when the command should end.
-  @Override
-  public boolean isFinished() {
-    return false;
   }
 
   /**
    * Updates the LimeLight's values
    */
-  public void updateValues() {
-    tx = table.getEntry("tx").getDouble(0.0);
-    ty = table.getEntry("ty").getDouble(0.0);
-    tv = table.getEntry("tv").getDouble(0.0);
-    ta = table.getEntry("ta").getDouble(0.0);
+  public static void updateValues() {
+    xoff = getLimeValues("tx");
+    yoff = getLimeValues("ty");
+    // tv = table.getEntry("tv").getDouble(0.0);
+    area = getLimeValues("ta");
+  }
+
+  public void showValues() {
+    SmartDashboard.putNumber("LimelightX", xoff);
+    SmartDashboard.putNumber("LimelightY", yoff);
+    SmartDashboard.putNumber("LimelightArea", area);
+
   }
 
   public double toRadians(double input) {
@@ -86,7 +77,7 @@ public class LimeLight extends CommandBase {
   }
 
   public double distanceToTarget() {
-    double r = toRadians(Constants.limeAngle + ty);
+    double r = toRadians(Constants.limeAngle + yoff);
     return (Constants.goalHeight - Constants.limeHeight) / Math.tan(r);
   }
 
@@ -101,32 +92,48 @@ public class LimeLight extends CommandBase {
   /**
    * Assume that there is a valid target, we will turn to aim at it
    */
-  public void aimAtTarget() {
-    double error = -tx;
+  public static void aimAtTarget() {
+    double error = -xoff;
+    // System.out.println("Error: " + error);
 
-    if (tx < 1) {
+    if (xoff < 1) {
       turnRate = limekP * error + minCommand;
     } else {
       turnRate = limekP * error - minCommand;
     }
+    System.out.println(turnRate);
     // Use this method to turn to robot at the speeds
-    driveTrain.setSides(turnRate, -turnRate);
+    driveTrain.setSides(turnRate , -turnRate);
+  }
 
+  public void fixOffset() {
+    double error = -xoff;
+    // driveTrain.deathBlossom(error);
+    double driveangle = driveTrain.ahrs.getAngle();
+    driveTrain.yawTarget = driveangle;
   }
 
   /**
    * Backs up to a given distance based on maths
-   * <p> Meant to be used called multiple times whilst preparing to shooting is occuring
+   * <p>
+   * Meant to be used called multiple times whilst preparing to shooting is
+   * occuring
+   * 
    * @param dist Distance away from goal
    */
   public void backToDistance(double dist) {
     double currentdist = distanceToTarget();
 
-    if ((currentdist - dist) < 0) {
-      driveTrain.setSides(-0.2, -0.2);
-    } else {
-      driveTrain.setSides(0.2, 0.2);
-    }
-
   }
+
+  /**
+   * Gets the different values from NetworkTables limelight
+   * 
+   * @param tvar String of the t value you want (ta , tx , ty , etc.)
+   */
+
+  public static double getLimeValues(String tvar) {
+    return NetworkTableInstance.getDefault().getTable("limelight").getEntry(tvar).getDouble(0.0);
+  }
+
 }

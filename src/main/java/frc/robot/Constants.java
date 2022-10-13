@@ -55,8 +55,8 @@ public final class Constants {
 
     // ------------LimeLight Constants------------ \\
     // In inches
-    public static final double limeHeight = 0.0;
-    public static final double limeAngle = 0.0;
+    public static final double limeHeight = 35.0;
+    public static final double limeAngle = 40.0;
     // In inches
     public static final double goalHeight = 104.0;
     
