@@ -7,9 +7,12 @@ package frc.robot.subsystems;
 import edu.wpi.first.math.controller.PIDController;
 import edu.wpi.first.networktables.NetworkTableEntry;
 import edu.wpi.first.networktables.NetworkTableInstance;
+import edu.wpi.first.wpilibj.Joystick;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import frc.robot.Constants;
+import frc.robot.RobotContainer;
+import frc.robot.libraries.Deadzone;
 
 public class LimeLight extends SubsystemBase {
   static DriveTrain driveTrain;
@@ -38,9 +41,12 @@ public class LimeLight extends SubsystemBase {
 
   int cameraMode = 0;
 
+  static Joystick stick;
+
   /** Creates a new LimeLight. */
-  public LimeLight(DriveTrain driveTrain) {
+  public LimeLight(DriveTrain driveTrain, Joystick stick) {
     this.driveTrain = driveTrain;
+    this.stick = stick;
 
   }
 
@@ -59,7 +65,8 @@ public class LimeLight extends SubsystemBase {
    * Updates the LimeLight's values
    */
   public static void updateValues() {
-    xoff = getLimeValues("tx");
+    xoff = getLimeValues("targetYaw");
+    System.out.println(xoff);
     yoff = getLimeValues("ty");
     // tv = table.getEntry("tv").getDouble(0.0);
     area = getLimeValues("ta");
@@ -94,16 +101,26 @@ public class LimeLight extends SubsystemBase {
    */
   public static void aimAtTarget() {
     double error = -xoff;
-    // System.out.println("Error: " + error);
+    // if' (stick.getMagnitude() < 0.2) return;
+    double m = RobotContainer.getBoostMode() ? 1.0 : 0.5;
+    double s = RobotContainer.getSlowMode() ? 0.5 : 1;
+    // m *= (stick.getRawAxis(3) + 1.0) / 2.0;
 
-    if (xoff < 1) {
+    // double turn = stick.getRawAxis(3) - stick.getRawAxis(2);
+
+    // m_drivetrain.singleJoystickDrive(stick.getX() * m, 0, 0);
+
+    if (xoff < 0) {
       turnRate = limekP * error + minCommand;
     } else {
       turnRate = limekP * error - minCommand;
     }
     System.out.println(turnRate);
     // Use this method to turn to robot at the speeds
-    driveTrain.setSides(turnRate , -turnRate);
+    // driveTrain.setSides(turnRate, -turnRate);
+    driveTrain.singleJoystickDrive(Deadzone.deadZone(stick.getRawAxis(1), Constants.deadzone) * m * s,
+        Deadzone.deadZone(stick.getRawAxis(0), Constants.deadzone) * m * s,
+        -turnRate);
   }
 
   public void fixOffset() {
@@ -133,7 +150,8 @@ public class LimeLight extends SubsystemBase {
    */
 
   public static double getLimeValues(String tvar) {
-    return NetworkTableInstance.getDefault().getTable("limelight").getEntry(tvar).getDouble(0.0);
+    return NetworkTableInstance.getDefault().getTable("photonvision").getSubTable("Limelight").getEntry(tvar)
+        .getDouble(0.0);
   }
 
 }

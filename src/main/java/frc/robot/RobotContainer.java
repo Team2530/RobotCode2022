@@ -65,7 +65,7 @@ public class RobotContainer {
   // private final PhotonVision vision = new PhotonVision(stick1, m_driveTrain, lights);
   private final FeedbackPanel m_feedbackPanel = new FeedbackPanel(3);
   private final Shooter shooter = new Shooter(xbox);
-  private final LimeLight m_limelight = new LimeLight(m_driveTrain);
+  private final LimeLight m_limelight = new LimeLight(m_driveTrain , stick1);
 
   // Diagnostics
   private final Battery m_battery = new Battery(m_ahrs, m_driveTrain, xbox);
